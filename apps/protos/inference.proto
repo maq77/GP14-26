@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package inference;
+
+// Optional: set namespace for .NET
+//option csharp_namespace = "Grpc.Contracts.Inference";
+option csharp_namespace = "Inference";
+
+// Optional: for Python readability
+option py_generic_services = true;
+
+// --- Request & Response messages ---
+message InferenceRequest {
+  string prompt = 1;
+  string model = 2;
+}
+
+message InferenceResponse {
+  string output_text = 1;
+  float confidence = 2;
+}
+
+// --- gRPC Service definition ---
+service InferenceService {
+  rpc Generate (InferenceRequest) returns (InferenceResponse);
+}

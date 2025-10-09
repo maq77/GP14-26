@@ -1,0 +1,15 @@
+syntax = "proto3";
+package inference;
+
+service Inference {
+  rpc DetectObjects(DetectRequest) returns (DetectResponse);
+  rpc VerifyFace(FaceVerifyRequest) returns (FaceVerifyResponse);
+}
+
+message DetectRequest { string image_url = 1; }
+message BoundingBox { float x=1; float y=2; float w=3; float h=4; }
+message Detection { string label=1; float score=2; BoundingBox box=3; }
+message DetectResponse { repeated Detection detections = 1; }
+
+message FaceVerifyRequest { string image_url = 1; string person_id = 2; }
+message FaceVerifyResponse { bool match = 1; float score = 2; }

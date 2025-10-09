@@ -1,0 +1,10 @@
+.git
+.gitignore
+node_modules
+bin
+obj
+.env
+__pycache__
+*.pyc
+dist
+coverage
