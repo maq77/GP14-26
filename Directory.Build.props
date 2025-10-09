@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- Points to your repo root on any machine/CI/container -->
+    <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+  </PropertyGroup>
+</Project>

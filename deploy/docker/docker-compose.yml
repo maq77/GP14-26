@@ -1,0 +1,107 @@
+version: "3.9"
+
+x-env: &default-env
+  ASPNETCORE_ENVIRONMENT: Development
+  JWT_ISSUER: ${JWT_ISSUER:-sssp.local}
+  SQLSERVER_CONNSTRING: ${SQLSERVER_CONNSTRING:-Server=sqlserver,1433;Database=sssp;User Id=sa;Password=Your_password123;}
+  REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+  RABBITMQ_URL: ${RABBITMQ_URL:-amqp://guest:guest@rabbitmq:5672}
+  AI_GRPC_URL: ${AI_GRPC_URL:-http://ai-fastapi:50051}
+  S3_ENDPOINT: ${S3_ENDPOINT:-http://minio:9000}
+  S3_BUCKET: ${S3_BUCKET:-sssp}
+  S3_ACCESS_KEY: ${S3_ACCESS_KEY:-admin}
+  S3_SECRET_KEY: ${S3_SECRET_KEY:-admin12345}
+  # for CORS (comma-separated)
+  ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:5173}
+
+networks:
+  sssp-net:
+
+volumes:
+  mssql-data:
+  minio-data:
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${SA_PASSWORD:-Your_password123}
+    ports: ["1433:1433"]
+    networks: [sssp-net]
+
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+    networks: [sssp-net]
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672" # management UI
+    networks: [sssp-net]
+
+  minio:
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-admin}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-admin12345}
+    ports:
+      - "9000:9000"
+      - "9001:9001" # console
+    networks: [sssp-net]
+    volumes:
+      - minio-data:/data
+
+  ai-fastapi:
+    build:
+      context: ../../apps/ai-fastapi
+      dockerfile: Dockerfile
+    env_file:
+      - ../../.env
+    environment:
+      <<: *default-env
+    depends_on:
+      - redis
+    ports:
+      - "8000:8000" # FastAPI
+      - "50051:50051" # gRPC
+    networks: [sssp-net]
+
+  api-dotnet:
+    build:
+      context: ../../          # <-- repo root so ./apps/** is visible
+      dockerfile: apps/api-dotnet/Dockerfile
+    env_file:
+      - ../../.env
+    environment:
+      <<: *default-env
+      # add JWT private/public keys via env or file mounts in real use
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY:-dev-placeholder}
+    depends_on:
+      sqlserver:
+        condition: service_started
+      ai-fastapi:
+        condition: service_started
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    networks: [sssp-net]
+
+  web-dashboard:
+    build:
+      context: ../../apps/web-dashboard
+    env_file:
+      - ../../.env
+    environment:
+      VITE_API_BASE: ${VITE_API_BASE:-http://localhost:8080}
+    depends_on:
+      - api-dotnet
+    ports:
+      - "8081:80" # served by nginx in Dockerfile runtime
+    networks: [sssp-net]

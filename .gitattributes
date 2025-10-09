@@ -1,0 +1,20 @@
+# Always use LF for code, Docker, and scripts
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.Dockerfile text eol=lf
+Dockerfile text eol=lf
+*.json text eol=lf
+*.proto text eol=lf
+*.py text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.cs text eol=lf
+*.csproj text eol=lf
+*.sln text eol=lf
+*.env text eol=lf
+
+# Allow Windows line endings for docs only
+*.md text eol=crlf
