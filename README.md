@@ -22,19 +22,33 @@ Your local machine runs the exact same environment used in CI/CD pipelines — n
 
 ```
 sssp/
-├── apps/
-│   ├── api-dotnet/        # ASP.NET Core API
-│   ├── ai-fastapi/        # FastAPI microservice (Python)
-│   ├── web-dashboard/     # Frontend (Vite + Nginx)
-│
-├── deploy/
-│   └── docker/
-│       ├── docker-compose.yml
-│       ├── supervisord.conf
-│       └── README.md
-│
-├── .env.example
-└── README.md
+  apps/
+    api-dotnet/        # ASP.NET Core 9
+    ai-fastapi/        # FastAPI + PyTorch/YOLO
+    web-dashboard/     # React + TS
+    workers/           # optional: queue consumers, schedulers
+  core/
+    domain/            # entities, value objects, domain services
+    application/       # use-cases, ports (interfaces), DTOs
+    infrastructure/    # repos, providers, adapters
+    shared/            # contracts, errors, utils
+  deploy/
+    docker/            # Dockerfiles, docker-compose.yml
+    k8s/               # optional later
+  db/
+    migrations/        # EF Core / Alembic
+    seeds/
+  .github/
+    workflows/         # GitHub Actions
+    ISSUE_TEMPLATE/
+  docs/
+    ADRs/              # Architecture Decision Records
+    diagrams/
+  .env.example
+  CODEOWNERS
+  CONTRIBUTING.md
+  SECURITY.md
+
 ```
 
 ---
@@ -55,8 +69,8 @@ sssp/
 
 ### 1️⃣ Clone the repository
 ```bash
-git clone https://github.com/your-org/sssp.git
-cd sssp
+git clone https://github.com/maq77/GP14-26.git
+cd GP14-26
 ```
 
 ### 2️⃣ Prepare environment file
@@ -73,14 +87,17 @@ docker compose up -d --build
 ### 4️⃣ Verify services
 | Service | URL | Description |
 |----------|-----|-------------|
-| API (.NET) | http://localhost:8080 | Main backend |
-| FastAPI | http://localhost:8000/health | AI healthcheck |
-| Dashboard | http://localhost:5173 | Web UI |
+| API (.NET) | [http://localhost:8080](http://localhost:8080/swagger/index.html)| Main backend |
+| FastAPI | [http://localhost:8000/](http://localhost:8000/docs) | AI endpoint |
+| Dashboard | [http://localhost:8081](http://localhost:8081/) | Web UI |
 | RabbitMQ | http://localhost:15672 | Messaging UI |
 | MinIO Console | http://localhost:9001 | S3 storage UI |
-| SQL Server | localhost,1433 | Use SSMS or Azure Data Studio |
+| SQL Server | sqlserver,1433 | Use SSMS or Azure Data Studio |
 
 ---
+
+###
+
 
 ## 🧰 Developer Workflow
 
@@ -202,4 +219,4 @@ build/
 
 ---
 
-> _“If a new dev can run the app with one command, you’ve done DevOps right.”_
+> _“We're the next Gen.....!”_
