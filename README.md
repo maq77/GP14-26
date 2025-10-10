@@ -18,7 +18,7 @@ Your local machine runs the exact same environment used in CI/CD pipelines — n
 
 ---
 
-## 🧩 Folder Structure
+## Folder Structure v1.1 (old)
 
 ```
 sssp/
@@ -49,6 +49,170 @@ sssp/
   CONTRIBUTING.md
   SECURITY.md
 
+```
+
+## Folder Structure v1.2 (new) based on Uber & Netflix Design
+```
+sssp/
+├── .github/
+│   ├── workflows/
+│   │   ├── api-dotnet-ci.yml
+│   │   ├── ai-fastapi-ci.yml
+│   │   ├── web-dashboard-ci.yml
+│   │   └── deploy.yml
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.md
+│   │   ├── feature_request.md
+│   │   └── tech_debt.md
+│   ├── pull_request_template.md
+│   └── CODEOWNERS
+│
+├── apps/
+│   ├── api/                          # ASP.NET Core 9 (don't use "dotnet" in name)
+│   │   ├── src/
+│   │   │   ├── SSSP.Api/            # Main API project
+│   │   │   │   ├── Controllers/
+│   │   │   │   ├── Middleware/
+│   │   │   │   ├── Hubs/            # SignalR
+│   │   │   │   ├── Extensions/
+│   │   │   │   ├── Program.cs
+│   │   │   │   └── appsettings.json
+│   │   │   ├── SSSP.Application/    # Use cases, DTOs
+│   │   │   ├── SSSP.Domain/         # Entities, interfaces
+│   │   │   └── SSSP.Infrastructure/ # EF Core, external services
+│   │   ├── tests/
+│   │   │   ├── SSSP.Api.Tests/
+│   │   │   ├── SSSP.Application.Tests/
+│   │   │   └── SSSP.Domain.Tests/
+│   │   ├── Dockerfile
+│   │   ├── .dockerignore
+│   │   └── SSSP.sln
+│   │
+│   ├── ai/                           # FastAPI AI Service
+│   │   ├── src/
+│   │   │   ├── api/
+│   │   │   │   ├── routes/
+│   │   │   │   ├── middleware/
+│   │   │   │   └── main.py
+│   │   │   ├── core/
+│   │   │   │   ├── config.py
+│   │   │   │   └── exceptions.py
+│   │   │   ├── models/              # ML models
+│   │   │   │   ├── yolo/
+│   │   │   │   ├── face/
+│   │   │   │   └── behavior/
+│   │   │   ├── services/            # Business logic
+│   │   │   └── schemas/             # Pydantic models
+│   │   ├── tests/
+│   │   ├── notebooks/               # Jupyter experiments
+│   │   ├── scripts/                 # Training scripts
+│   │   ├── Dockerfile
+│   │   ├── requirements.txt
+│   │   └── pyproject.toml
+│   │
+│   ├── web/                          # React Dashboard
+│   │   ├── public/
+│   │   ├── src/
+│   │   │   ├── components/
+│   │   │   │   ├── ui/              # Base components
+│   │   │   │   ├── layout/
+│   │   │   │   └── features/        # Feature-specific
+│   │   │   ├── pages/
+│   │   │   │   ├── admin/
+│   │   │   │   ├── operator/
+│   │   │   │   └── user/
+│   │   │   ├── services/            # API calls
+│   │   │   ├── hooks/
+│   │   │   ├── store/               # Zustand
+│   │   │   ├── types/
+│   │   │   ├── utils/
+│   │   │   ├── App.tsx
+│   │   │   └── main.tsx
+│   │   ├── tests/
+│   │   ├── Dockerfile
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   └── vite.config.ts
+│   │
+│   └── workers/                      # Background jobs (optional for MVP)
+│       └── incident-processor/
+│
+├── packages/                         # SHARED CODE (Critical for monorepo!)
+│   ├── contracts/                    # Shared contracts
+│   │   ├── proto/                    # gRPC .proto files
+│   │   │   └── inference.proto
+│   │   ├── events/                   # Event schemas
+│   │   │   ├── incident.events.ts
+│   │   │   └── detection.events.py
+│   │   └── openapi/                  # OpenAPI specs
+│   │       └── api.yaml
+│   │
+│   └── shared-types/                 # TypeScript types (if needed)
+│       └── index.ts
+│
+├── infrastructure/                   # BETTER than "deploy/"
+│   ├── docker/
+│   │   ├── docker-compose.yml
+│   │   ├── docker-compose.dev.yml
+│   │   ├── docker-compose.prod.yml
+│   │   └── .env.example
+│   │
+│   ├── terraform/                    # Infrastructure as Code (add later)
+│   │   ├── environments/
+│   │   │   ├── dev/
+│   │   │   └── prod/
+│   │   └── modules/
+│   │
+│   └── k8s/                          # Kubernetes (Phase 3)
+│       ├── base/
+│       └── overlays/
+│
+├── scripts/                          # BUILD & UTILITY SCRIPTS
+│   ├── setup-dev.sh
+│   ├── run-tests.sh
+│   ├── seed-db.sh
+│   └── deploy.sh
+│
+├── docs/                             # DOCUMENTATION
+│   ├── architecture/
+│   │   ├── ADRs/                     # Architecture Decision Records
+│   │   │   ├── 001-use-clean-architecture.md
+│   │   │   ├── 002-grpc-for-ml-integration.md
+│   │   │   └── 003-signalr-for-realtime.md
+│   │   ├── c4/                       # C4 diagrams
+│   │   │   ├── context.png
+│   │   │   ├── container.png
+│   │   │   └── component.png
+│   │   └── data-flow.md
+│   │
+│   ├── api/                          # API documentation
+│   │   ├── rest-api.md
+│   │   └── grpc-api.md
+│   │
+│   ├── development/
+│   │   ├── getting-started.md
+│   │   ├── coding-standards.md
+│   │   └── testing-guide.md
+│   │
+│   ├── deployment/
+│   │   ├── docker-guide.md
+│   │   └── production-checklist.md
+│   │
+│   └── ml/                           # ML-specific docs
+│       ├── model-training.md
+│       ├── dataset-guide.md
+│       └── inference-optimization.md
+│
+├── .editorconfig                     # Code style config
+├── .gitignore
+├── .gitattributes
+├── LICENSE
+├── README.md
+├── CHANGELOG.md                      # Version history
+├── CONTRIBUTING.md
+├── SECURITY.md
+├── CODE_OF_CONDUCT.md
+└── CODEOWNERS
 ```
 
 ---
