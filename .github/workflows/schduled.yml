@@ -50,7 +50,7 @@ jobs:
           npm install
 
       - name: Create PR for updates
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           commit-message: 'chore: update dependencies'
           title: 'chore: Weekly dependency updates'
