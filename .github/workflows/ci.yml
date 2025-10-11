@@ -1,0 +1,379 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '9.0.x'
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '20'
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository }}
+
+jobs:
+  # ==================================================
+  # Job 1: Code Quality & Linting
+  # ==================================================
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component: [api, ai, web]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # API (.NET)
+      - name: Setup .NET
+        if: matrix.component == 'api'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore .NET dependencies
+        if: matrix.component == 'api'
+        run: dotnet restore apps/api/SSSP.sln
+
+      - name: Lint .NET code
+        if: matrix.component == 'api'
+        run: dotnet format apps/api/SSSP.sln --verify-no-changes --verbosity diagnostic
+
+      # AI (Python)
+      - name: Setup Python
+        if: matrix.component == 'ai'
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        if: matrix.component == 'ai'
+        run: |
+          pip install ruff black mypy
+          pip install -r apps/ai/requirements.txt
+
+      - name: Lint Python with Ruff
+        if: matrix.component == 'ai'
+        run: ruff check apps/ai/src
+
+      - name: Check Python formatting
+        if: matrix.component == 'ai'
+        run: black --check apps/ai/src
+
+      - name: Type check with mypy
+        if: matrix.component == 'ai'
+        run: mypy apps/ai/src --ignore-missing-imports
+        continue-on-error: true
+
+      # Web (React)
+      - name: Setup Node.js
+        if: matrix.component == 'web'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install Node dependencies
+        if: matrix.component == 'web'
+        run: npm ci
+        working-directory: apps/web
+
+      - name: Lint TypeScript
+        if: matrix.component == 'web'
+        run: npm run lint
+        working-directory: apps/web
+
+      - name: Type check TypeScript
+        if: matrix.component == 'web'
+        run: npm run type-check
+        working-directory: apps/web
+
+  # ==================================================
+  # Job 2: Unit Tests
+  # ==================================================
+  unit-tests:
+    name: Unit Tests
+    needs: code-quality
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component: [api, ai, web]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # API Tests (.NET)
+      - name: Setup .NET
+        if: matrix.component == 'api'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore .NET dependencies
+        if: matrix.component == 'api'
+        run: dotnet restore apps/api/SSSP.sln
+
+      - name: Build .NET
+        if: matrix.component == 'api'
+        run: dotnet build apps/api/SSSP.sln --no-restore --configuration Release
+
+      - name: Run .NET tests
+        if: matrix.component == 'api'
+        run: |
+          dotnet test apps/api/SSSP.sln \
+            --no-build \
+            --configuration Release \
+            --logger "trx;LogFileName=test-results.trx" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./coverage
+
+      - name: Upload .NET test results
+        if: matrix.component == 'api' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-test-results
+          path: coverage/
+
+      - name: Code Coverage Report (.NET)
+        if: matrix.component == 'api'
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/*/coverage.cobertura.xml
+          flags: api
+          name: api-coverage
+
+      # AI Tests (Python)
+      - name: Setup Python
+        if: matrix.component == 'ai'
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install Python test dependencies
+        if: matrix.component == 'ai'
+        run: |
+          pip install pytest pytest-asyncio pytest-cov
+          pip install -r apps/ai/requirements.txt
+
+      - name: Run Python tests
+        if: matrix.component == 'ai'
+        run: |
+          pytest apps/ai/tests/ \
+            --cov=apps/ai/src \
+            --cov-report=xml \
+            --cov-report=html \
+            --junitxml=junit.xml \
+            -v
+
+      - name: Upload Python test results
+        if: matrix.component == 'ai' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-test-results
+          path: |
+            junit.xml
+            htmlcov/
+
+      - name: Code Coverage Report (Python)
+        if: matrix.component == 'ai'
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          flags: ai
+          name: ai-coverage
+
+      # Web Tests (React)
+      - name: Setup Node.js
+        if: matrix.component == 'web'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install Node dependencies
+        if: matrix.component == 'web'
+        run: npm ci
+        working-directory: apps/web
+
+      - name: Run Web tests
+        if: matrix.component == 'web'
+        run: npm run test:coverage
+        working-directory: apps/web
+
+      - name: Upload Web test results
+        if: matrix.component == 'web' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-test-results
+          path: apps/web/coverage/
+
+      - name: Code Coverage Report (Web)
+        if: matrix.component == 'web'
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./apps/web/coverage/coverage-final.json
+          flags: web
+          name: web-coverage
+
+  # ==================================================
+  # Job 3: Build Docker Images
+  # ==================================================
+  build-images:
+    name: Build Docker Images
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component: [api, ai, web]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}-${{ matrix.component }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push API image
+        if: matrix.component == 'api'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          target: production
+
+      - name: Build and push AI image
+        if: matrix.component == 'ai'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/ai/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          target: production
+
+      - name: Build and push Web image
+        if: matrix.component == 'web'
+        uses: docker/build-push-action@v5
+        with:
+          context: apps/web
+          file: apps/web/Dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          target: production
+          build-args: |
+            VITE_API_BASE=${{ secrets.VITE_API_BASE || 'http://localhost:8080' }}
+
+  # ==================================================
+  # Job 4: Integration Tests
+  # ==================================================
+  integration-tests:
+    name: Integration Tests
+    needs: build-images
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start services with Docker Compose
+        run: |
+          cp infrastructure/docker/.env.example infrastructure/docker/.env
+          docker-compose -f infrastructure/docker/docker-compose.yml up -d
+        env:
+          SA_PASSWORD: Test_password123!
+
+      - name: Wait for services to be healthy
+        run: |
+          timeout 300 bash -c 'until docker-compose -f infrastructure/docker/docker-compose.yml ps | grep -q "healthy"; do sleep 5; done'
+        working-directory: infrastructure/docker
+
+      - name: Run integration tests
+        run: |
+          # Add your integration test commands here
+          echo "Running integration tests..."
+          # Example: newman run postman_collection.json
+
+      - name: Collect logs on failure
+        if: failure()
+        run: docker-compose -f infrastructure/docker/docker-compose.yml logs
+        working-directory: infrastructure/docker
+
+      - name: Shutdown services
+        if: always()
+        run: docker-compose -f infrastructure/docker/docker-compose.yml down -v
+        working-directory: infrastructure/docker
+
+  # ==================================================
+  # Job 5: Security Scan
+  # ==================================================
+  security-scan:
+    name: Security Scan
+    needs: code-quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high

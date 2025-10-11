@@ -1,0 +1,30 @@
+# Auto-label PRs based on files changed
+
+'api':
+  - apps/api/**/*
+
+'ai':
+  - apps/ai/**/*
+
+'frontend':
+  - apps/web/**/*
+
+'infrastructure':
+  - infrastructure/**/*
+  - docker-compose.yml
+  - Dockerfile
+
+'documentation':
+  - docs/**/*
+  - '**/*.md'
+
+'dependencies':
+  - '**/package.json'
+  - '**/package-lock.json'
+  - '**/requirements.txt'
+  - '**/*.csproj'
+
+'tests':
+  - '**/tests/**/*'
+  - '**/*.test.*'
+  - '**/*.spec.*'

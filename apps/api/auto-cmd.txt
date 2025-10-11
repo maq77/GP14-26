@@ -1,0 +1,97 @@
+Setup
+...........................................................................
+# Navigate to API directory
+cd apps/api
+
+# Create solution
+dotnet new sln -n SSSP
+
+# Create API project (ASP.NET Core Web API)
+dotnet new webapi -n SSSP.Api -o src/SSSP.Api --framework net9.0
+
+# Create Class Libraries
+dotnet new classlib -n SSSP.Domain -o src/SSSP.Domain --framework net9.0
+dotnet new classlib -n SSSP.Application -o src/SSSP.Application --framework net9.0
+dotnet new classlib -n SSSP.Infrastructure -o src/SSSP.Infrastructure --framework net9.0
+
+# Create Test Projects
+dotnet new xunit -n SSSP.Api.Tests -o tests/SSSP.Api.Tests --framework net9.0
+dotnet new xunit -n SSSP.Application.Tests -o tests/SSSP.Application.Tests --framework net9.0
+dotnet new xunit -n SSSP.Domain.Tests -o tests/SSSP.Domain.Tests --framework net9.0
+
+# Add projects to solution
+dotnet sln add src/SSSP.Api/SSSP.Api.csproj
+dotnet sln add src/SSSP.Domain/SSSP.Domain.csproj
+dotnet sln add src/SSSP.Application/SSSP.Application.csproj
+dotnet sln add src/SSSP.Infrastructure/SSSP.Infrastructure.csproj
+dotnet sln add tests/SSSP.Api.Tests/SSSP.Api.Tests.csproj
+dotnet sln add tests/SSSP.Application.Tests/SSSP.Application.Tests.csproj
+dotnet sln add tests/SSSP.Domain.Tests/SSSP.Domain.Tests.csproj
+
+# Add project references (Clean Architecture dependencies)
+dotnet add src/SSSP.Api/SSSP.Api.csproj reference src/SSSP.Application/SSSP.Application.csproj
+dotnet add src/SSSP.Api/SSSP.Api.csproj reference src/SSSP.Infrastructure/SSSP.Infrastructure.csproj
+
+dotnet add src/SSSP.Application/SSSP.Application.csproj reference src/SSSP.Domain/SSSP.Domain.csproj
+
+dotnet add src/SSSP.Infrastructure/SSSP.Infrastructure.csproj reference src/SSSP.Application/SSSP.Application.csproj
+
+# Add test project references
+dotnet add tests/SSSP.Api.Tests/SSSP.Api.Tests.csproj reference src/SSSP.Api/SSSP.Api.csproj
+dotnet add tests/SSSP.Application.Tests/SSSP.Application.Tests.csproj reference src/SSSP.Application/SSSP.Application.csproj
+dotnet add tests/SSSP.Domain.Tests/SSSP.Domain.Tests.csproj reference src/SSSP.Domain/SSSP.Domain.csproj
+
+
+.............................................................................
+Packages
+.............................................................................
+
+# API Layer packages
+dotnet add src/SSSP.Api/SSSP.Api.csproj package Microsoft.AspNetCore.Authentication.JwtBearer
+dotnet add src/SSSP.Api/SSSP.Api.csproj package Microsoft.AspNetCore.SignalR
+dotnet add src/SSSP.Api/SSSP.Api.csproj package Swashbuckle.AspNetCore
+dotnet add src/SSSP.Api/SSSP.Api.csproj package Serilog.AspNetCore
+dotnet add src/SSSP.Api/SSSP.Api.csproj package Serilog.Sinks.Console
+dotnet add src/SSSP.Api/SSSP.Api.csproj package Grpc.Net.Client
+dotnet add src/SSSP.Api/SSSP.Api.csproj package Grpc.Tools
+
+# Application Layer packages
+dotnet add src/SSSP.Application/SSSP.Application.csproj package FluentValidation
+dotnet add src/SSSP.Application/SSSP.Application.csproj package FluentValidation.DependencyInjectionExtensions
+dotnet add src/SSSP.Application/SSSP.Application.csproj package MediatR
+dotnet add src/SSSP.Application/SSSP.Application.csproj package AutoMapper
+dotnet add src/SSSP.Application/SSSP.Application.csproj package AutoMapper.Extensions.Microsoft.DependencyInjection
+
+# Infrastructure Layer packages
+dotnet add src/SSSP.Infrastructure/SSSP.Infrastructure.csproj package Microsoft.EntityFrameworkCore
+dotnet add src/SSSP.Infrastructure/SSSP.Infrastructure.csproj package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add src/SSSP.Infrastructure/SSSP.Infrastructure.csproj package Microsoft.EntityFrameworkCore.Design
+dotnet add src/SSSP.Infrastructure/SSSP.Infrastructure.csproj package Npgsql.EntityFrameworkCore.PostgreSQL
+dotnet add src/SSSP.Infrastructure/SSSP.Infrastructure.csproj package StackExchange.Redis
+dotnet add src/SSSP.Infrastructure/SSSP.Infrastructure.csproj package RabbitMQ.Client
+dotnet add src/SSSP.Infrastructure/SSSP.Infrastructure.csproj package Minio
+
+# Test packages
+dotnet add tests/SSSP.Api.Tests/SSSP.Api.Tests.csproj package Microsoft.AspNetCore.Mvc.Testing
+dotnet add tests/SSSP.Api.Tests/SSSP.Api.Tests.csproj package FluentAssertions
+dotnet add tests/SSSP.Api.Tests/SSSP.Api.Tests.csproj package Moq
+dotnet add tests/SSSP.Api.Tests/SSSP.Api.Tests.csproj package Testcontainers
+dotnet add tests/SSSP.Api.Tests/SSSP.Api.Tests.csproj package Testcontainers.PostgreSql
+........................................................................
+Projects Structuure
+........................................................................
+
+# Create folder structure in API project
+mkdir -p src/SSSP.Api/{Controllers,Hubs,Middleware,Extensions,Filters}
+
+# Create folder structure in Domain
+mkdir -p src/SSSP.Domain/{Entities,ValueObjects,Enums,Interfaces,Events,Exceptions}
+
+# Create folder structure in Application
+mkdir -p src/SSSP.Application/{UseCases,DTOs,Interfaces,Mappings,Validators,Common}
+
+# Create folder structure in Infrastructure
+mkdir -p src/SSSP.Infrastructure/{Persistence,Repositories,Services,Messaging,Caching,Storage}
+mkdir -p src/SSSP.Infrastructure/Persistence/{Configurations,Migrations}
+
+............................................................................

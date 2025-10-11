@@ -1,0 +1,77 @@
+name: Performance Tests
+
+on:
+  schedule:
+    # Run nightly at 2 AM
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  load-test:
+    name: Load Testing
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start services
+        run: |
+          cp infrastructure/docker/.env.example infrastructure/docker/.env
+          docker-compose -f infrastructure/docker/docker-compose.yml up -d
+          sleep 60  # Wait for services to be ready
+
+      - name: Setup k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+
+      - name: Run API load tests
+        run: |
+          k6 run --vus 100 --duration 5m tests/performance/api-load-test.js
+
+      - name: Run AI inference load tests
+        run: |
+          k6 run --vus 50 --duration 3m tests/performance/ai-load-test.js
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-results
+          path: tests/performance/results/
+
+      - name: Shutdown services
+        if: always()
+        run: docker-compose -f infrastructure/docker/docker-compose.yml down
+
+  lighthouse:
+    name: Lighthouse Performance
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start web service
+        run: |
+          cd apps/web
+          npm ci
+          npm run build
+          npx serve -s dist -l 3000 &
+          sleep 10
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: 'http://localhost:3000'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-results
+          path: .lighthouseci/

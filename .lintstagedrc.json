@@ -1,0 +1,16 @@
+{
+  "apps/api/**/*.cs": [
+    "dotnet format --include"
+  ],
+  "apps/ai/**/*.py": [
+    "black",
+    "ruff check --fix"
+  ],
+  "apps/web/**/*.{ts,tsx,js,jsx}": [
+    "eslint --fix",
+    "prettier --write"
+  ],
+  "**/*.{json,md,yml,yaml}": [
+    "prettier --write"
+  ]
+}

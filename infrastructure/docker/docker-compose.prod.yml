@@ -1,0 +1,28 @@
+# ==================================================
+# Production Override
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+# ==================================================
+version: "3.9"
+
+services:
+  ai-fastapi:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      GPU_ENABLED: "true"
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '8'
+          memory: 16G
+
+  api-dotnet:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ENABLE_SWAGGER: "false"
+    deploy:
+      replicas: 3
+
+  web-dashboard:
+    deploy:
+      replicas: 2
