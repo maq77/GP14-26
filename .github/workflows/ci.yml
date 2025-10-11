@@ -264,7 +264,7 @@ jobs:
 
       - name: Build and push API image
         if: matrix.component == 'api'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: apps/api/Dockerfile
@@ -277,7 +277,7 @@ jobs:
 
       - name: Build and push AI image
         if: matrix.component == 'ai'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: apps/ai/Dockerfile
@@ -290,7 +290,7 @@ jobs:
 
       - name: Build and push Web image
         if: matrix.component == 'web'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: apps/web
           file: apps/web/Dockerfile
