@@ -71,7 +71,7 @@ CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 # ==================================================
 # Stage 5: Production with Nginx
 # ==================================================
-FROM nginx:1.25-alpine AS production
+FROM nginx:1.29-alpine AS production
 
 # Copy custom nginx config
 COPY apps/web/nginx.conf /etc/nginx/nginx.conf
