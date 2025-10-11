@@ -10,7 +10,7 @@ torchvision==0.21.0
 ultralytics==8.1.0
 opencv-python-headless==4.9.0.80
 numpy==1.26.3
-pillow==10.2.0
+pillow==11.3.0
 
 # Face Recognition (disabled for now)
 # deepface==0.0.87
