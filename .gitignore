@@ -1,0 +1,105 @@
+# --------------------
+# Environment / Secrets
+# --------------------
+.env
+.env.*
+!.env.example
+*.local
+
+# --------------------
+# OS / Editors
+# --------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.user
+*.swp
+
+# --------------------
+# Node / Frontend (apps/web, etc.)
+# --------------------
+node_modules/
+**/node_modules/
+dist/
+build/
+*.log
+.cache/
+.parcel-cache/
+.pnp.*
+.npm/
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+# Vite / bundlers
+**/node_modules/.vite/
+vite.config.timestamp-*.mjs
+
+# --------------------
+# Python / Backend (apps/ai, etc.)
+# --------------------
+venv/
+.venv/
+**/venv/
+**/.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage*
+htmlcov/
+.ipynb_checkpoints/
+.eggs/
+*.egg-info/
+build/
+dist/
+# Keep dependency manifests
+!requirements*.txt
+!pyproject.toml
+!poetry.lock
+
+# --------------------
+# ML / Data / Outputs
+# --------------------
+models/
+weights/
+checkpoints/
+datasets/
+data/
+storage/
+outputs/
+*.pt
+*.pth
+*.onnx
+*.npz
+*.h5
+# allow a readme to describe how to fetch models
+!models/README.md
+
+# --------------------
+# Docker
+# --------------------
+.dockerignore
+
+# --------------------
+# .NET / C# (if present)
+# --------------------
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# --------------------
+# Misc / Archives
+# --------------------
+*.zip
+*.tar
+*.tar.gz
