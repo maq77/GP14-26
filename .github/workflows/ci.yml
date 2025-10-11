@@ -144,7 +144,7 @@ jobs:
 
       - name: Code Coverage Report (.NET)
         if: matrix.component == 'api'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: ./coverage/*/coverage.cobertura.xml
           flags: api
@@ -185,7 +185,7 @@ jobs:
 
       - name: Code Coverage Report (Python)
         if: matrix.component == 'ai'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: ./coverage.xml
           flags: ai
@@ -219,7 +219,7 @@ jobs:
 
       - name: Code Coverage Report (Web)
         if: matrix.component == 'web'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: ./apps/web/coverage/coverage-final.json
           flags: web
