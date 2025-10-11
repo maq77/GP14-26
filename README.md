@@ -207,7 +207,7 @@ sssp/
 
 ### 1️⃣ Clone the repository
 ```bash
-git clone https://github.com/your-org/sssp.git
+git clone https://github.com/maq77/sssp.git
 cd sssp
 ```
 
@@ -218,7 +218,7 @@ cp .env.example .env
 
 ### 3️⃣ Build & run everything
 ```bash
-cd deploy/docker
+cd infrastructure/docker
 docker compose up -d --build
 ```
 
