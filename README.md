@@ -22,25 +22,6 @@ Your local machine runs the exact same environment used in CI/CD pipelines — n
 
 ---
 
-## Folder Structure v1.1 (old)
-
-```
-sssp/
-├── apps/
-│   ├── api-dotnet/        # ASP.NET Core API
-│   ├── ai-fastapi/        # FastAPI microservice (Python)
-│   ├── web-dashboard/     # Frontend (Vite + Nginx)
-│
-├── deploy/
-│   └── docker/
-│       ├── docker-compose.yml
-│       ├── supervisord.conf
-│       └── README.md
-│
-├── .env.example
-└── README.md
-```
-
 ## Folder Structure v1.2 (new) based on Uber & Netflix Design
 ```
 sssp/
