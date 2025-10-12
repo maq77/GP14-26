@@ -1,23 +1,50 @@
-﻿@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900;
+    background-color: #f9fafb; /* Tailwind bg-gray-50 */
+    color: #111827; /* Tailwind text-gray-900 */
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors;
+    background-color: #2563eb; /* Replace with your primary-600 color */
+    color: #fff;
+    font-weight: 600;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 0.5rem;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-duration: 150ms;
   }
-  
+  .btn-primary:hover {
+    background-color: #1d4ed8; /* Replace with your primary-700 color */
+  }
   .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors;
+    background-color: #e5e7eb; /* Tailwind bg-gray-200 */
+    color: #1f2937; /* Tailwind text-gray-800 */
+    font-weight: 600;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 0.5rem;
+    transition-property: background-color;
+    transition-duration: 150ms;
   }
-  
+  .btn-secondary:hover {
+    background-color: #d1d5db; /* Tailwind hover:bg-gray-300 */
+  }
   .card {
-    @apply bg-white rounded-lg shadow-md p-6;
+    background-color: #fff; /* Tailwind bg-white */
+    border-radius: 0.5rem; /* Tailwind rounded-lg */
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); /* Tailwind shadow-md */
+    padding: 1.5rem; /* Tailwind p-6 */
   }
+}
+@layer utilities {
+  .text-shadow { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); }
 }
