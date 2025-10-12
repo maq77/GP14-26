@@ -127,8 +127,8 @@ services:
   # ==================== AI SERVICE ====================
   ai-fastapi:
     build:
-      context: ../../apps/ai
-      dockerfile: Dockerfile
+      context: ../../
+      dockerfile: apps/ai/Dockerfile
       args:
         - PYTHON_VERSION=3.11
     container_name: sssp-ai-fastapi
@@ -215,8 +215,8 @@ services:
   # ==================== WEB DASHBOARD ====================
   web-dashboard:
     build:
-      context: ../../apps/web
-      dockerfile: Dockerfile
+      context: ../../
+      dockerfile: apps/web/Dockerfile
       args:
         - NODE_VERSION=20
         - VITE_API_BASE=${VITE_API_BASE:-http://localhost:8080}
