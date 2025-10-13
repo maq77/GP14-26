@@ -124,7 +124,7 @@ CMD ["gunicorn", "src.api.main:app", \
 # ==================================================
 # Stage 6: Production with GPU support
 # ==================================================
-FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04 AS production-gpu
+FROM nvidia/cuda:13.0.1-runtime-ubuntu22.04 AS production-gpu
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
