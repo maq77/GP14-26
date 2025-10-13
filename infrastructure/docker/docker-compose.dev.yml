@@ -6,6 +6,8 @@ version: "3.9"
 
 services:
   ai-fastapi:
+    build:
+      target: development  # Use dev stage from Dockerfile
     volumes:
       - ../../apps/ai/src:/app/src  # Hot reload
     environment:
@@ -13,6 +15,8 @@ services:
     command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
 
   api-dotnet:
+    build:
+      target: development  # Use dev stage from Dockerfile
     volumes:
       - ../../apps/api/src:/app/src
     environment:

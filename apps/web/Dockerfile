@@ -15,8 +15,8 @@ RUN apk add --no-cache dumb-init
 WORKDIR /app
 
 # Create non-root user
-RUN addgroup -g 1000 sssp && \
-    adduser -u 1000 -G sssp -s /bin/sh -D sssp
+RUN addgroup -S sssp && adduser -S -G sssp -s /bin/sh sssp
+
 
 # ==================================================
 # Stage 2: Dependencies
