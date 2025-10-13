@@ -1,28 +1,37 @@
-# SSSP - Smart Security & Sustainability Platform
+# 🧱 SSSP – Smart Security & Sustainability Platform
 
-AI-powered IoT platform for smart cities combining security monitoring, environmental sustainability, and citizen engagement.
-
-
-# 🧱 SSSP Project – Developer Guide
-
-> Full-stack project including:
-> - **api-dotnet** (.NET backend)
-> - **ai-fastapi** (Python AI service)
-> - **web-dashboard** (Frontend)
-> - Shared infrastructure: SQL Server, Redis, RabbitMQ, MinIO
+[![Build Status](https://img.shields.io/github/actions/workflow/status/maq77/sssp/deploy.yml?branch=main&style=for-the-badge)](https://github.com/maq77/sssp/actions)
+[![Version](https://img.shields.io/badge/version-1.2-blue?style=for-the-badge)](https://github.com/maq77/sssp/releases)
+[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
+[![Docker](https://img.shields.io/badge/docker-ready-0db7ed?style=for-the-badge&logo=docker&logoColor=white)](#)
+[![Platform](https://img.shields.io/badge/platform-linux--%7C--windows-lightgrey?style=for-the-badge)](#)
 
 ---
 
-## 🚀 Overview
+### _AI-Powered IoT Platform for Smart Cities_
 
-This repository provides a complete **Docker-based development environment** for all SSSP services.  
-Each service runs in its own container and communicates via an internal Docker network (`sssp-net`).
-
-Your local machine runs the exact same environment used in CI/CD pipelines — no configuration drift, no “works on my machine.”
+SSSP integrates **security monitoring**, **environmental sustainability**, and **citizen engagement** into one intelligent ecosystem powered by **AI + IoT**.
 
 ---
 
-## Folder Structure v1.2 (new) based on Uber & Netflix Design
+## 🧱 Project Overview
+
+This repository hosts the **full-stack monorepo** for SSSP, including all backend, frontend, and AI services.  
+The stack is fully containerized with Docker, ensuring **identical environments** across development, CI/CD, and production.
+
+### Includes:
+- **api** – ASP.NET Core 9 backend  
+- **ai** – Python FastAPI microservice for AI models  
+- **web** – React (Vite + TypeScript) dashboard  
+- **shared infrastructure** – SQL Server, Redis, RabbitMQ, MinIO  
+- **scripts**, **docs**, **CI/CD**, and **IaC (Terraform/K8s)**
+
+> _“If a new dev can run the app with one command, you’ve done DevOps right.”_
+
+---
+
+## 📂 Folder Structure v1.2
+
 ```
 sssp/
 ├── .github/
@@ -39,246 +48,97 @@ sssp/
 │   └── CODEOWNERS
 │
 ├── apps/
-│   ├── api/                          # ASP.NET Core 9 (don't use "dotnet" in name)
-│   │   ├── src/
-│   │   │   ├── SSSP.Api/            # Main API project
-│   │   │   │   ├── Controllers/
-│   │   │   │   ├── Middleware/
-│   │   │   │   ├── Hubs/            # SignalR
-│   │   │   │   ├── Extensions/
-│   │   │   │   ├── Program.cs
-│   │   │   │   └── appsettings.json
-│   │   │   ├── SSSP.Application/    # Use cases, DTOs
-│   │   │   ├── SSSP.Domain/         # Entities, interfaces
-│   │   │   └── SSSP.Infrastructure/ # EF Core, external services
-│   │   ├── tests/
-│   │   │   ├── SSSP.Api.Tests/
-│   │   │   ├── SSSP.Application.Tests/
-│   │   │   └── SSSP.Domain.Tests/
-│   │   ├── Dockerfile
-│   │   ├── .dockerignore
-│   │   └── SSSP.sln
-│   │
-│   ├── ai/                           # FastAPI AI Service
-│   │   ├── src/
-│   │   │   ├── api/
-│   │   │   │   ├── routes/
-│   │   │   │   ├── middleware/
-│   │   │   │   └── main.py
-│   │   │   ├── core/
-│   │   │   │   ├── config.py
-│   │   │   │   └── exceptions.py
-│   │   │   ├── models/              # ML models
-│   │   │   │   ├── yolo/
-│   │   │   │   ├── face/
-│   │   │   │   └── behavior/
-│   │   │   ├── services/            # Business logic
-│   │   │   └── schemas/             # Pydantic models
-│   │   ├── tests/
-│   │   ├── notebooks/               # Jupyter experiments
-│   │   ├── scripts/                 # Training scripts
-│   │   ├── Dockerfile
-│   │   ├── requirements.txt
-│   │   └── pyproject.toml
-│   │
-│   ├── web/                          # React Dashboard
-│   │   ├── public/
-│   │   ├── src/
-│   │   │   ├── components/
-│   │   │   │   ├── ui/              # Base components
-│   │   │   │   ├── layout/
-│   │   │   │   └── features/        # Feature-specific
-│   │   │   ├── pages/
-│   │   │   │   ├── admin/
-│   │   │   │   ├── operator/
-│   │   │   │   └── user/
-│   │   │   ├── services/            # API calls
-│   │   │   ├── hooks/
-│   │   │   ├── store/               # Zustand
-│   │   │   ├── types/
-│   │   │   ├── utils/
-│   │   │   ├── App.tsx
-│   │   │   └── main.tsx
-│   │   ├── tests/
-│   │   ├── Dockerfile
-│   │   ├── package.json
-│   │   ├── tsconfig.json
-│   │   └── vite.config.ts
-│   │
-│   └── workers/                      # Background jobs (optional for MVP)
-│       └── incident-processor/
+│   ├── api/       # .NET backend
+│   ├── ai/        # FastAPI AI service
+│   ├── web/       # React dashboard
+│   └── workers/   # Background jobs (optional)
 │
-├── packages/                         # SHARED CODE (Critical for monorepo!)
-│   ├── contracts/                    # Shared contracts
-│   │   ├── proto/                    # gRPC .proto files
-│   │   │   └── inference.proto
-│   │   ├── events/                   # Event schemas
-│   │   │   ├── incident.events.ts
-│   │   │   └── detection.events.py
-│   │   └── openapi/                  # OpenAPI specs
-│   │       └── api.yaml
-│   │
-│   └── shared-types/                 # TypeScript types (if needed)
-│       └── index.ts
+├── packages/      # Shared contracts & types
+│   ├── contracts/
+│   └── shared-types/
 │
-├── infrastructure/                   # BETTER than "deploy/"
-│   ├── docker/
-│   │   ├── docker-compose.yml
-│   │   ├── docker-compose.dev.yml
-│   │   ├── docker-compose.prod.yml
-│   │   └── .env.example
-│   │
-│   ├── terraform/                    # Infrastructure as Code (add later)
-│   │   ├── environments/
-│   │   │   ├── dev/
-│   │   │   └── prod/
-│   │   └── modules/
-│   │
-│   └── k8s/                          # Kubernetes (Phase 3)
-│       ├── base/
-│       └── overlays/
+├── infrastructure/
+│   ├── docker/    # Compose files
+│   ├── terraform/ # Infra as Code
+│   └── k8s/       # K8s manifests
 │
-├── scripts/                          # BUILD & UTILITY SCRIPTS
-│   ├── setup-dev.sh
-│   ├── run-tests.sh
-│   ├── seed-db.sh
-│   └── deploy.sh
-│
-├── docs/                             # DOCUMENTATION
-│   ├── architecture/
-│   │   ├── ADRs/                     # Architecture Decision Records
-│   │   │   ├── 001-use-clean-architecture.md
-│   │   │   ├── 002-grpc-for-ml-integration.md
-│   │   │   └── 003-signalr-for-realtime.md
-│   │   ├── c4/                       # C4 diagrams
-│   │   │   ├── context.png
-│   │   │   ├── container.png
-│   │   │   └── component.png
-│   │   └── data-flow.md
-│   │
-│   ├── api/                          # API documentation
-│   │   ├── rest-api.md
-│   │   └── grpc-api.md
-│   │
-│   ├── development/
-│   │   ├── getting-started.md
-│   │   ├── coding-standards.md
-│   │   └── testing-guide.md
-│   │
-│   ├── deployment/
-│   │   ├── docker-guide.md
-│   │   └── production-checklist.md
-│   │
-│   └── ml/                           # ML-specific docs
-│       ├── model-training.md
-│       ├── dataset-guide.md
-│       └── inference-optimization.md
-│
-├── .editorconfig                     # Code style config
-├── .gitignore
-├── .gitattributes
+├── scripts/       # Build & utility scripts
+├── docs/          # Documentation
 ├── LICENSE
-├── README.md
-├── CHANGELOG.md                      # Version history
-├── CONTRIBUTING.md
-├── SECURITY.md
-├── CODE_OF_CONDUCT.md
-└── CODEOWNERS
+└── README.md
 ```
 
 ---
 
 ## ⚙️ Prerequisites
 
-| Tool | Minimum Version | Notes |
-|------|------------------|-------|
-| Docker Desktop | 4.x | Required for containers |
-| Git | Latest | For version control |
-| VS Code | Latest | Recommended IDE |
-| Python | 3.12+ | Optional for AI local testing |
-| .NET SDK | 8.0+ | Optional for API local builds |
+| Tool | Min Version | Notes |
+|------|--------------|-------|
+| **Docker Desktop** | 4.x | Required for containers |
+| **Git** | Latest | For version control |
+| **VS Code** | Latest | Recommended IDE |
+| **Python** | 3.12+ | For AI local dev |
+| **.NET SDK** | 8.0+ | For backend builds |
 
 ---
 
-## 🪄 Quick Start (Local Dev)
-### 2. Setup development environment
-./scripts/setup-dev.sh
+## 🚀 Quick Start (Local Dev)
 
-
-### 1️⃣ Clone the repository
+### 1️⃣ Clone repository
 ```bash
 git clone https://github.com/maq77/sssp.git
 cd sssp
 ```
 
-### 2️⃣ Prepare environment file
+### 2️⃣ Prepare environment
 ```bash
 cp .env.example .env
 ```
 
-### 3️⃣ Build & run everything
+### 3️⃣ Start stack (Development mode)
 ```bash
 cd infrastructure/docker
-docker compose up -d --build
+docker compose -f docker-compose.dev.yml up -d --build
 ```
 
 ### 4️⃣ Verify services
+
 | Service | URL | Description |
 |----------|-----|-------------|
-| API (.NET) | http://localhost:8080 | Main backend |
-| FastAPI | http://localhost:8000/health | AI healthcheck |
-| Dashboard | http://localhost:5173 | Web UI |
-| RabbitMQ | http://localhost:15672 | Messaging UI |
-| MinIO Console | http://localhost:9001 | S3 storage UI |
-| SQL Server | localhost,1433 | Use SSMS or Azure Data Studio |
+| **API (.NET)** | http://localhost:8080 | Backend |
+| **AI FastAPI** | http://localhost:8000/health | AI health check |
+| **Web Dashboard** | http://localhost:5173 | Frontend |
+| **RabbitMQ** | http://localhost:15672 | Messaging UI |
+| **MinIO** | http://localhost:9001 | S3 console |
+| **SQL Server** | localhost,1433 | Database |
 
 ---
 
-## 🧰 Developer Workflow
+## 🧰 Common Docker Commands
 
 | Action | Command |
 |--------|----------|
-| Rebuild all images | docker compose build --no-cache |
-| Restart containers | docker compose up -d |
-| Remove containers and volumes | docker compose down -v |
-| Check logs | docker compose logs -f |
+| Rebuild all images | `docker compose build --no-cache` |
+| Restart containers | `docker compose up -d` |
+| Remove all | `docker compose down -v` |
+| Logs | `docker compose logs -f` |
 
 ---
 
-## 🧩 Docker Compose Details
-
-Each service has its own Dockerfile under `apps/<service>/Dockerfile`.
-
-Example:
-```yaml
-ai-fastapi:
-  build:
-    context: ../../apps/ai-fastapi
-    dockerfile: Dockerfile
-  env_file:
-    - ../../.env
-  environment:
-    <<: *default-env
-  ports:
-    - "8000:8000"
-    - "50051:50051"
-```
-
----
-
-## 🧱 Branching & CI/CD
+## 🧱 Git & CI/CD
 
 ### Git Workflow
-1. main → protected branch
-2. feature/* → new features
+1. `main` → protected branch  
+2. `feature/*` → new features  
 3. PR required before merge
 
-Example:
 ```bash
 git checkout -b feature/add-login
 ```
 
-### GitHub Actions CI
+### GitHub Actions
+Each app has its own pipeline under `.github/workflows/`.
+
 ```yaml
 name: Build & Test
 on: [push, pull_request]
@@ -288,22 +148,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build Docker images
-        run: docker compose -f deploy/docker/docker-compose.yml build
+        run: docker compose -f infrastructure/docker/docker-compose.yml build
 ```
 
 ---
 
-## 🧠 Team Practices
+## 🧠 Best Practices
 
-| Area | Best Practice |
-|------|----------------|
-| Environment | Use .env.example → copy to .env |
+| Area | Guideline |
+|------|------------|
+| Environment | `.env.example → .env` |
 | Dependencies | Pin versions |
 | Secrets | Never commit to git |
-| Code Reviews | Required on PRs |
-| Dockerfile names | Always `Dockerfile` |
-| Line endings | LF for Dockerfiles |
-| Documentation | Keep README updated |
+| Code Reviews | Mandatory |
+| Dockerfiles | Use LF endings |
+| Docs | Keep updated |
 
 ---
 
@@ -326,32 +185,44 @@ build/
 
 ---
 
-## 🧠 Troubleshooting
+## 🧩 Troubleshooting
 
-| Issue | Fix |
-|--------|------|
-| `failed to read dockerfile` | Rename to `Dockerfile` (lowercase `f`) |
-| `ModuleNotFoundError: No module named 'fastapi'` | Create venv & install deps |
-| `Permission denied` in `.vs` | Close VS, delete `.vs/` |
-| `version` warning | Remove version: line from docker-compose.yml |
+| Issue | Solution |
+|--------|-----------|
+| `failed to read dockerfile` | Rename → `Dockerfile` |
+| `ModuleNotFoundError: fastapi` | Reinstall deps |
+| `Permission denied (.vs)` | Delete `.vs/` |
+| `version warning` | Remove `version:` line |
 
 ---
 
-## 💬 Contributing
+## 🤝 Contributing
 
 1. Fork repo  
 2. Create feature branch  
 3. Commit with clear message  
-4. Push and open PR  
-5. Ensure Docker build passes before merge
+4. Push & open PR  
+5. Ensure CI passes  
 
 ---
 
-## 🧭 Credits
+## 🧭 Maintainers
 
-**Maintainers:** Project Lead + Team  
-**Tech Stack:** .NET, FastAPI, Redis, RabbitMQ, SQL Server, Docker, Vite
+**Core Team:**  
+- Project Lead  
+- AI Engineer  
+- Backend Engineer  
+- Frontend Engineer  
+- DevOps Engineer  
+
+**Tech Stack:**  
+.NET 9 · FastAPI · Redis · RabbitMQ · SQL Server · Docker · Vite + React
 
 ---
 
-> _“If a new dev can run the app with one command, you’ve done DevOps right.”_
+## 🏁 License
+
+Licensed under the **MIT License**.  
+See [LICENSE](LICENSE) for details.
+
+---

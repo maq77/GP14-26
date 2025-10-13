@@ -25,4 +25,11 @@
     <ProjectReference Include="..\SSSP.Infrastructure\SSSP.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extentions\" />
+    <Folder Include="Hubs\" />
+    <Folder Include="Middleware\" />
+    <Folder Include="Filters\" />
+  </ItemGroup>
+
 </Project>
