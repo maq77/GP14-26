@@ -1,0 +1,40 @@
+syntax = "proto3";
+package sssp.ai.face;
+
+// ============================================================================
+// Face Service (PLACEHOLDER)
+// Everything below is commented out until server impl is ready.
+// ============================================================================
+
+// service FaceService {
+//   rpc DetectFaces(FaceDetectRequest) returns (FaceDetectResponse);
+//   rpc RecognizeFace(FaceRecognizeRequest) returns (FaceRecognizeResponse);
+//   rpc EnrollFace(FaceEnrollRequest) returns (FaceEnrollResponse);
+//   rpc GetModelInfo(FaceModelInfoRequest) returns (FaceModelInfoResponse);
+// }
+
+// // Requests
+// message FaceDetectRequest { bytes image = 1; float confidence_threshold = 2; }
+// message FaceRecognizeRequest { bytes image = 1; repeated string candidate_ids = 2; }
+// message FaceEnrollRequest { string person_id = 1; repeated bytes images = 2; }
+// message FaceModelInfoRequest {}
+
+// // Responses
+// message FaceDetectResponse {
+//   bool success = 1; string error_message = 2;
+//   repeated Face faces = 3; int32 total_faces = 4; float total_time_ms = 8;
+// }
+// message FaceRecognizeResponse {
+//   bool success = 1; string error_message = 2;
+//   repeated FaceMatch matches = 3;
+// }
+// message FaceEnrollResponse { bool success = 1; string error_message = 2; string person_id = 3; }
+// message FaceModelInfoResponse {
+//   string model_name = 1; string model_version = 2; string device = 3;
+//   float model_size_mb = 4; int32 input_size = 5;
+// }
+
+// // Data types
+// message Face { BoundingBox bbox = 1; float confidence = 2; bytes cropped_image = 3; }
+// message FaceMatch { string person_id = 1; float score = 2; Face face = 3; }
+// message BoundingBox { float x1=1; float y1=2; float x2=3; float y2=4; }
