@@ -1,0 +1,39 @@
+syntax = "proto3";
+package sssp.ai.behavior;
+
+// ============================================================================
+// Behavior Analysis Service (PLACEHOLDER)
+// Everything below is commented out until server impl is ready.
+// ============================================================================
+
+// service BehaviorService {
+//   rpc AnalyzeFrame(BehaviorFrameRequest) returns (BehaviorFrameResponse);
+//   rpc AnalyzeStream(stream BehaviorFrameRequest) returns (stream BehaviorFrameResponse);
+//   rpc GetModelInfo(BehaviorModelInfoRequest) returns (BehaviorModelInfoResponse);
+// }
+
+// // Requests
+// message BehaviorFrameRequest {
+//   bytes image = 1; int64 timestamp = 2; string camera_id = 3;
+// }
+
+// // Responses
+// message BehaviorFrameResponse {
+//   bool success = 1; string error_message = 2;
+//   repeated BehaviorEvent events = 3; float total_time_ms = 4;
+// }
+
+// message BehaviorModelInfoRequest {}
+// message BehaviorModelInfoResponse {
+//   string model_name = 1; string model_version = 2; string device = 3;
+//   float model_size_mb = 4; int32 input_size = 5;
+// }
+
+// // Data types
+// message BehaviorEvent {
+//   string type = 1;         // e.g., "fighting", "running", "loitering"
+//   float confidence = 2;
+//   BoundingBox bbox = 3;
+//   int64 timestamp = 4;
+// }
+// message BoundingBox { float x1=1; float y1=2; float x2=3; float y2=4; }

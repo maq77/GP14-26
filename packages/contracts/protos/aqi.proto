@@ -1,0 +1,28 @@
+syntax = "proto3";
+package sssp.ai.aqi;
+
+// ============================================================================
+// AQI Service (PLACEHOLDER)
+// Everything below is commented out until server impl is ready.
+// ============================================================================
+
+// service AqiService {
+//   rpc ComputeAqi(AqiRequest) returns (AqiResponse);
+//   rpc GetRecommendations(AqiRequest) returns (AqiRecommendationsResponse);
+// }
+
+// message AqiRequest {
+//   // Sensor inputs (example)
+//   float pm25 = 1; float pm10 = 2; float no2 = 3; float so2 = 4; float o3 = 5; float co = 6;
+//   int64 timestamp = 7; string sensor_id = 8;
+// }
+
+// message AqiResponse {
+//   bool success = 1; string error_message = 2;
+//   float aqi = 3; string category = 4;  // e.g., "Good", "Moderate", ...
+// }
+
+// message AqiRecommendationsResponse {
+//   bool success = 1; string error_message = 2;
+//   repeated string actions = 3; // e.g., "Increase ventilation", "Close windows"
+// }

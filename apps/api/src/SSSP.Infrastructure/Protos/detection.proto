@@ -1,0 +1,161 @@
+// packages/contracts/protos/detection.proto
+// Object Detection Service Contract
+
+syntax = "proto3";
+
+package sssp.ai.detection;
+
+// ============================================================================
+// Detection Service - Object Detection & Tracking
+// ============================================================================
+
+service DetectionService {
+  // Detect all objects in a single image
+  rpc DetectObjects(DetectRequest) returns (DetectResponse);
+  
+  // Detect waste/trash specifically
+  rpc DetectWaste(DetectRequest) returns (DetectResponse);
+  
+  // Detect vandalism (property damage, graffiti)
+  rpc DetectVandalism(DetectRequest) returns (DetectResponse);
+  
+  // Batch detection for multiple images
+  rpc DetectObjectsBatch(DetectBatchRequest) returns (DetectBatchResponse);
+  
+  // Stream detection (for video streams)
+  rpc DetectObjectsStream(stream DetectRequest) returns (stream DetectResponse);
+  
+  // Get model information
+  rpc GetModelInfo(ModelInfoRequest) returns (ModelInfoResponse);
+}
+
+// ============================================================================
+// Request Messages
+// ============================================================================
+
+message DetectRequest {
+  // Image data (JPEG/PNG bytes)
+  bytes image = 1;
+  
+  // Detection parameters
+  float confidence_threshold = 2;  // Min confidence (0.0-1.0), default: 0.25
+  float iou_threshold = 3;         // NMS IoU threshold (0.0-1.0), default: 0.45
+  
+  // Optional filters
+  repeated string target_classes = 4;  // Only detect these classes, empty = all
+  repeated string exclude_classes = 5; // Exclude these classes
+  
+  // Metadata
+  string camera_id = 6;            // Camera identifier
+  int64 timestamp = 7;             // Unix timestamp (milliseconds)
+  string request_id = 8;           // Correlation ID for tracking
+  
+  // Advanced options
+  bool enable_tracking = 9;        // Enable object tracking (DeepSORT)
+  bool return_cropped_images = 10; // Return cropped detection images
+  int32 max_detections = 11;       // Max number of detections to return
+}
+
+message DetectBatchRequest {
+  repeated DetectRequest requests = 1;
+  bool parallel_processing = 2;    // Process in parallel (faster)
+}
+
+message ModelInfoRequest {
+  // Empty - just get model info
+}
+
+// ============================================================================
+// Response Messages
+// ============================================================================
+
+message DetectResponse {
+  // Status
+  bool success = 1;
+  string error_message = 2;
+  
+  // Detections
+  repeated Detection detections = 3;
+  int32 total_objects = 4;
+  
+  // Performance metrics
+  float inference_time_ms = 5;
+  float preprocessing_time_ms = 6;
+  float postprocessing_time_ms = 7;
+  float total_time_ms = 8;
+  
+  // Metadata
+  string request_id = 9;
+  int64 timestamp = 10;
+  ImageMetadata image_metadata = 11;
+}
+
+message DetectBatchResponse {
+  repeated DetectResponse responses = 1;
+  float total_time_ms = 2;
+}
+
+message ModelInfoResponse {
+  string model_name = 1;           // e.g., "yolo11s"
+  string model_version = 2;        // e.g., "1.0.0"
+  repeated string classes = 3;     // List of detectable classes
+  int32 num_classes = 4;
+  string device = 5;               // "cuda", "cpu", "mps"
+  float model_size_mb = 6;
+  int32 input_size = 7;            // e.g., 640
+}
+
+// ============================================================================
+// Data Types
+// ============================================================================
+
+message Detection {
+  // Class information
+  string class_name = 1;           // e.g., "person", "trash_bag", "car"
+  int32 class_id = 2;              // Numeric class ID
+  float confidence = 3;            // Confidence score (0.0-1.0)
+  
+  // Bounding box (x1, y1, x2, y2 format - absolute pixels)
+  BoundingBox bbox = 4;
+  
+  // Optional tracking
+  int32 track_id = 5;              // Object tracking ID (-1 if disabled)
+  
+  // Optional cropped image
+  bytes cropped_image = 6;         // Cropped detection image
+  
+  // Additional metadata
+  float area = 7;                  // Bbox area (pixels)
+  string zone = 8;                 // Geofence zone (if applicable)
+}
+
+message BoundingBox {
+  float x1 = 1;  // Top-left X
+  float y1 = 2;  // Top-left Y
+  float x2 = 3;  // Bottom-right X
+  float y2 = 4;  // Bottom-right Y
+  
+  // Normalized coordinates (0.0-1.0)
+  float x1_norm = 5;
+  float y1_norm = 6;
+  float x2_norm = 7;
+  float y2_norm = 8;
+}
+
+message ImageMetadata {
+  int32 width = 1;
+  int32 height = 2;
+  int32 channels = 3;
+  string format = 4;  // "jpeg", "png", etc.
+}
+
+// ============================================================================
+// Error Codes (use in error_message)
+// ============================================================================
+
+// SUCCESS = "OK"
+// INVALID_IMAGE = "Image could not be decoded"
+// MODEL_NOT_LOADED = "Model is not loaded"
+// INFERENCE_FAILED = "Inference failed"
+// INVALID_PARAMETERS = "Invalid request parameters"
+// TIMEOUT = "Request timeout"
