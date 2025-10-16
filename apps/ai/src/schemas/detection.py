@@ -3,10 +3,10 @@ apps/ai/src/schemas/detection.py
 Data Transfer Objects for object detection
 """
 
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import Field, field_validator, ConfigDict
 from typing import List, Optional
 from datetime import datetime
-
+from .base import BaseModel
 
 # ============================================================================
 # Bounding Box
