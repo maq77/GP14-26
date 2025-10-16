@@ -50,8 +50,9 @@ class Settings(BaseSettings):
     # ========================================================================
     
     # Model selection
-    DETECTION_MODEL_TYPE: Literal["yolo11n", "yolo11s", "yolo11m", "yolo11l", "yolo11x"] = "yolo11s"
-    DETECTION_MODEL_PATH: Optional[Path] = None  # If None, download pretrained
+    DETECTION_MODEL_TYPE: Literal["yolo11n", "yolo11s", "yolo11m", "yolo11l", "yolov8s", "yolo11x", "yolo8n", "yolo8s"] = "yolov8s"
+    DETECTION_MODEL_PATH: Path = Path("apps/ai/data/models/production/yolov8s.pt")  # Optional: custom model path
+    #DETECTION_MODEL_PATH: Optional[Path] = None  # If None, download pretrained
     
     # Inference parameters
     DETECTION_CONFIDENCE: float = Field(default=0.25, ge=0.0, le=1.0)
@@ -112,6 +113,7 @@ class Settings(BaseSettings):
     # ========================================================================
     # Data Paths
     # ========================================================================
+    BASE_DIR: Path = Path(__file__).resolve().parents[2]  # apps/ai/
     DATA_DIR: Path = Path("data")
     MODELS_DIR: Path = DATA_DIR / "models" / "production"
     CACHE_DIR: Path = DATA_DIR / "cache"

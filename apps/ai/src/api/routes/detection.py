@@ -5,17 +5,12 @@ import time
 from typing import List
 import structlog
 
-# If your PYTHONPATH is repo root and you expose "src", these imports work:
-from src.schemas.detection import DetectResponse, BoundingBox, Detection
-from apps.ai.src.services.ml.object_detection import ObjectDetectionService
-
-# If you instead import via fully-qualified package, use this pair instead:
-from apps.ai.src.schemas.detection import DetectResponse, BoundingBox, Detection
-from apps.ai.src.services.ml.object_detection import ObjectDetectionService
+from apps.ai.src.schemas.detection import DetectResponse, BoundingBox, Detection, DetectRequest
+from ...core.container import get_detection_app
 
 router = APIRouter(prefix="/api/v1", tags=["detection"])
 logger = structlog.get_logger()
-detector = ObjectDetectionService()
+detector = get_detection_app()  # Initialize your detection application
 
 
 @router.post("/detect", response_model=DetectResponse, summary="Detect objects (REST test)")
@@ -25,48 +20,27 @@ async def detect_objects(file: UploadFile = File(...)):
     This is a REST testing endpoint (use gRPC in production).
     """
     try:
-        start_time = time.time()
+        start_time = time.perf_counter()
 
-        # Basic content-type guard (optional)
         if file.content_type not in {"image/jpeg", "image/png", "image/jpg"}:
             raise HTTPException(status_code=400, detail="Unsupported content type")
 
         image_bytes = await file.read()
-        nparr = np.frombuffer(image_bytes, np.uint8)
-        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        if image is None:
-            raise HTTPException(status_code=400, detail="Invalid image bytes")
+        if not image_bytes:
+            raise HTTPException(status_code=400, detail="Empty file")
 
-        # Your service should return a list like:
-        # [{"class": "person", "confidence": 0.91, "bbox": [x1,y1,x2,y2], ...}, ...]
-        detections = detector.detect_objects(image)
+        request = DetectRequest(image=image_bytes)
+        response = detector.detect(request)
 
-        inference_time = (time.time() - start_time) * 1000.0
+        if not response.success:
+            raise HTTPException(status_code=500, detail=response.error_message or "Detection failed")
 
-        detected_objects: List[Detection] = [
-            Detection(
-                class_name=d.get("class") or d.get("class_name", ""),
-                confidence=float(d["confidence"]),
-                bbox=BoundingBox(
-                    x1=float(d["bbox"][0]),
-                    y1=float(d["bbox"][1]),
-                    x2=float(d["bbox"][2]),
-                    y2=float(d["bbox"][3]),
-                ),
-                # Optional fields if your service returns them:
-                class_id=d.get("class_id"),
-                track_id=d.get("track_id"),
-            )
-            for d in detections
-            if "bbox" in d and len(d["bbox"]) == 4
-        ]
-
-        return DetectResponse(
-            success=True,
-            detections=detected_objects,
-            total_objects=len(detected_objects),
-            inference_time_ms=inference_time,
+        logger.info(
+            "rest_detection_done",
+            total_objects=response.total_objects,
+            time_ms=response.inference_time_ms,
         )
+        return response
 
     except HTTPException:
         raise

@@ -1,173 +1,185 @@
-"""
-apps/ai/src/api/routes/health.py
-Health check endpoints
-"""
-
-from fastapi import APIRouter, status
-from pydantic import BaseModel
+"""Health check endpoints for monitoring and observability."""
+from fastapi import APIRouter, Request, status
+from fastapi.responses import JSONResponse
 from typing import Dict, Any
-import torch
+import structlog
 
-from ...core.config import settings
-from ...core.logging import get_logger
-from ...models.object.model_loader import get_model_loader
+from ..lifespan.health_registry import get_health_registry, HealthStatus
 
-logger = get_logger("health")
-
-router = APIRouter(tags=["Health"])
+router = APIRouter(prefix="/api/v1/health", tags=["health"])
+logger = structlog.get_logger(__name__)
 
 
-# ============================================================================
-# Response Models
-# ============================================================================
-
-class HealthResponse(BaseModel):
-    """Health check response"""
-    status: str
-    service: str
-    version: str
-    environment: str
-    model_loaded: bool
-    device: str
-
-
-class DetailedHealthResponse(BaseModel):
-    """Detailed health check response"""
-    status: str
-    service: str
-    version: str
-    environment: str
-    model: Dict[str, Any]
-    system: Dict[str, Any]
-
-
-# ============================================================================
-# Endpoints
-# ============================================================================
-
-@router.get(
-    "/health",
-    response_model=HealthResponse,
-    status_code=status.HTTP_200_OK,
-    summary="Basic health check"
-)
-async def health_check():
+@router.get("", response_model=Dict[str, Any], summary="System health check")
+@router.get("/", include_in_schema=False)
+async def health_check(request: Request):
     """
-    Basic health check endpoint
-    Returns service status and model status
+    Comprehensive system health check.
+    
+    Returns:
+    - overall_status: Overall system health (healthy/degraded/unhealthy)
+    - timestamp: Current timestamp
+    - components: Detailed status of each component
+    - summary: Component count by status
+    
+    Status Codes:
+    - 200: All components healthy
+    - 503: One or more components unhealthy or degraded
+    """
+    health_registry = get_health_registry()
+    health_summary = health_registry.get_health_summary()
+    
+    overall_status = health_summary["overall_status"]
+    
+    # Return 503 if system is degraded or unhealthy
+    status_code = status.HTTP_200_OK
+    if overall_status in ("degraded", "unhealthy"):
+        status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    
+    return JSONResponse(
+        status_code=status_code,
+        content=health_summary
+    )
+
+
+@router.get("/live", summary="Kubernetes liveness probe")
+async def liveness():
+    """
+    Liveness probe for Kubernetes.
+    
+    Returns 200 if the application process is running.
+    Does not check component health - only process health.
+    
+    Use this for Kubernetes liveness probes.
+    """
+    return {"status": "alive", "probe": "liveness"}
+
+
+@router.get("/ready", summary="Kubernetes readiness probe")
+async def readiness():
+    """
+    Readiness probe for Kubernetes.
+    
+    Returns:
+    - 200: Application is ready to serve traffic
+    - 503: Application is starting up or degraded
+    
+    Use this for Kubernetes readiness probes.
+    """
+    health_registry = get_health_registry()
+    overall_status = health_registry.get_overall_status()
+    
+    # Ready only if all components are healthy
+    if overall_status == HealthStatus.HEALTHY:
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "status": "ready",
+                "probe": "readiness"
+            }
+        )
+    else:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "status": "not_ready",
+                "probe": "readiness",
+                "reason": overall_status.value
+            }
+        )
+
+
+@router.get("/startup", summary="Kubernetes startup probe")
+async def startup():
+    """
+    Startup probe for Kubernetes.
+    
+    Returns:
+    - 200: Application has completed startup
+    - 503: Application is still starting
+    
+    Use this for Kubernetes startup probes to avoid killing
+    the container during slow model loading.
+    """
+    health_registry = get_health_registry()
+    overall_status = health_registry.get_overall_status()
+    
+    # Startup complete if status is not UNKNOWN
+    if overall_status != HealthStatus.UNKNOWN:
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "status": "started",
+                "probe": "startup"
+            }
+        )
+    else:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "status": "starting",
+                "probe": "startup"
+            }
+        )
+
+
+@router.get("/components/{component_name}", summary="Component-specific health")
+async def component_health(component_name: str):
+    """
+    Get health status for a specific component.
+    
+    Args:
+        component_name: Name of the component (e.g., "DetectionModel", "GRPCServer")
+    
+    Returns:
+        Component health details or 404 if not found
+    """
+    health_registry = get_health_registry()
+    component = health_registry.get_component_health(component_name)
+    
+    if not component:
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={
+                "error": "Component not found",
+                "component": component_name
+            }
+        )
+    
+    return component.to_dict()
+
+
+@router.get("/metrics", summary="Startup and performance metrics")
+async def metrics(request: Request):
+    """
+    Get application startup and performance metrics.
+    
+    Includes:
+    - Startup duration
+    - Component success/failure counts
+    - Individual component metrics
     """
     try:
-        model_loader = get_model_loader()
-        is_loaded = model_loader.is_loaded()
+        manager = request.app.state.lifespan_manager
         
-        return HealthResponse(
-            status="healthy",
-            service=settings.APP_NAME,
-            version=settings.APP_VERSION,
-            environment=settings.ENVIRONMENT,
-            model_loaded=is_loaded,
-            device=settings.DETECTION_DEVICE
-        )
-    except Exception as e:
-        logger.error("health_check_failed", error=str(e))
-        return HealthResponse(
-            status="unhealthy",
-            service=settings.APP_NAME,
-            version=settings.APP_VERSION,
-            environment=settings.ENVIRONMENT,
-            model_loaded=False,
-            device="unknown"
-        )
-
-
-@router.get(
-    "/health/detailed",
-    response_model=DetailedHealthResponse,
-    status_code=status.HTTP_200_OK,
-    summary="Detailed health check"
-)
-async def detailed_health_check():
-    """
-    Detailed health check endpoint
-    Returns comprehensive system and model information
-    """
-    try:
-        model_loader = get_model_loader()
-        model_info = model_loader.get_model_info()
+        startup_metrics = manager.get_startup_metrics()
         
-        # System info
-        system_info = {
-            "cuda_available": torch.cuda.is_available(),
-            "cuda_version": torch.version.cuda if torch.cuda.is_available() else None,
-            "device_count": torch.cuda.device_count() if torch.cuda.is_available() else 0,
-            "pytorch_version": torch.__version__,
+        # Get component-specific metrics
+        component_metrics = {}
+        for component in manager.components:
+            component_metrics[component.name] = component.get_metrics()
+        
+        return {
+            "startup": startup_metrics,
+            "components": component_metrics
         }
         
-        # GPU info if available
-        if torch.cuda.is_available():
-            system_info["gpu_name"] = torch.cuda.get_device_name(0)
-            system_info["gpu_memory_total_gb"] = round(
-                torch.cuda.get_device_properties(0).total_memory / 1024**3, 2
-            )
-        
-        return DetailedHealthResponse(
-            status="healthy",
-            service=settings.APP_NAME,
-            version=settings.APP_VERSION,
-            environment=settings.ENVIRONMENT,
-            model=model_info,
-            system=system_info
-        )
-        
-    except Exception as e:
-        logger.error("detailed_health_check_failed", error=str(e), exc_info=True)
-        return DetailedHealthResponse(
-            status="unhealthy",
-            service=settings.APP_NAME,
-            version=settings.APP_VERSION,
-            environment=settings.ENVIRONMENT,
-            model={"is_loaded": False, "error": str(e)},
-            system={"error": str(e)}
+    except AttributeError:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "error": "Lifespan manager not available",
+                "message": "Application may still be starting up"
+            }
         )
 
-
-@router.get(
-    "/ready",
-    status_code=status.HTTP_200_OK,
-    summary="Readiness probe"
-)
-async def readiness_check():
-    """
-    Kubernetes readiness probe
-    Returns 200 if service is ready to accept requests
-    """
-    try:
-        model_loader = get_model_loader()
-        if not model_loader.is_loaded():
-            return {"ready": False, "reason": "Model not loaded"}
-        
-        return {"ready": True}
-        
-    except Exception as e:
-        logger.error("readiness_check_failed", error=str(e))
-        return {"ready": False, "reason": str(e)}
-
-
-@router.get(
-    "/live",
-    status_code=status.HTTP_200_OK,
-    summary="Liveness probe"
-)
-async def liveness_check():
-    """
-    Kubernetes liveness probe
-    Returns 200 if service is alive
-    """
-    return {"alive": True}
-
-
-# ============================================================================
-# Export
-# ============================================================================
-
-__all__ = ["router"]

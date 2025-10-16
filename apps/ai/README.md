@@ -37,6 +37,17 @@ apps/ai/
 │   │   │   ├── health.py              # Health check
 │   │   │   └── inference.py           # Direct inference endpoint (testing only)
 │   │   │
+│   │   ├── metrics/                    
+│   │   │   ├── __init__.py
+│   │   │   └── base.py           
+│   │   │
+│   │   ├── lifespan/                    # lifespan manager
+│   │   │   ├── __init__.py
+│   │   │   ├── modules/                #detection.py
+│   │   │   ├── base.py            
+│   │   │   ├── registry.py            
+│   │   │   ├── health_registry.py    
+│   │   │   └── manager.py           
 │   │   └── grpc/                      # gRPC Server (NO .proto files here!)
 │   │       ├── __init__.py
 │   │       ├── server.py              # gRPC server setup
@@ -75,37 +86,49 @@ apps/ai/
 │   │   └── aqi_service.py                 # AQI calculation & recommendations
 │   │
 │   └── models/                        # -- ML Models (Core AI Logic)
-│       ├── __init__.py
-│       │
-│       ├── object/                    # Object Detection Models
-│       │   ├── __init__.py
-│       │   ├── yolo_detector.py       # YOLO inference wrapper
-│       │   ├── model_loader.py        # Singleton model loader
-│       │   ├── preprocessor.py        # Image preprocessing (resize, normalize)
-│       │   ├── postprocessor.py       # NMS, filtering, bbox conversion
-│       │   └── tracker.py             # Object tracking (DeepSORT/ByteTrack)
-│       │
-│       ├── face/                      # Face Recognition Models
-│       │   ├── __init__.py
-│       │   ├── detector.py            # Face detection (RetinaFace/MTCNN)
-│       │   ├── recognizer.py          # Face recognition (InsightFace)
-│       │   ├── embedder.py            # Face embedding extraction
-│       │   ├── matcher.py             # Face matching (cosine similarity)
-│       │   └── database.py            # Face database (FAISS index)
-│       │
-│       ├── behavior/                  # Behavior Analysis Models
-│       │   ├── __init__.py
-│       │   ├── pose_estimator.py      # Pose estimation (MediaPipe/YOLO-Pose)
-│       │   ├── action_classifier.py   # Action classification (fighting, running)
-│       │   ├── sequence_analyzer.py   # Temporal analysis (multi-frame)
-│       │   └── anomaly_detector.py    # Abnormal behavior detection
-│       │
-│       └── shared/                    # Shared Utilities
-│           ├── __init__.py
-│           ├── model_factory.py       # Factory pattern (create models)
-│           ├── model_registry.py      # Model versioning/management
-│           ├── base_model.py          # Abstract base model class
-│           └── optimization.py        # ONNX/TensorRT conversion
+│   │   ├── __init__.py
+│   │   │
+│   │   ├── object/                    # Object Detection Models
+│   │   │   ├── __init__.py
+│   │   │   ├── train.py
+│   │   │   ├── benchmark.py
+│   │   │   ├── export.py
+│   │   │   ├── yolo_detector.py       # YOLO inference wrapper
+│   │   │   ├── model_loader.py        # Singleton model loader
+│   │   │   ├── preprocessor.py        # Image preprocessing (resize, normalize)
+│   │   │   ├── postprocessor.py       # NMS, filtering, bbox conversion
+│   │   │   └── tracker.py             # Object tracking (DeepSORT/ByteTrack)
+│   │   │
+│   │   ├── face/                      # Face Recognition Models
+│   │   │   ├── __init__.py
+│   │   │   ├── detector.py            # Face detection (RetinaFace/MTCNN)
+│   │   │   ├── recognizer.py          # Face recognition (InsightFace)
+│   │   │   ├── embedder.py            # Face embedding extraction
+│   │   │   ├── matcher.py             # Face matching (cosine similarity)
+│   │   │   └── database.py            # Face database (FAISS index)
+│   │   │
+│   │   ├── behavior/                  # Behavior Analysis Models
+│   │   │   ├── __init__.py
+│   │   │   ├── pose_estimator.py      # Pose estimation (MediaPipe/YOLO-Pose)
+│   │   │   ├── action_classifier.py   # Action classification (fighting, running)
+│   │   │   ├── sequence_analyzer.py   # Temporal analysis (multi-frame)
+│   │   │   └── anomaly_detector.py    # Abnormal behavior detection
+│   │   │
+│   │   └── shared/                    # Shared Utilities
+│   │       ├── __init__.py
+│   │       ├── model_factory.py       # Factory pattern (create models)
+│   │       ├── model_registry.py      # Model versioning/management
+│   │       ├── base_model.py          # Abstract base model class
+│   │       └── optimization.py        # ONNX/TensorRT conversion
+│   │
+│   │
+│   └── pipelines/
+│          ├── __init__.py
+│          ├── train_pipeline.py       # Factory pattern (create models)
+│          ├── eval_pipeline.py      # Model versioning/management
+│          ├── eval_pipline.py          # Abstract base model class
+│          └── deploy_pipeline.py        # ONNX/TensorRT conversion
+│
 │
 ├── tests/                             # -- Tests
 │   ├── __init__.py

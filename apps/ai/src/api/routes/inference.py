@@ -1,74 +1,59 @@
 ﻿from fastapi import APIRouter, UploadFile, File, HTTPException
-import numpy as np
-import cv2
 import time
-from typing import List
 import structlog
 
-from src.schemas.detection import DetectionResponse, BoundingBox, DetectedObject
-from apps.ai.src.services.ml.object_detection import ObjectDetectionService 
+from ...core.container import get_detection_app
+from ...schemas.detection import DetectRequest
+from ..metrics.registry import track_inference  
 
-router = APIRouter()
+
+router = APIRouter(prefix="/api/v1", tags=["detection"])
 logger = structlog.get_logger()
-detector = ObjectDetectionService()
 
-@router.post("/detect", response_model=DetectionResponse)
+
+@router.post("/detect", summary="Detect objects (REST test)")
 async def detect_objects(file: UploadFile = File(...)):
     """
-    Detect objects in an image using YOLO
+    Thin HTTP adapter around the application layer.
     """
     try:
-        start_time = time.time()
+        t0 = time.perf_counter()
+
+        if file.content_type not in {"image/jpeg", "image/png", "image/jpg"}:
+            raise HTTPException(status_code=400, detail="Unsupported content type")
+
         image_bytes = await file.read()
+        if not image_bytes:
+            raise HTTPException(status_code=400, detail="Empty file")
 
-        nparr = np.frombuffer(image_bytes, np.uint8)
-        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        if image is None:
-            raise HTTPException(status_code=400, detail="Invalid image format")
+        app = get_detection_app()
 
-        detections = detector.detect_objects(image)
-        inference_time = (time.time() - start_time) * 1000
-
-        detected_objects = [
-            DetectedObject(
-                class_name=d["class"],
-                confidence=d["confidence"],
-                bbox=BoundingBox(
-                    x1=d["bbox"][0],
-                    y1=d["bbox"][1],
-                    x2=d["bbox"][2],
-                    y2=d["bbox"][3],
-                ),
-            )
-            for d in detections
-        ]
-
-        return DetectionResponse(
-            success=True,
-            detections=detected_objects,
-            inference_time_ms=inference_time,
+        req = DetectRequest(
+            image=image_bytes,                  # bytes; app will decode to ndarray
+            confidence_threshold=None,          # None -> use runner defaults
+            iou_threshold=None,
+            target_classes=[],
+            exclude_classes=[],
+            camera_id=None,
+            timestamp=None,
+            request_id=None,
+            enable_tracking=False,
+            return_cropped_images=False,
+            max_detections=None
         )
+        resp = app.detect(req)
 
+        if track_inference:
+            # keep units consistent; record seconds, not ms
+            track_inference("yolov8s", time.perf_counter() - t0, success=resp.success)
+
+        if not resp.success:
+            raise HTTPException(status_code=500, detail=resp.error_message or "Detection failed")
+
+        return resp
+
+    except HTTPException:
+        raise
     except Exception as e:
-        logger.error("Object detection failed", error=str(e))
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.post("/face/verify")
-async def verify_face(file: UploadFile = File(...)):
-    """
-    Verify a face against known faces
-    """
-    try:
-        contents = await file.read()
-        
-        # TODO: Implement face verification
-        
-        return {
-            "success": True,
-            "match_found": False,
-            "confidence": 0.0
-        }
-    except Exception as e:
-        logger.error("Face verification failed", error=str(e))
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error("rest_detect_failed", error=str(e))
+        raise HTTPException(status_code=500, detail="Internal error during detection")
