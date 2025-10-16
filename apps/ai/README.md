@@ -259,7 +259,6 @@ apps/ai/
 ├── pytest.ini
 ├── README.md
 └── CHANGELOG.md
-
 ```
 
 ## Common Commands

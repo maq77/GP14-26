@@ -86,8 +86,8 @@ sssp/
 
 ### 1️⃣ Clone repository
 ```bash
-git clone https://github.com/maq77/sssp.git
-cd sssp
+git clone https://github.com/maq77/GP14-26.git
+cd GP14-26
 ```
 
 ### 2️⃣ Prepare environment
