@@ -263,6 +263,7 @@ apps/ai/
 
 ## Common Commands
 ```bash
+python -m apps.ai.src.api.main
 uvicorn src.api.main:app --reload
 pytest
 gunicorn src.api.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker
