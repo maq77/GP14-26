@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sssp-contracts"
+version = "0.1.0"
+description = "SSSP gRPC contracts (protobuf + gRPC Python stubs)"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "SSSP Team" }]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sssp*"]
