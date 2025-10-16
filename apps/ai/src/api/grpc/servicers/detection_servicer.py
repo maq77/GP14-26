@@ -2,20 +2,13 @@
 import grpc
 import structlog
 from typing import Iterator
-from pathlib import Path
-import sys
 
 # Import proto definitions
-contracts_path = Path(__file__).resolve().parents[6] / "packages" / "contracts" / "python"
-if str(contracts_path) not in sys.path:
-    sys.path.insert(0, str(contracts_path))
-
-import detection_pb2
-import detection_pb2_grpc
+from packages.contracts.python import detection_pb2, detection_pb2_grpc
 
 # Import business logic
 from ....services.ml.object_detection import ObjectDetectionService
-from ....core.exceptions import ModelNotLoadedException, InferenceException
+from ....core.exceptions import ModelNotLoadedError, InferenceError
 
 logger = structlog.get_logger("grpc.detection_servicer")
 
@@ -88,7 +81,7 @@ class DetectionServicer(detection_pb2_grpc.DetectionServiceServicer):
             
             return response
             
-        except ModelNotLoadedException as e:
+        except ModelNotLoadedError as e:
             logger.error("model_not_loaded", error=str(e))
             context.set_code(grpc.StatusCode.UNAVAILABLE)
             context.set_details("Detection model not loaded")
@@ -97,7 +90,7 @@ class DetectionServicer(detection_pb2_grpc.DetectionServiceServicer):
                 error_message="Model not available"
             )
             
-        except InferenceException as e:
+        except InferenceError as e:
             logger.error("inference_error", error=str(e), exc_info=True)
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details("Inference failed")

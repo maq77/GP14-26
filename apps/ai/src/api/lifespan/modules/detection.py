@@ -1,319 +1,151 @@
-"""
-apps/ai/src/api/grpc/servicers/detection_servicer.py
-gRPC Detection Service Implementation
-"""
+"""Detection model lifecycle component."""
+import structlog
+import numpy as np
 
-import sys
-from pathlib import Path
-from sssp.ai.detection import detection_pb2, detection_pb2_grpc
-import grpc
-
-# Add packages/contracts/python to path
-contracts_path = Path(__file__).resolve().parents[6] / "packages" / "contracts" / "python"
-if str(contracts_path) not in sys.path:
-    sys.path.insert(0, str(contracts_path))
-
-# Import generated gRPC code from packages/contracts
-from detection_pb2 import (
-    DetectRequest as ProtoDetectRequest,
-    DetectResponse as ProtoDetectResponse,
-    DetectBatchRequest as ProtoDetectBatchRequest,
-    DetectBatchResponse as ProtoDetectBatchResponse,
-    ModelInfoRequest as ProtoModelInfoRequest,
-    ModelInfoResponse as ProtoModelInfoResponse,
-    Detection as ProtoDetection,
-    BoundingBox as ProtoBoundingBox,
-    ImageMetadata as ProtoImageMetadata
-)
-from detection_pb2_grpc import DetectionServiceServicer
-
-from ....core.logging import get_logger
-from ....services.ml.object_detection import ObjectDetectionService
-from ....schemas.detection import DetectRequest, DetectBatchRequest
+from ..base import BaseLifecycleComponent, ComponentPriority, ComponentState
+from ..registry import register_component
 from ....models.object.model_loader import get_model_loader
-from ....core.config import settings
 
-logger = get_logger("detection_servicer")
+logger = structlog.get_logger(__name__)
 
 
-class DetectionServicer(DetectionServiceServicer):
+@register_component
+class DetectionModelComponent(BaseLifecycleComponent):
     """
-    gRPC Detection Service Implementation
-    Implements DetectionService defined in detection.proto
+    Manages YOLO object detection model lifecycle.
+    
+    Responsibilities:
+    - Load detection model on startup
+    - Warm up model with dummy inference
+    - Monitor GPU/CPU device status
+    - Unload model on shutdown
     """
+    
+    name = "DetectionModel"
+    priority = ComponentPriority.HIGH
+    startup_timeout = 90  # Model loading + warmup can take time
+    shutdown_timeout = 15
     
     def __init__(self):
-        """Initialize detection servicer"""
-        self.detection_service = ObjectDetectionService()
-        logger.info("detection_servicer_initialized")
+        super().__init__()
+        self.model_loader = None
+        self.warmup_iterations = 3
+        self.warmup_image_size = (640, 640)
     
-    def DetectObjects(
-        self,
-        request: ProtoDetectRequest,
-        context
-    ) -> ProtoDetectResponse:
-        """
-        Detect objects in image (gRPC endpoint)
+    async def startup(self) -> None:
+        """Load and warm up the detection model."""
+        self.safe_log("loading_detection_model")
         
-        Args:
-            request: Proto DetectRequest
-            context: gRPC context
+        # Get singleton model loader
+        self.model_loader = get_model_loader()
         
-        Returns:
-            Proto DetectResponse
-        """
-        try:
-            logger.debug(
-                "grpc_detect_objects_called",
-                camera_id=request.camera_id,
-                request_id=request.request_id
-            )
-            
-            # Convert proto request to internal request
-            internal_request = self._proto_to_internal_request(request)
-            
-            # Call service
-            internal_response = self.detection_service.detect_objects(internal_request)
-            
-            # Convert internal response to proto response
-            proto_response = self._internal_to_proto_response(internal_response)
-            
-            return proto_response
-            
-        except Exception as e:
-            logger.error("grpc_detect_objects_failed", error=str(e), exc_info=True)
-            return ProtoDetectResponse(
-                success=False,
-                error_message=f"Internal error: {str(e)}"
-            )
-    
-    def DetectWaste(
-        self,
-        request: ProtoDetectRequest,
-        context
-    ) -> ProtoDetectResponse:
-        """
-        Detect waste/trash in image (gRPC endpoint)
-        """
-        try:
-            logger.debug("grpc_detect_waste_called", camera_id=request.camera_id)
-            
-            internal_request = self._proto_to_internal_request(request)
-            internal_response = self.detection_service.detect_waste(internal_request)
-            proto_response = self._internal_to_proto_response(internal_response)
-            
-            return proto_response
-            
-        except Exception as e:
-            logger.error("grpc_detect_waste_failed", error=str(e), exc_info=True)
-            return ProtoDetectResponse(
-                success=False,
-                error_message=f"Internal error: {str(e)}"
-            )
-    
-    def DetectVandalism(
-        self,
-        request: ProtoDetectRequest,
-        context
-    ) -> ProtoDetectResponse:
-        """
-        Detect vandalism in image (gRPC endpoint)
-        """
-        try:
-            logger.debug("grpc_detect_vandalism_called", camera_id=request.camera_id)
-            
-            internal_request = self._proto_to_internal_request(request)
-            internal_response = self.detection_service.detect_vandalism(internal_request)
-            proto_response = self._internal_to_proto_response(internal_response)
-            
-            return proto_response
-            
-        except Exception as e:
-            logger.error("grpc_detect_vandalism_failed", error=str(e), exc_info=True)
-            return ProtoDetectResponse(
-                success=False,
-                error_message=f"Internal error: {str(e)}"
-            )
-    
-    def DetectObjectsBatch(
-        self,
-        request: ProtoDetectBatchRequest,
-        context
-    ) -> ProtoDetectBatchResponse:
-        """
-        Detect objects in batch of images (gRPC endpoint)
-        """
-        try:
-            logger.debug("grpc_detect_batch_called", batch_size=len(request.requests))
-            
-            # Convert proto requests
-            internal_requests = [
-                self._proto_to_internal_request(req) 
-                for req in request.requests
-            ]
-            
-            internal_batch_request = DetectBatchRequest(
-                requests=internal_requests,
-                parallel_processing=request.parallel_processing
-            )
-            
-            # Call service
-            internal_response = self.detection_service.detect_batch(internal_batch_request)
-            
-            # Convert to proto response
-            proto_response = ProtoDetectBatchResponse(
-                total_time_ms=internal_response.total_time_ms
-            )
-            
-            for resp in internal_response.responses:
-                proto_resp = self._internal_to_proto_response(resp)
-                proto_response.responses.append(proto_resp)
-            
-            return proto_response
-            
-        except Exception as e:
-            logger.error("grpc_detect_batch_failed", error=str(e), exc_info=True)
-            return ProtoDetectBatchResponse(
-                total_time_ms=0.0
-            )
-    
-    def DetectObjectsStream(self, request_iterator, context):
-        """
-        Stream detection (not implemented yet - Phase 2)
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details("Streaming not implemented yet")
-        return ProtoDetectResponse()
-    
-    def GetModelInfo(
-        self,
-        request: ProtoModelInfoRequest,
-        context
-    ) -> ProtoModelInfoResponse:
-        """
-        Get model information (gRPC endpoint)
-        """
-        try:
-            logger.debug("grpc_get_model_info_called")
-            
-            loader = get_model_loader()
-            info = loader.get_model_info()
-            
-            response = ProtoModelInfoResponse(
-                model_name=info.get("model_name", "unknown"),
-                model_version=settings.APP_VERSION,
-                num_classes=info.get("num_classes", 0),
-                device=info.get("device", "unknown"),
-                model_size_mb=0.0,  # TODO: Calculate actual size
-                input_size=settings.DETECTION_IMAGE_SIZE
-            )
-            
-            # Add class names
-            if "class_names" in info:
-                response.classes.extend(info["class_names"])
-            
-            return response
-            
-        except Exception as e:
-            logger.error("grpc_get_model_info_failed", error=str(e), exc_info=True)
-            return ProtoModelInfoResponse(
-                model_name="error",
-                model_version="0.0.0",
-                num_classes=0,
-                device="unknown"
-            )
-    
-    # ========================================================================
-    # Helper Methods - Proto <-> Internal Conversion
-    # ========================================================================
-    
-    def _proto_to_internal_request(
-        self,
-        proto_request: ProtoDetectRequest
-    ) -> DetectRequest:
-        """
-        Convert protobuf DetectRequest to internal DetectRequest
-        """
-        return DetectRequest(
-            image=proto_request.image,
-            confidence_threshold=proto_request.confidence_threshold or settings.DETECTION_CONFIDENCE,
-            iou_threshold=proto_request.iou_threshold or settings.DETECTION_IOU_THRESHOLD,
-            target_classes=list(proto_request.target_classes) if proto_request.target_classes else [],
-            exclude_classes=list(proto_request.exclude_classes) if proto_request.exclude_classes else [],
-            camera_id=proto_request.camera_id or None,
-            timestamp=proto_request.timestamp or None,
-            request_id=proto_request.request_id or None,
-            enable_tracking=proto_request.enable_tracking,
-            return_cropped_images=proto_request.return_cropped_images,
-            max_detections=proto_request.max_detections or settings.DETECTION_MAX_DETECTIONS
-        )
-    
-    def _internal_to_proto_response(
-        self,
-        internal_response
-    ) -> ProtoDetectResponse:
-        """
-        Convert internal DetectResponse to protobuf DetectResponse
-        """
-        proto_response = ProtoDetectResponse(
-            success=internal_response.success,
-            error_message=internal_response.error_message or "",
-            total_objects=internal_response.total_objects,
-            inference_time_ms=internal_response.inference_time_ms,
-            preprocessing_time_ms=internal_response.preprocessing_time_ms,
-            postprocessing_time_ms=internal_response.postprocessing_time_ms,
-            total_time_ms=internal_response.total_time_ms,
-            request_id=internal_response.request_id or "",
-            timestamp=internal_response.timestamp or 0
+        # Load the model
+        self.model_loader.load_detector()
+        
+        # Collect metadata
+        self.metadata.update({
+            "device": str(self.model_loader.device),
+            "model_type": getattr(self.model_loader, 'model_name', 'YOLO'),
+            "model_path": getattr(self.model_loader, 'model_path', 'unknown'),
+            "warmup_iterations": self.warmup_iterations,
+            "input_size": self.warmup_image_size,
+        })
+        
+        self.safe_log(
+            "model_loaded",
+            device=self.metadata["device"],
+            model=self.metadata["model_type"]
         )
         
-        # Add detections
-        for detection in internal_response.detections:
-            proto_detection = ProtoDetection(
-                class_name=detection.class_name,
-                class_id=detection.class_id,
-                confidence=detection.confidence,
-                track_id=detection.track_id or -1,
-                area=detection.area or 0.0,
-                zone=detection.zone or ""
-            )
-            
-            # Add bounding box
-            proto_detection.bbox.CopyFrom(
-                ProtoBoundingBox(
-                    x1=detection.bbox.x1,
-                    y1=detection.bbox.y1,
-                    x2=detection.bbox.x2,
-                    y2=detection.bbox.y2,
-                    x1_norm=detection.bbox.x1_norm or 0.0,
-                    y1_norm=detection.bbox.y1_norm or 0.0,
-                    x2_norm=detection.bbox.x2_norm or 0.0,
-                    y2_norm=detection.bbox.y2_norm or 0.0
-                )
-            )
-            
-            # Add cropped image if available
-            if detection.cropped_image:
-                proto_detection.cropped_image = detection.cropped_image
-            
-            proto_response.detections.append(proto_detection)
+        # Warm up the model
+        self.safe_log("warming_up_model", iterations=self.warmup_iterations)
+        await self._warmup_model()
         
-        # Add image metadata
-        if internal_response.image_metadata:
-            proto_response.image_metadata.CopyFrom(
-                ProtoImageMetadata(
-                    width=internal_response.image_metadata.width,
-                    height=internal_response.image_metadata.height,
-                    channels=internal_response.image_metadata.channels,
-                    format=internal_response.image_metadata.format
-                )
-            )
+        self.safe_log("detection_model_ready")
+    
+    async def _warmup_model(self) -> None:
+        """
+        Warm up model with dummy inference.
         
-        return proto_response
-
-
-# ============================================================================
-# Export
-# ============================================================================
-
-__all__ = ["DetectionServicer"]
+        This:
+        - Allocates GPU memory
+        - Compiles CUDA kernels
+        - Initializes inference pipeline
+        - Reduces first real inference latency
+        """
+        try:
+            # Create dummy image
+            h, w = self.warmup_image_size
+            dummy_image = np.random.randint(0, 255, (h, w, 3), dtype=np.uint8)
+            
+            for i in range(self.warmup_iterations):
+                # Run inference (result is discarded)
+                _ = self.model_loader.detect(dummy_image)
+                
+                self.safe_log(
+                    "warmup_iteration_completed",
+                    iteration=i + 1,
+                    total=self.warmup_iterations
+                )
+            
+            self.metadata["warmup_completed"] = True
+            self.safe_log("model_warmup_completed")
+            
+        except Exception as e:
+            self.log_error("model_warmup_failed", e)
+            self.metadata["warmup_completed"] = False
+            # Don't fail startup - model is loaded even if warmup fails
+            logger.warning(
+                "continuing_without_warmup",
+                component=self.name,
+                reason=str(e)
+            )
+    
+    async def shutdown(self) -> None:
+        """Unload model and free resources."""
+        if self.model_loader:
+            self.safe_log("unloading_detection_model")
+            
+            try:
+                self.model_loader.unload_detector()
+                self.safe_log("detection_model_unloaded")
+            except Exception as e:
+                # Log but don't raise - best effort shutdown
+                self.log_error("model_unload_error", e)
+    
+    async def health_check(self) -> bool:
+        """Check if model is loaded and functional."""
+        try:
+            if not self.model_loader:
+                return False
+            
+            # Check if model attribute exists and is not None
+            model_loaded = (
+                hasattr(self.model_loader, 'model') and 
+                self.model_loader.model is not None
+            )
+            
+            return model_loaded and self.state == ComponentState.READY
+            
+        except Exception as e:
+            self.log_error("health_check_failed", e)
+            return False
+    
+    def get_metrics(self) -> dict:
+        """Return model-specific metrics."""
+        base_metrics = super().get_metrics()
+        
+        if self.model_loader:
+            model_loaded = (
+                hasattr(self.model_loader, 'model') and 
+                self.model_loader.model is not None
+            )
+            
+            base_metrics["model_info"] = {
+                "loaded": model_loaded,
+                "device": self.metadata.get("device"),
+                "type": self.metadata.get("model_type"),
+                "warmup_completed": self.metadata.get("warmup_completed", False),
+            }
+        
+        return base_metrics
