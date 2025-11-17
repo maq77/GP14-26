@@ -6,7 +6,7 @@
 # ==================================================
 # Stage 1: Base Runtime
 # ==================================================
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS base
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8443
