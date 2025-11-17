@@ -21,7 +21,7 @@ RUN apk add --no-cache curl
 # ==================================================
 # Stage 2: Build
 # ==================================================
-FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
