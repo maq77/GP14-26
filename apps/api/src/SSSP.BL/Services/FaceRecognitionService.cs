@@ -9,7 +9,7 @@ using SSSP.Infrastructure.Persistence.Interfaces;
 
 namespace SSSP.BL.Services
 {
-    public class FaceRecognitionService
+    public sealed class FaceRecognitionService
     {
         private readonly IAIFaceClient _ai;
         private readonly IUnitOfWork _uow;
@@ -34,43 +34,41 @@ namespace SSSP.BL.Services
             CancellationToken ct)
         {
             _logger.LogInformation(
-                "HTTP face verify started for camera {CameraId}. Image size {Length} bytes",
+                "Face verify started. Camera={CameraId} ImageSize={Size}",
                 cameraId,
                 image?.Length ?? 0);
 
-            var embeddingResult = await _ai.ExtractEmbeddingAsync(image, cameraId, ct);
+            var embeddingResult =
+                await _ai.ExtractEmbeddingAsync(image, cameraId, ct);
 
-            if (embeddingResult.Embedding == null || embeddingResult.Embedding.Count == 0)
+            if (embeddingResult.Embedding == null ||
+                embeddingResult.Embedding.Count == 0)
             {
                 _logger.LogWarning(
-                    "AI returned empty embedding during verify for camera {CameraId}",
+                    "Verify failed. Empty embedding from AI. Camera={CameraId}",
                     cameraId);
                 return new FaceMatchResult(false, null, null, 0);
             }
 
-            _logger.LogInformation(
-                "AI embedding extracted for verify. Camera {CameraId} Dimension {Dim}",
-                cameraId,
-                embeddingResult.Embedding.Count);
+            var repo = _uow.GetRepository<FaceProfile, Guid>();
+            var profiles = await repo.GetAllAsync(ct);
 
-            var profileRepo = _uow.GetRepository<FaceProfile, Guid>();
-            var profiles = await profileRepo.GetAllAsync(ct);
-
-            var result = _matcher.Match(embeddingResult.Embedding, profiles);
+            var result = _matcher.Match(
+                embeddingResult.Embedding,
+                profiles);
 
             if (result.IsMatch)
             {
                 _logger.LogInformation(
-                    "Face verified. Camera {CameraId} User {UserId} FaceProfile {FaceProfileId} Similarity {Similarity}",
+                    "Face verified. Camera={CameraId} User={UserId} Similarity={Similarity}",
                     cameraId,
                     result.UserId,
-                    result.FaceProfileId,
                     result.Similarity);
             }
             else
             {
-                _logger.LogWarning(
-                    "Unknown face on verify. Camera {CameraId} BestSimilarity {Similarity}",
+                _logger.LogInformation(
+                    "Unknown face. Camera={CameraId} BestSimilarity={Similarity}",
                     cameraId,
                     result.Similarity);
             }
@@ -83,29 +81,31 @@ namespace SSSP.BL.Services
             string cameraId,
             CancellationToken ct)
         {
-            _logger.LogInformation(
-                "Streaming face verify from embedding for camera {CameraId}. Dimension {Dim}",
-                cameraId,
-                embedding?.Count ?? 0);
+            if (embedding == null || embedding.Count == 0)
+            {
+                _logger.LogDebug(
+                    "Streaming verify skipped. Empty embedding. Camera={CameraId}",
+                    cameraId);
+                return new FaceMatchResult(false, null, null, 0);
+            }
 
-            var profileRepo = _uow.GetRepository<FaceProfile, Guid>();
-            var profiles = await profileRepo.GetAllAsync(ct);
+            var repo = _uow.GetRepository<FaceProfile, Guid>();
+            var profiles = await repo.GetAllAsync(ct);
 
             var result = _matcher.Match(embedding, profiles);
 
             if (result.IsMatch)
             {
                 _logger.LogInformation(
-                    "Streaming face verified. Camera {CameraId} User {UserId} FaceProfile {FaceProfileId} Similarity {Similarity}",
+                    "Streaming verified. Camera={CameraId} User={UserId} Similarity={Similarity}",
                     cameraId,
                     result.UserId,
-                    result.FaceProfileId,
                     result.Similarity);
             }
             else
             {
-                _logger.LogWarning(
-                    "Streaming unknown face. Camera {CameraId} BestSimilarity {Similarity}",
+                _logger.LogDebug(
+                    "Streaming unknown face. Camera={CameraId} BestSimilarity={Similarity}",
                     cameraId,
                     result.Similarity);
             }

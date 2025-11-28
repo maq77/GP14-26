@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SSSP.Api.DTOs.Grpc;
-using SSSP.BL.Services;
+using SSSP.BL.Services.Interfaces;
 using SSSP.DAL.Models;
 using SSSP.Infrastructure.Persistence.Interfaces;
 
@@ -15,12 +15,12 @@ namespace SSSP.Api.Controllers
     public class CameraController : ControllerBase
     {
         private readonly IUnitOfWork _uow;
-        private readonly CameraMonitoringService _monitoring;
+        private readonly ICameraMonitoringService _monitoring;
         private readonly ILogger<CameraController> _logger;
 
         public CameraController(
             IUnitOfWork uow,
-            CameraMonitoringService monitoring,
+            ICameraMonitoringService monitoring,
             ILogger<CameraController> logger)
         {
             _uow = uow;
@@ -29,7 +29,7 @@ namespace SSSP.Api.Controllers
         }
 
         [HttpPost("{id:int}/start")]
-        [Authorize(Roles = "Admin,Operator")]
+        //[Authorize(Roles = "Admin,Operator")]
         public async Task<IActionResult> Start(
             int id,
             [FromBody] StartCameraRequest request,
@@ -54,16 +54,20 @@ namespace SSSP.Api.Controllers
                 ? camera.RtspUrl
                 : request.RtspUrl;
 
+            var started = await _monitoring.StartAsync(camera.Id, rtspUrl, ct);
+
+            if (!started)
+            {
+                _logger.LogWarning(
+                    "Camera {CameraId} monitoring is already running",
+                    camera.Id);
+                return Conflict("Camera is already being monitored");
+            }
+
             _logger.LogInformation(
-                "Starting background monitoring for camera {CameraId} on RTSP {RtspUrl}",
+                "Camera {CameraId} monitoring accepted on RTSP {RtspUrl}",
                 camera.Id,
                 rtspUrl);
-
-            _ = Task.Run(() =>
-                _monitoring.StartCameraAsync(
-                    camera.Id.ToString(),
-                    rtspUrl,
-                    CancellationToken.None));
 
             return Accepted(new
             {
@@ -71,6 +75,41 @@ namespace SSSP.Api.Controllers
                 camera.Name,
                 RtspUrl = rtspUrl
             });
+        }
+
+        [HttpPost("{id:int}/stop")]
+        //[Authorize(Roles = "Admin,Operator")]
+        public async Task<IActionResult> Stop(
+            int id,
+            CancellationToken ct)
+        {
+            _logger.LogInformation(
+                "HTTP stop camera requested for camera {CameraId}",
+                id);
+
+            var stopped = await _monitoring.StopAsync(id, ct);
+
+            if (!stopped)
+            {
+                _logger.LogWarning(
+                    "Stop requested for non-active camera {CameraId}",
+                    id);
+                return NotFound("Camera is not being monitored");
+            }
+
+            _logger.LogInformation(
+                "Camera {CameraId} monitoring stop accepted",
+                id);
+
+            return Accepted(new { CameraId = id });
+        }
+
+        [HttpGet("active")]
+        //[Authorize(Roles = "Admin,Operator")]
+        public IActionResult Active()
+        {
+            var sessions = _monitoring.GetActiveSessions();
+            return Ok(sessions);
         }
     }
 }

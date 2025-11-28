@@ -1,58 +1,190 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Grpc.Net.Client;
-using Microsoft.Extensions.Configuration;
-using static System.Net.Mime.MediaTypeNames;
+﻿using System;
 using System.Diagnostics;
-using Microsoft.Extensions.Options;
-
+using System.Threading;
+using System.Threading.Tasks;
+using Google.Protobuf;
+using Grpc.Core;
+using Grpc.Net.Client;
+using Microsoft.Extensions.Logging;
+using Polly;
+using Polly.CircuitBreaker;
+using Polly.Retry;
+using Polly.Timeout;
 using SSSP.Infrastructure.AI.Grpc.Interfaces;
-using SSSP.Infrastructure.AI.Grpc.Config;
+using SSSP.Infrastructure.AI.Grpc.Clients;
 using Sssp.Ai.Face;
 
-public class AIFaceClient : IAIFaceClient
+namespace SSSP.Infrastructure.AI.Grpc.Clients
 {
-    private readonly AIOptions aiOptions;
-
-    private readonly FaceService.FaceServiceClient _client;
-
-    public AIFaceClient(IOptions<AIOptions> options)
+    public sealed class AIFaceClient : IAIFaceClient
     {
-        aiOptions = options.Value;
+        private readonly ILogger<AIFaceClient> _logger;
+        private readonly FaceService.FaceServiceClient _client;
+        private readonly AsyncPolicy _policy;
 
-        if (string.IsNullOrWhiteSpace(aiOptions.GrpcUrl))
-            throw new InvalidOperationException("AI:GrpcUrl is not configured.");
-
-        var channel = GrpcChannel.ForAddress(aiOptions.GrpcUrl);
-        _client = new FaceService.FaceServiceClient(channel);
-    }
-
-    public async Task<FaceVerifyResponse> VerifyFaceAsync(byte[] imageBytes, string cameraId)
-    {
-        var request = new FaceVerifyRequest
+        public AIFaceClient(
+            GrpcChannelFactory channelFactory,
+            ILogger<AIFaceClient> logger)
         {
-            Image = Google.Protobuf.ByteString.CopyFrom(imageBytes),
-            CameraId = cameraId,
-            CheckBlacklist = true
-            // optionally:
-            // ConfidenceThreshold = 0.7f
-        };
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-        return await _client.VerifyFaceAsync(request);
-    }
+            var channel = channelFactory.CreateAiChannel();
+            _client = new FaceService.FaceServiceClient(channel);
 
-    public async Task<FaceEmbeddingResponse> ExtractEmbeddingAsync(
-        byte[] image,
-        string? cameraId = null,
-        CancellationToken cancellationToken = default)
-    {
-        var req = new FaceEmbeddingRequest
+            _policy = BuildPolicy();
+
+            _logger.LogInformation("AIFaceClient initialized.");
+        }
+
+        public async Task<FaceVerifyResponse> VerifyFaceAsync(
+            byte[] imageBytes,
+            string cameraId)
         {
-            Image = Google.Protobuf.ByteString.CopyFrom(image),
-        };
+            ValidateImage(imageBytes);
 
-        if (!string.IsNullOrWhiteSpace(cameraId))
-            req.CameraId = cameraId;
+            var request = new FaceVerifyRequest
+            {
+                Image = ByteString.CopyFrom(imageBytes),
+                CameraId = cameraId ?? string.Empty,
+                CheckBlacklist = true
+            };
 
-        return await _client.ExtractEmbeddingAsync(req, cancellationToken: cancellationToken);
+            var sw = Stopwatch.StartNew();
+
+            return await _policy.ExecuteAsync(async () =>
+            {
+                try
+                {
+                    _logger.LogInformation(
+                        "VerifyFace sent. Camera={CameraId} Size={Size}",
+                        cameraId,
+                        imageBytes.Length);
+
+                    var response = await _client.VerifyFaceAsync(request);
+
+                    sw.Stop();
+
+                    _logger.LogInformation(
+                        "VerifyFace response. Camera={CameraId} Success={Success} Match={Match} Authorized={Auth} ElapsedMs={Elapsed}",
+                        cameraId,
+                        response.Success,
+                        response.MatchFound,
+                        response.IsAuthorized,
+                        sw.ElapsedMilliseconds);
+
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    sw.Stop();
+                    _logger.LogError(
+                        ex,
+                        "VerifyFace failed. Camera={CameraId} ElapsedMs={Elapsed}",
+                        cameraId,
+                        sw.ElapsedMilliseconds);
+                    throw;
+                }
+            });
+        }
+
+        public async Task<FaceEmbeddingResponse> ExtractEmbeddingAsync(
+            byte[] image,
+            string? cameraId = null,
+            CancellationToken cancellationToken = default)
+        {
+            ValidateImage(image);
+
+            var request = new FaceEmbeddingRequest
+            {
+                Image = ByteString.CopyFrom(image)
+            };
+
+            if (!string.IsNullOrWhiteSpace(cameraId))
+                request.CameraId = cameraId;
+
+            var sw = Stopwatch.StartNew();
+
+            return await _policy.ExecuteAsync(async () =>
+            {
+                try
+                {
+                    _logger.LogInformation(
+                        "ExtractEmbedding sent. Camera={CameraId} Size={Size}",
+                        cameraId ?? "N/A",
+                        image.Length);
+
+                    var response = await _client.ExtractEmbeddingAsync(
+                        request,
+                        cancellationToken: cancellationToken);
+
+                    sw.Stop();
+
+                    _logger.LogInformation(
+                        "ExtractEmbedding response. Camera={CameraId} Success={Success} Dim={Dim} FaceDetected={Detected} ElapsedMs={Elapsed}",
+                        cameraId ?? "N/A",
+                        response.Success,
+                        response.Embedding.Count,
+                        response.FaceDetected,
+                        sw.ElapsedMilliseconds);
+
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    sw.Stop();
+                    _logger.LogError(
+                        ex,
+                        "ExtractEmbedding failed. Camera={CameraId} ElapsedMs={Elapsed}",
+                        cameraId ?? "N/A",
+                        sw.ElapsedMilliseconds);
+                    throw;
+                }
+            });
+        }
+
+        private static void ValidateImage(byte[] image)
+        {
+            if (image == null || image.Length == 0)
+                throw new ArgumentException("Image is empty", nameof(image));
+        }
+
+        private AsyncPolicy BuildPolicy()
+        {
+            var retry = Policy
+                .Handle<RpcException>()
+                .Or<TimeoutRejectedException>()
+                .WaitAndRetryAsync(
+                    retryCount: 3,
+                    sleepDurationProvider: attempt => TimeSpan.FromMilliseconds(300 * attempt),
+                    onRetry: (ex, ts, count, _) =>
+                    {
+                        _logger.LogWarning(
+                            ex,
+                            "AIFaceClient retry {Retry} after {Delay}ms",
+                            count,
+                            ts.TotalMilliseconds);
+                    });
+
+            var timeout = Policy.TimeoutAsync(5);
+
+            var breaker = Policy
+                .Handle<RpcException>()
+                .CircuitBreakerAsync(
+                    exceptionsAllowedBeforeBreaking: 5,
+                    durationOfBreak: TimeSpan.FromSeconds(20),
+                    onBreak: (ex, ts) =>
+                    {
+                        _logger.LogCritical(
+                            ex,
+                            "AIFaceClient circuit opened for {Seconds}s",
+                            ts.TotalSeconds);
+                    },
+                    onReset: () =>
+                    {
+                        _logger.LogInformation("AIFaceClient circuit reset");
+                    });
+
+            return Policy.WrapAsync(retry, timeout, breaker);
+        }
     }
 }
