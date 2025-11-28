@@ -2,32 +2,37 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Protobuf;
-using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Timeout;
 using SSSP.Infrastructure.AI.Grpc.Config;
 using SSSP.Infrastructure.AI.Grpc.Interfaces;
 using SSSP.Infrastructure.AI.Grpc.Video;
 using Sssp.Ai.Stream;
+using Grpc.Core;
 
 namespace SSSP.Infrastructure.AI.Grpc.Clients
 {
-    public class VideoStreamClient : IVideoStreamClient
+    public sealed class VideoStreamClient : IVideoStreamClient
     {
-        private readonly VideoStreamService.VideoStreamServiceClient _client;
         private readonly ILogger<VideoStreamClient> _logger;
-        private readonly AIOptions _options;
+        private readonly VideoStreamService.VideoStreamServiceClient _client;
+        private readonly AsyncTimeoutPolicy _timeoutPolicy;
 
         public VideoStreamClient(
-            IOptions<AIOptions> options,
+            GrpcChannelFactory channelFactory,
             ILogger<VideoStreamClient> logger)
         {
-            _options = options.Value;
-            _logger = logger;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            var channel = GrpcChannel.ForAddress(_options.GrpcUrl);
+            var channel = channelFactory.CreateAiChannel();
             _client = new VideoStreamService.VideoStreamServiceClient(channel);
+
+            _timeoutPolicy = Policy.TimeoutAsync(10);
+
+            _logger.LogInformation("VideoStreamClient initialized.");
         }
 
         public async Task StreamCameraAsync(
@@ -36,10 +41,9 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
             Func<VideoFrameResponse, Task> onFrameResponse,
             CancellationToken cancellationToken = default)
         {
-            using var rtsp = new RtspCamera(cameraId, rtspUrl);
+            using var stream = new RtspCamera(cameraId, rtspUrl);
 
-            using var call = _client.StreamFrames(
-                cancellationToken: cancellationToken);
+            using var call = _client.StreamFrames(cancellationToken: cancellationToken);
 
             var readTask = Task.Run(async () =>
             {
@@ -47,22 +51,14 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
                 {
                     await foreach (var response in call.ResponseStream.ReadAllAsync(cancellationToken))
                     {
-                        try
-                        {
-                            await onFrameResponse(response);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex,
-                                "Error while processing AI frame response for camera {CameraId}",
-                                cameraId);
-                        }
+                        await SafeHandleFrame(onFrameResponse, response);
                     }
                 }
                 catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
                 {
-                    _logger.LogError(ex,
-                        "Error reading AI streaming response for camera {CameraId}",
+                    _logger.LogError(
+                        ex,
+                        "AI streaming read failed. Camera={CameraId}",
                         cameraId);
                 }
             }, cancellationToken);
@@ -73,14 +69,14 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    var jpeg = rtsp.ReadJpeg();
+                    var jpeg = stream.ReadJpeg();
                     if (jpeg == null)
                     {
                         await Task.Delay(50, cancellationToken);
                         continue;
                     }
 
-                    var req = new VideoFrameRequest
+                    var request = new VideoFrameRequest
                     {
                         CameraId = cameraId,
                         FrameId = frameId++,
@@ -88,7 +84,8 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
                         ImageJpeg = ByteString.CopyFrom(jpeg)
                     };
 
-                    await call.RequestStream.WriteAsync(req, cancellationToken);
+                    await _timeoutPolicy.ExecuteAsync(() =>
+                        call.RequestStream.WriteAsync(request, cancellationToken));
 
                     // 10 FPS
                     await Task.Delay(100, cancellationToken);
@@ -98,12 +95,31 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
             }
             catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
             {
-                _logger.LogError(ex,
-                    "Error streaming camera {CameraId} to AI",
+                _logger.LogError(
+                    ex,
+                    "AI camera streaming failed. Camera={CameraId}",
                     cameraId);
             }
 
             await readTask;
+        }
+
+        private async Task SafeHandleFrame(
+            Func<VideoFrameResponse, Task> handler,
+            VideoFrameResponse response)
+        {
+            try
+            {
+                await handler(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Frame handler failed. Camera={CameraId} Frame={FrameId}",
+                    response.CameraId,
+                    response.FrameId);
+            }
         }
     }
 }

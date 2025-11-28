@@ -14,7 +14,7 @@ namespace SSSP.BL.Managers
         double Similarity
     );
 
-    public class FaceMatchingManager
+    public sealed class FaceMatchingManager
     {
         private readonly double _threshold;
         private readonly ILogger<FaceMatchingManager> _logger;
@@ -31,24 +31,39 @@ namespace SSSP.BL.Managers
             IReadOnlyList<float> embedding,
             IEnumerable<FaceProfile> knownProfiles)
         {
-            _logger.LogDebug(
-                "Face matching started. Embedding dimension {Dim}, Profiles count {Count}",
-                embedding.Count,
-                knownProfiles.Count());
+            if (embedding == null || embedding.Count == 0)
+            {
+                _logger.LogWarning("Face matching requested with empty embedding");
+                return new FaceMatchResult(false, null, null, 0.0);
+            }
 
-            FaceProfile? bestProfile = null;
-            double bestSim = -1.0;
+            var profiles = knownProfiles as IList<FaceProfile> ?? knownProfiles.ToList();
+
+            if (profiles.Count == 0)
+            {
+                _logger.LogInformation("Face matching skipped. No known profiles in database");
+                return new FaceMatchResult(false, null, null, 0.0);
+            }
+
+            _logger.LogDebug(
+                "Face matching started. EmbeddingDim={Dim} ProfilesCount={Count} Threshold={Threshold}",
+                embedding.Count,
+                profiles.Count,
+                _threshold);
 
             var embArr = embedding.ToArray();
             var embNorm = Norm(embArr);
 
             if (embNorm == 0)
             {
-                _logger.LogWarning("Embedding norm is zero. Matching aborted");
+                _logger.LogWarning("Face matching aborted. Embedding norm is zero");
                 return new FaceMatchResult(false, null, null, 0.0);
             }
 
-            foreach (var profile in knownProfiles)
+            FaceProfile? bestProfile = null;
+            double bestSim = -1.0;
+
+            foreach (var profile in profiles)
             {
                 float[]? vec;
 
@@ -68,8 +83,10 @@ namespace SSSP.BL.Managers
                 if (vec == null || vec.Length != embArr.Length)
                 {
                     _logger.LogDebug(
-                        "Embedding dimension mismatch for FaceProfile {FaceProfileId}",
-                        profile.Id);
+                        "Embedding dimension mismatch for FaceProfile {FaceProfileId}. StoredDim={StoredDim} ProbeDim={ProbeDim}",
+                        profile.Id,
+                        vec?.Length ?? 0,
+                        embArr.Length);
                     continue;
                 }
 
@@ -85,7 +102,7 @@ namespace SSSP.BL.Managers
             if (bestProfile != null && bestSim >= _threshold)
             {
                 _logger.LogInformation(
-                    "Face match success. User {UserId}, FaceProfile {FaceProfileId}, Similarity {Similarity}",
+                    "Face match success. UserId={UserId} FaceProfileId={FaceProfileId} Similarity={Similarity}",
                     bestProfile.UserId,
                     bestProfile.Id,
                     bestSim);
@@ -94,12 +111,11 @@ namespace SSSP.BL.Managers
                     true,
                     bestProfile.UserId,
                     bestProfile.Id,
-                    bestSim
-                );
+                    bestSim);
             }
 
             _logger.LogInformation(
-                "Face match failed. Best similarity {Similarity}, Threshold {Threshold}",
+                "Face match failed. BestSimilarity={Similarity} Threshold={Threshold}",
                 bestSim,
                 _threshold);
 
@@ -107,8 +123,7 @@ namespace SSSP.BL.Managers
                 false,
                 null,
                 null,
-                bestSim
-            );
+                bestSim);
         }
 
         private static double Norm(float[] v)
@@ -119,25 +134,21 @@ namespace SSSP.BL.Managers
             return Math.Sqrt(sumSq);
         }
 
-        private static double Norm(double[] v)
-        {
-            double sumSq = 0;
-            for (int i = 0; i < v.Length; i++)
-                sumSq += v[i] * v[i];
-            return Math.Sqrt(sumSq);
-        }
-
         private static double CosineSimilarity(float[] a, float[] b, double normA)
         {
             double dot = 0;
+            double normBSq = 0;
+
             for (int i = 0; i < a.Length; i++)
             {
                 dot += (double)a[i] * b[i];
+                normBSq += (double)b[i] * b[i];
             }
 
-            var normB = Norm(b.Select(x => (double)x).ToArray());
+            var normB = Math.Sqrt(normBSq);
             var denom = normA * normB;
             if (denom == 0) return 0.0;
+
             return dot / denom;
         }
     }

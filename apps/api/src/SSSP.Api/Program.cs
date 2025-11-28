@@ -1,22 +1,26 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Text;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using SSSP.BL.Managers;
+using SSSP.BL.Services;
+using SSSP.BL.Services.Interfaces;
 using SSSP.DAL.Context;
 using SSSP.DAL.Models;
 using SSSP.Infrastructure.AI.Grpc.Clients;
 using SSSP.Infrastructure.AI.Grpc.Config;
+using SSSP.Infrastructure.AI.Grpc.Health;
 using SSSP.Infrastructure.AI.Grpc.Interfaces;
-using SSSP.Infrastructure.Persistence.Repos;
 using SSSP.Infrastructure.Persistence.Interfaces;
-using System.Text;
+using SSSP.Infrastructure.Persistence.Repos;
 using SSSP.Infrastructure.Persistence.UnitOfWork;
-using SSSP.BL.Services;
-using SSSP.DAL.Enums;
-using SSSP.BL.Services.Interfaces;
+using Microsoft.AspNetCore.Builder;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +49,6 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 
-    // JWT Bearer in Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -141,44 +144,73 @@ builder.Services
 // Domain / Infrastructure Services
 // =======================================
 
-// uof & Repo
+// UoW & Repos
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ISensorService, SensorService>();
 
+// HTTP + gRPC Channel factory
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<GrpcChannelFactory>();
+
+// AI Clients (singleton, channel shared via factory)
 builder.Services.AddSingleton<IAIFaceClient, AIFaceClient>();
 builder.Services.AddSingleton<IVideoStreamClient, VideoStreamClient>();
 
+// Face Matching
 builder.Services.AddSingleton<FaceMatchingManager>(sp =>
 {
     var logger = sp.GetRequiredService<ILogger<FaceMatchingManager>>();
     return new FaceMatchingManager(0.6, logger);
 });
 
+// Face services
 builder.Services.AddScoped<FaceRecognitionService>();
 builder.Services.AddScoped<FaceEnrollmentService>();
-builder.Services.AddScoped<CameraMonitoringService>();
+
+// Camera monitoring as background worker + service
+builder.Services.AddSingleton<CameraMonitoringWorker>();
+builder.Services.AddSingleton<ICameraMonitoringService>(sp =>
+    sp.GetRequiredService<CameraMonitoringWorker>());
+builder.Services.AddHostedService(sp =>
+    sp.GetRequiredService<CameraMonitoringWorker>());
 
 builder.Services.AddSignalR();
-builder.Services.AddHealthChecks();
 
+builder.Services
+    .AddHealthChecks()
+    .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "live" })
+    .AddCheck<AiGrpcHealthCheck>("ai_grpc", tags: new[] { "ready" });
+builder.Services
+    .AddHealthChecksUI(options =>
+    {
+        options.SetEvaluationTimeInSeconds(30);
+        options.MaximumHistoryEntriesPerEndpoint(60);
+
+        options.AddHealthCheckEndpoint("SSSP API", "/health/ready");
+    })
+    .AddInMemoryStorage();
 
 // =======================================
 // Build App
 // =======================================
 var app = builder.Build();
 
-// Just to verify AI config on startup (Dev only)
+// Dev-time AI config echo
 if (app.Environment.IsDevelopment())
 {
-    var aiOptions = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<AIOptions>>().Value;
+    var aiOptions = app.Services
+        .GetRequiredService<Microsoft.Extensions.Options.IOptions<AIOptions>>()
+        .Value;
+
     Console.WriteLine($"AI REST: {aiOptions.RestUrl}");
     Console.WriteLine($"AI gRPC: {aiOptions.GrpcUrl}");
 }
 
-// use to seed roles (once only)
+// Role seeding (optional – enable once, or move to a dedicated seeder)
+/*
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
@@ -198,6 +230,7 @@ using (var scope = app.Services.CreateScope())
         }
     }
 }
+*/
 
 // =======================================
 // Middleware Pipeline
@@ -217,7 +250,31 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHealthChecks("/health");
+
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = r => r.Tags.Contains("live")
+});
+
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = r => r.Tags.Contains("ready"),
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+app.UseHealthChecksUI(options =>
+{
+    options.UIPath = "/health-ui";
+    options.ApiPath = "/health-ui-api";
+});
+
 // app.MapHub<YourHub>("/hubs/whatever");
 
 app.Run();
+

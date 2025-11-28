@@ -1,11 +1,12 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SSSP.Infrastructure.AI.Grpc.Interfaces;
 
 namespace SSSP.BL.Services
 {
-    public class CameraMonitoringService
+    public sealed class CameraMonitoringService
     {
         private readonly IVideoStreamClient _stream;
         private readonly FaceRecognitionService _faceService;
@@ -21,55 +22,74 @@ namespace SSSP.BL.Services
             _logger = logger;
         }
 
-        public async Task StartCameraAsync(string cameraId, string rtspUrl, CancellationToken ct)
+        public async Task StartCameraAsync(
+            string cameraId,
+            string rtspUrl,
+            CancellationToken ct)
         {
             _logger.LogInformation(
-                "Starting camera monitoring for camera {CameraId} on RTSP {RtspUrl}",
+                "Camera streaming started. CameraId={CameraId} Rtsp={RtspUrl}",
                 cameraId,
                 rtspUrl);
 
-            await _stream.StreamCameraAsync(
-                cameraId,
-                rtspUrl,
-                async response =>
-                {
-                    _logger.LogDebug(
-                        "AI streaming frame received. Camera {CameraId} Frame {FrameId} Faces {FaceCount}",
-                        response.CameraId,
-                        response.FrameId,
-                        response.Faces.Count);
-
-                    foreach (var face in response.Faces)
+            try
+            {
+                await _stream.StreamCameraAsync(
+                    cameraId,
+                    rtspUrl,
+                    async response =>
                     {
-                        var match = await _faceService.VerifyEmbeddingAsync(
-                            face.Embedding.Vector,
-                            response.CameraId,
-                            ct);
-
-                        if (match.IsMatch)
+                        try
                         {
-                            _logger.LogInformation(
-                                "Camera {CameraId} frame {FrameId} recognized user {UserId} with similarity {Similarity}",
-                                response.CameraId,
-                                response.FrameId,
-                                match.UserId,
-                                match.Similarity);
-                        }
-                        else
-                        {
-                            _logger.LogWarning(
-                                "Camera {CameraId} frame {FrameId} unknown face. BestSimilarity {Similarity}",
-                                response.CameraId,
-                                response.FrameId,
-                                match.Similarity);
-                        }
-                    }
-                },
-                ct);
+                            foreach (var face in response.Faces)
+                            {
+                                var match =
+                                    await _faceService.VerifyEmbeddingAsync(
+                                        face.Embedding.Vector,
+                                        response.CameraId,
+                                        ct);
 
-            _logger.LogInformation(
-                "Camera monitoring finished for camera {CameraId}",
-                cameraId);
+                                if (match.IsMatch)
+                                {
+                                    _logger.LogInformation(
+                                        "Streaming match. Camera={Camera} User={UserId} Similarity={Similarity}",
+                                        response.CameraId,
+                                        match.UserId,
+                                        match.Similarity);
+                                }
+                                else
+                                {
+                                    _logger.LogDebug(
+                                        "Streaming unknown face. Camera={Camera} BestSimilarity={Similarity}",
+                                        response.CameraId,
+                                        match.Similarity);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(
+                                ex,
+                                "Streaming processing error. Camera={CameraId}",
+                                cameraId);
+                        }
+                    },
+                    ct);
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogInformation(
+                    "Camera streaming cancelled. CameraId={CameraId}",
+                    cameraId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(
+                    ex,
+                    "Camera streaming crashed. CameraId={CameraId}",
+                    cameraId);
+                throw;
+            }
         }
     }
 }
