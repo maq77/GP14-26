@@ -14,11 +14,43 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nface.proto\x12\x0csssp.ai.faceb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nface.proto\x12\x0csssp.ai.face\"@\n\x11\x46\x61\x63\x65\x44\x65tectRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\x12\x1c\n\x14\x63onfidence_threshold\x18\x02 \x01(\x02\"o\n\x14\x46\x61\x63\x65RecognizeRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\x12\x15\n\rcandidate_ids\x18\x02 \x03(\t\x12\x1c\n\x14\x63onfidence_threshold\x18\x03 \x01(\x02\x12\x13\n\x0bmax_results\x18\x04 \x01(\x05\"l\n\x11\x46\x61\x63\x65VerifyRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\x12\x11\n\tcamera_id\x18\x02 \x01(\t\x12\x17\n\x0f\x63heck_blacklist\x18\x03 \x01(\x08\x12\x1c\n\x14\x63onfidence_threshold\x18\x04 \x01(\x02\"c\n\x11\x46\x61\x63\x65\x45nrollRequest\x12\x11\n\tperson_id\x18\x01 \x01(\t\x12\x13\n\x0bperson_name\x18\x02 \x01(\t\x12\x0e\n\x06images\x18\x03 \x03(\x0c\x12\x16\n\x0eis_blacklisted\x18\x04 \x01(\x08\"\x16\n\x14\x46\x61\x63\x65ModelInfoRequest\"8\n\x14\x46\x61\x63\x65\x45mbeddingRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\x12\x11\n\tcamera_id\x18\x02 \x01(\t\"\x8b\x01\n\x12\x46\x61\x63\x65\x44\x65tectResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x15\n\rerror_message\x18\x02 \x01(\t\x12!\n\x05\x66\x61\x63\x65s\x18\x03 \x03(\x0b\x32\x12.sssp.ai.face.Face\x12\x13\n\x0btotal_faces\x18\x04 \x01(\x05\x12\x15\n\rtotal_time_ms\x18\x05 \x01(\x02\"\xa2\x01\n\x15\x46\x61\x63\x65RecognizeResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x15\n\rerror_message\x18\x02 \x01(\t\x12(\n\x07matches\x18\x03 \x03(\x0b\x32\x17.sssp.ai.face.FaceMatch\x12 \n\x18total_candidates_checked\x18\x04 \x01(\x05\x12\x15\n\rtotal_time_ms\x18\x05 \x01(\x02\"\xaf\x02\n\x12\x46\x61\x63\x65VerifyResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x15\n\rerror_message\x18\x02 \x01(\t\x12\x15\n\rface_detected\x18\x03 \x01(\x08\x12\x13\n\x0bmatch_found\x18\x04 \x01(\x08\x12\x15\n\ris_authorized\x18\x05 \x01(\x08\x12\x11\n\tperson_id\x18\x06 \x01(\t\x12\x13\n\x0bperson_name\x18\x07 \x01(\t\x12\x12\n\nconfidence\x18\x08 \x01(\x02\x12\'\n\x04\x62\x62ox\x18\t \x01(\x0b\x32\x19.sssp.ai.face.BoundingBox\x12\x15\n\rtotal_time_ms\x18\n \x01(\x02\x12\x32\n\x11\x63\x61ndidate_matches\x18\x0b \x03(\x0b\x32\x17.sssp.ai.face.FaceMatch\"\xa9\x01\n\x15\x46\x61\x63\x65\x45mbeddingResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x15\n\rerror_message\x18\x02 \x01(\t\x12\x15\n\rface_detected\x18\x03 \x01(\x08\x12\x11\n\tembedding\x18\x04 \x03(\x02\x12\'\n\x04\x62\x62ox\x18\x05 \x01(\x0b\x32\x19.sssp.ai.face.BoundingBox\x12\x15\n\rtotal_time_ms\x18\x06 \x01(\x02\"h\n\x12\x46\x61\x63\x65\x45nrollResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x15\n\rerror_message\x18\x02 \x01(\t\x12\x11\n\tperson_id\x18\x03 \x01(\t\x12\x17\n\x0fimages_enrolled\x18\x04 \x01(\x05\"\xb2\x01\n\x15\x46\x61\x63\x65ModelInfoResponse\x12\x12\n\nmodel_name\x18\x01 \x01(\t\x12\x15\n\rmodel_version\x18\x02 \x01(\t\x12\x0e\n\x06\x64\x65vice\x18\x03 \x01(\t\x12\x15\n\rmodel_size_mb\x18\x04 \x01(\x02\x12\x12\n\ninput_size\x18\x05 \x01(\x05\x12\x15\n\rembedding_dim\x18\x06 \x01(\x05\x12\x1c\n\x14total_faces_enrolled\x18\x07 \x01(\x05\"\x8d\x01\n\x04\x46\x61\x63\x65\x12\'\n\x04\x62\x62ox\x18\x01 \x01(\x0b\x32\x19.sssp.ai.face.BoundingBox\x12\x12\n\nconfidence\x18\x02 \x01(\x02\x12\x17\n\x0f\x65mbedding_bytes\x18\x03 \x01(\x0c\x12\x15\n\rcropped_image\x18\x04 \x01(\x0c\x12\x18\n\x10\x65mbedding_vector\x18\x05 \x03(\x02\"|\n\tFaceMatch\x12\x11\n\tperson_id\x18\x01 \x01(\t\x12\x13\n\x0bperson_name\x18\x02 \x01(\t\x12\r\n\x05score\x18\x03 \x01(\x02\x12 \n\x04\x66\x61\x63\x65\x18\x04 \x01(\x0b\x32\x12.sssp.ai.face.Face\x12\x16\n\x0eis_blacklisted\x18\x05 \x01(\x08\"=\n\x0b\x42oundingBox\x12\n\n\x02x1\x18\x01 \x01(\x02\x12\n\n\x02y1\x18\x02 \x01(\x02\x12\n\n\x02x2\x18\x03 \x01(\x02\x12\n\n\x02y2\x18\x04 \x01(\x02\x32\x91\x04\n\x0b\x46\x61\x63\x65Service\x12P\n\x0b\x44\x65tectFaces\x12\x1f.sssp.ai.face.FaceDetectRequest\x1a .sssp.ai.face.FaceDetectResponse\x12X\n\rRecognizeFace\x12\".sssp.ai.face.FaceRecognizeRequest\x1a#.sssp.ai.face.FaceRecognizeResponse\x12O\n\nVerifyFace\x12\x1f.sssp.ai.face.FaceVerifyRequest\x1a .sssp.ai.face.FaceVerifyResponse\x12O\n\nEnrollFace\x12\x1f.sssp.ai.face.FaceEnrollRequest\x1a .sssp.ai.face.FaceEnrollResponse\x12W\n\x0cGetModelInfo\x12\".sssp.ai.face.FaceModelInfoRequest\x1a#.sssp.ai.face.FaceModelInfoResponse\x12[\n\x10\x45xtractEmbedding\x12\".sssp.ai.face.FaceEmbeddingRequest\x1a#.sssp.ai.face.FaceEmbeddingResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'face_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
+  _globals['_FACEDETECTREQUEST']._serialized_start=28
+  _globals['_FACEDETECTREQUEST']._serialized_end=92
+  _globals['_FACERECOGNIZEREQUEST']._serialized_start=94
+  _globals['_FACERECOGNIZEREQUEST']._serialized_end=205
+  _globals['_FACEVERIFYREQUEST']._serialized_start=207
+  _globals['_FACEVERIFYREQUEST']._serialized_end=315
+  _globals['_FACEENROLLREQUEST']._serialized_start=317
+  _globals['_FACEENROLLREQUEST']._serialized_end=416
+  _globals['_FACEMODELINFOREQUEST']._serialized_start=418
+  _globals['_FACEMODELINFOREQUEST']._serialized_end=440
+  _globals['_FACEEMBEDDINGREQUEST']._serialized_start=442
+  _globals['_FACEEMBEDDINGREQUEST']._serialized_end=498
+  _globals['_FACEDETECTRESPONSE']._serialized_start=501
+  _globals['_FACEDETECTRESPONSE']._serialized_end=640
+  _globals['_FACERECOGNIZERESPONSE']._serialized_start=643
+  _globals['_FACERECOGNIZERESPONSE']._serialized_end=805
+  _globals['_FACEVERIFYRESPONSE']._serialized_start=808
+  _globals['_FACEVERIFYRESPONSE']._serialized_end=1111
+  _globals['_FACEEMBEDDINGRESPONSE']._serialized_start=1114
+  _globals['_FACEEMBEDDINGRESPONSE']._serialized_end=1283
+  _globals['_FACEENROLLRESPONSE']._serialized_start=1285
+  _globals['_FACEENROLLRESPONSE']._serialized_end=1389
+  _globals['_FACEMODELINFORESPONSE']._serialized_start=1392
+  _globals['_FACEMODELINFORESPONSE']._serialized_end=1570
+  _globals['_FACE']._serialized_start=1573
+  _globals['_FACE']._serialized_end=1714
+  _globals['_FACEMATCH']._serialized_start=1716
+  _globals['_FACEMATCH']._serialized_end=1840
+  _globals['_BOUNDINGBOX']._serialized_start=1842
+  _globals['_BOUNDINGBOX']._serialized_end=1903
+  _globals['_FACESERVICE']._serialized_start=1906
+  _globals['_FACESERVICE']._serialized_end=2435
 # @@protoc_insertion_point(module_scope)

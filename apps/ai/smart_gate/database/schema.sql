@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS faces(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    embedding FLOAT8[] NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_faces_name ON faces(name);

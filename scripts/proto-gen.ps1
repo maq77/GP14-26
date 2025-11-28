@@ -19,7 +19,7 @@ $ProtoRoot  = Join-Path $RootDir "packages/contracts/protos"
 $PyOut      = Join-Path $RootDir "packages/contracts/python"
 
 # NOTE: you pointed to SSSP.Infrastructure in your last message; keep or change as needed:
-$CsProtoOut = Join-Path $RootDir "apps/api/src/SSSP.Infrastructure/Protos"
+$CsProtoOut = Join-Path $RootDir "apps/api/src/SSSP.Infrastructure.AI.Grpc/Protos"
 
 # Optional: only used if you generate grpc-web
 $WebOut     = Join-Path $RootDir "apps/web/src/protos"

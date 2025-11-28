@@ -1,0 +1,142 @@
+syntax = "proto3";
+
+option csharp_namespace = "SSSP.Infrastructure.AI.Face";
+package sssp.ai.face;
+
+// ============================================================================
+// Face Service
+// ============================================================================
+
+service FaceService {
+  // Detect faces in an image (no identification).
+  rpc DetectFaces(FaceDetectRequest) returns (FaceDetectResponse);
+
+  // Identify a face against candidate IDs or the full gallery.
+  rpc RecognizeFace(FaceRecognizeRequest) returns (FaceRecognizeResponse);
+
+  // One-to-one verification: "is this person authorized?"
+  rpc VerifyFace(FaceVerifyRequest) returns (FaceVerifyResponse);
+
+  // Enroll or update a person in the face gallery.
+  rpc EnrollFace(FaceEnrollRequest) returns (FaceEnrollResponse);
+
+  // Get model and gallery information.
+  rpc GetModelInfo(FaceModelInfoRequest) returns (FaceModelInfoResponse);
+}
+
+// ============================================================================
+// Requests
+// ============================================================================
+
+message FaceDetectRequest {
+  bytes image = 1;               // Raw image bytes (e.g. JPEG/PNG).
+  float confidence_threshold = 2; // 0.0–1.0, default handled server-side.
+}
+
+message FaceRecognizeRequest {
+  bytes image = 1;                          // Image with (single) face to identify.
+  repeated string candidate_ids = 2;        // If empty, search the whole gallery.
+  float confidence_threshold = 3;           // Min score for a match.
+  int32 max_results = 4;                    // Top-K matches to return (e.g. 5).
+}
+
+message FaceVerifyRequest {
+  bytes image = 1;               // Image to verify.
+  string camera_id = 2;          // Optional: which camera this came from.
+  bool check_blacklist = 3;      // Also check against blacklist/wanted list.
+  float confidence_threshold = 4; // Min verification confidence.
+}
+
+message FaceEnrollRequest {
+  string person_id = 1;          // Stable ID in your domain.
+  string person_name = 2;        // Human-readable name.
+  repeated bytes images = 3;     // Multiple photos of the same person.
+  bool is_blacklisted = 4;       // True if this person is on a blacklist.
+}
+
+message FaceModelInfoRequest {}
+
+// ============================================================================
+// Responses
+// ============================================================================
+
+message FaceDetectResponse {
+  bool success = 1;
+  string error_message = 2;
+
+  repeated Face faces = 3; // Detected faces with bbox + confidence.
+  int32 total_faces = 4;
+  float total_time_ms = 5;
+}
+
+message FaceRecognizeResponse {
+  bool success = 1;
+  string error_message = 2;
+
+  repeated FaceMatch matches = 3;  // Ranked matches.
+  int32 total_candidates_checked = 4; // For debugging / metrics.
+  float total_time_ms = 5;
+}
+
+message FaceVerifyResponse {
+  bool success = 1;
+  string error_message = 2;
+
+  bool face_detected = 3;  // At least one face in the image.
+  bool match_found = 4;    // Any match above threshold.
+  bool is_authorized = 5;  // Business logic result (e.g. in whitelist & not blacklisted).
+
+  string person_id = 6;    // Best match person_id (if any).
+  string person_name = 7;  // Best match person_name (if any).
+  float confidence = 8;    // Confidence of best match.
+
+  BoundingBox bbox = 9;    // BBox of verified face.
+  float total_time_ms = 10;
+
+  // Optional extra: candidates for debugging / UI.
+  repeated FaceMatch candidate_matches = 11;
+}
+
+message FaceEnrollResponse {
+  bool success = 1;
+  string error_message = 2;
+
+  string person_id = 3;
+  int32 images_enrolled = 4; // How many images were successfully used.
+}
+
+message FaceModelInfoResponse {
+  string model_name = 1;
+  string model_version = 2;
+  string device = 3;             // e.g. "CPU", "CUDA:0", "TensorRT".
+  float model_size_mb = 4;
+  int32 input_size = 5;          // e.g. 112 (for 112x112).
+  int32 embedding_dim = 6;       // e.g. 512.
+  int32 total_faces_enrolled = 7;
+}
+
+// ============================================================================
+// Data Types
+// ============================================================================
+
+message Face {
+  BoundingBox bbox = 1;
+  float confidence = 2;   // Detection confidence.
+  bytes embedding = 3;    // Face embedding (e.g. 512-d vector, encoded as bytes).
+  bytes cropped_image = 4; // Optional cropped face image bytes.
+}
+
+message FaceMatch {
+  string person_id = 1;
+  string person_name = 2;
+  float score = 3;        // Similarity / match score.
+  Face face = 4;          // Detected face info.
+  bool is_blacklisted = 5;
+}
+
+message BoundingBox {
+  float x1 = 1;
+  float y1 = 2;
+  float x2 = 3;
+  float y2 = 4;
+}
