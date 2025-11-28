@@ -1,0 +1,31 @@
+ 
+build images:
+docker compose -f docker-compose-v2.yml up -d
+
+rebuild:
+
+run:
+docker compose up
+
+
+...................................................................................
+Since you’re already in:
+
+M:\SSSP\GP14-26\infrastructure\docker
+
+🔁 First time after a successful build (or when you change Dockerfile/requirements):
+docker compose -f docker-compose-v2.yml up -d --build
+
+🚀 After that (images already built, just want to start):
+docker compose -f docker-compose-v2.yml up -d
+
+✅ Useful follow-ups
+
+Check running services:
+
+docker compose -f docker-compose-v2.yml ps
+
+
+Stop everything:
+
+docker compose -f docker-compose-v2.yml down

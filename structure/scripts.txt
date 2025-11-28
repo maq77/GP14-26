@@ -1,0 +1,22 @@
+Folder PATH listing for volume Programming
+Volume serial number is 846C-9E0B
+M:\SSSP\GP14-26\SCRIPTS
+    build-images.sh
+    deploy.sh
+    proto-gen.ps1
+    proto-gen.sh
+    run-tests.sh
+    seed-db.sh
+    setup-all.sh
+    setup-branch-protection.sh
+    setup-dev-stack-env.sh
+    setup-dev.sh
+    setup-git-hooks.sh
+    setup-github-secrets.sh
+    structure.txt
+    teardown.sh
+    test-builds.sh
+    verify-setup.sh
+    
+No subfolders exist 
+

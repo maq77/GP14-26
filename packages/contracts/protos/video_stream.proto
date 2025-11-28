@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package sssp.ai.stream;
+
+service VideoStreamService {
+  rpc StreamFrames (stream VideoFrameRequest)
+      returns (stream VideoFrameResponse);
+}
+
+message VideoFrameRequest {
+  string camera_id = 1;
+  int64 frame_id = 2;
+  int64 timestamp_ms = 3;
+  bytes image_jpeg = 4;  // BGR JPEG buffer from .NET
+}
+
+message FaceBox {
+  float x = 1;
+  float y = 2;
+  float w = 3;
+  float h = 4;
+}
+
+message FaceEmbedding {
+  repeated float vector = 1;  // embedding from FaceNet (L2-normalized)
+}
+
+message FaceResult {
+  FaceBox box = 1;
+  FaceEmbedding embedding = 2;
+}
+
+message VideoFrameResponse {
+  string camera_id = 1;
+  int64 frame_id = 2;
+  repeated FaceResult faces = 3;
+}

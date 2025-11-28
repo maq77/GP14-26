@@ -13,10 +13,10 @@ Architecture:
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from ..core.config import settings
-from ..core.logging import setup_logging, get_logger
-from .lifespan.manager import lifespan
-from .routes import health, detection
+from apps.ai.src.core.config import settings
+from apps.ai.src.core.logging import setup_logging, get_logger
+from apps.ai.src.api.lifespan.manager import lifespan
+from apps.ai.src.api.routes import health, detection
 
 # Setup logging first
 setup_logging()
@@ -46,7 +46,7 @@ def create_app() -> FastAPI:
         title=settings.APP_NAME,
         version=settings.APP_VERSION,
         description="AI Inference Service for SSSP - REST API for testing, gRPC for production",
-        lifespan=lifespan,  # ✅ Handles model loading + gRPC server
+        lifespan=lifespan,  #  Handles model loading + gRPC server
         
         # Docs (enabled even in production for testing)
         docs_url="/api/docs",
