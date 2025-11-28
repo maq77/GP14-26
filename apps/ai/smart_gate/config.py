@@ -22,5 +22,5 @@ DB_USER ="smart_user"
 DB_PASSWORD = "REDA"
 
 # Logging
-LOG_FILE = "logs/app.log"
+LOG_FILE = "data/logs/ai-service.log"
 

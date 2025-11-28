@@ -1,0 +1,33 @@
+rm -rf venv
+
+python -m venv venv
+
+venv\Scripts\activate
+
+or in linx :source venv/bin/activate
+
+
+pip install -r requirements.txt
+
+
+python -m main
+
+
+.....................................
+How to run server
+PS M:\SSSP\GP14-26\apps\ai> venv/scripts/activate.ps1
+(venv) PS M:\SSSP\GP14-26\apps\ai> python -m src.api.main
+
+..........................
+(IMPORTANT)
+inside: root(GP14-26)
+venv/scripts/activate.ps1
+python -m apps.ai.src.api.main
+or uvicorn apps.ai.src.api.main:app --reload --port 8001
+
+server will work on http://localhost:8001/api/docs
+
+
+...../................/.......................
+
+(venv) PS M:\SSSP\GP14-26> uvicorn apps.ai.src.api.main:app --reload --port 8001

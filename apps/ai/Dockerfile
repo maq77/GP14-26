@@ -1,168 +1,154 @@
 # ==================================================
-# SSSP AI Service - FastAPI + PyTorch
-# Multi-stage Dockerfile with GPU support
+# SSSP AI Service - Optimized Multi-Stage
+# Supports: development + production
 # ==================================================
 
-# ==================================================
-# Stage 1: Base Python
-# ==================================================
 ARG PYTHON_VERSION=3.11
+
+# ==================================================
+# Stage 1: Base (System dependencies)
+# ==================================================
 FROM python:${PYTHON_VERSION}-slim AS base
 
-# Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     DEBIAN_FRONTEND=noninteractive
 
-WORKDIR /app
-
-# Install system dependencies
+# Install minimal system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
-    build-essential \
+    libgomp1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
     libxrender1 \
-    libgomp1 \
-    libgl1 \
- && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
-# Create non-root user
-RUN groupadd -r sssp && useradd -r -g sssp sssp
+WORKDIR /app
 
 # ==================================================
-# Stage 2: Dependencies
+# Stage 2: Dependencies Builder (Cached layer)
 # ==================================================
 FROM base AS dependencies
 
-# Copy requirements
+# Install build tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy only requirements (for Docker cache)
 COPY apps/ai/requirements.txt .
-COPY apps/ai/pyproject.toml .
 
-# Install Python dependencies
-RUN pip install --upgrade pip setuptools wheel && \
-    pip install -r requirements.txt
-
-# ==================================================
-# Stage 3: Build (for production)
-# ==================================================
-FROM dependencies AS build
-
-# Copy source code
-COPY apps/ai/src/ /app/src/
-COPY packages/contracts/proto/ /app/proto/
-
-# Compile protobuf files
-RUN python -m grpc_tools.protoc \
-    -I/app/proto \
-    --python_out=/app/src/schemas \
-    --grpc_python_out=/app/src/schemas \
-    /app/proto/*.proto
-
-# Pre-download models (optional - can be done at runtime)
-# RUN python -c "from ultralytics import YOLO; YOLO('yolov8n.pt')"
+# Install dependencies in virtual environment
+RUN python -m venv /opt/venv && \
+    /opt/venv/bin/pip install --upgrade pip wheel && \
+    /opt/venv/bin/pip install -r requirements.txt
 
 # ==================================================
-# Stage 4: Development
+# Stage 3: Development (Hot-reload)
 # ==================================================
 FROM dependencies AS development
 
-# Install development dependencies
-RUN pip install \
-    pytest \
-    pytest-asyncio \
-    pytest-cov \
-    black \
-    ruff \
-    ipython \
-    jupyter
+ENV PATH="/opt/venv/bin:$PATH"
 
-COPY apps/ai/ /app/
-COPY packages/contracts/ /app/contracts/
+# Install dev tools
+COPY apps/ai/requirements-dev.txt .
+RUN /opt/venv/bin/pip install -r requirements-dev.txt
 
-USER sssp
-EXPOSE 8000 50051
+WORKDIR /app
 
-CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
-
-# ==================================================
-# Stage 5: Production
-# ==================================================
-FROM base AS production
-
-# Copy installed dependencies
-COPY --from=dependencies /usr/local/lib/python${PYTHON_VERSION}/site-packages/ \
-     /usr/local/lib/python${PYTHON_VERSION}/site-packages/
-
-# Copy application
-COPY --from=build --chown=sssp:sssp /app /app
-
-# Create directories for models and cache
-RUN mkdir -p /app/models /app/cache && \
+# Create non-root user
+RUN useradd -m -u 1000 sssp && \
+    mkdir -p /app/data /app/cache && \
     chown -R sssp:sssp /app
 
 USER sssp
 
-EXPOSE 8000 50051
+EXPOSE 8001 50051
 
-# Health check
+# Development command (hot-reload)
+CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
+
+# ==================================================
+# Stage 4: Production (Minimal runtime)
+# ==================================================
+FROM base AS production
+
+# Copy only virtual environment (no build tools)
+COPY --from=dependencies /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy application code
+COPY apps/ai/src /app/src
+COPY packages/contracts/python /app/packages/contracts/python
+
+# Create non-root user
+RUN useradd -m -u 1000 sssp && \
+    mkdir -p /app/data /app/cache && \
+    chown -R sssp:sssp /app
+
+USER sssp
+
+EXPOSE 8001 50051
+
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:8001/health || exit 1
 
-# Use gunicorn with uvicorn workers for production
+# Production command (gunicorn)
 CMD ["gunicorn", "src.api.main:app", \
      "--workers", "4", \
      "--worker-class", "uvicorn.workers.UvicornWorker", \
-     "--bind", "0.0.0.0:8000", \
+     "--bind", "0.0.0.0:8001", \
      "--timeout", "120", \
-     "--access-logfile", "-", \
-     "--error-logfile", "-"]
+     "--access-logfile", "-"]
 
 # ==================================================
-# Stage 6: Production with GPU support
+# Stage 5: GPU Production (NVIDIA CUDA)
 # ==================================================
 FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04 AS production-gpu
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
-    DEBIAN_FRONTEND=noninteractive
+    PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /app
 
-# Install Python and dependencies
+# Install Python + minimal deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.11 \
     python3-pip \
     curl \
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
     libgomp1 \
-    libgl1-mesa-glx \
-    && rm -rf /var/lib/apt/lists/*
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/* && \
+    ln -s /usr/bin/python3.11 /usr/bin/python
 
-# Copy from build stage
-COPY --from=dependencies /usr/local/lib/python3.11/site-packages/ \
-     /usr/local/lib/python3.11/site-packages/
-COPY --from=build /app /app
+# Copy virtual environment from builder
+COPY --from=dependencies /opt/venv /opt/venv
 
-RUN groupadd -r sssp && useradd -r -g sssp sssp && \
-    mkdir -p /app/models /app/cache && \
+# Copy application
+COPY apps/ai/src /app/src
+COPY packages/contracts/python /app/packages/contracts/python
+
+RUN useradd -m -u 1000 sssp && \
+    mkdir -p /app/data /app/cache && \
     chown -R sssp:sssp /app
 
 USER sssp
-EXPOSE 8000 50051
+
+EXPOSE 8001 50051
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:8001/health || exit 1
 
-CMD ["gunicorn", "src.api.main:app", \
+ENV PYTHONPATH=/app
+
+CMD ["uvicorn", "apps.ai.src.api.main:app", \
      "--workers", "2", \
      "--worker-class", "uvicorn.workers.UvicornWorker", \
-     "--bind", "0.0.0.0:8000", \
+     "--bind", "0.0.0.0:8001", \
      "--timeout", "180"]
