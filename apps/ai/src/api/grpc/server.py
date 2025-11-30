@@ -42,7 +42,7 @@ sys.path.insert(0, str(CONTRACTS_PY_PATH.parent))  # .../packages/contracts
 # ---------------------------------------------------------------------------
 
 # Detection service (compiled with python_package = "sssp.ai.detection" most likely)
-from sssp.ai.detection.detection_pb2_grpc import (
+from packages.contracts.python.detection_pb2_grpc import (
     add_DetectionServiceServicer_to_server,
 )
 
