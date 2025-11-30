@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 """
 apps/ai/src/api/grpc/server.py
 Simple gRPC server for AI inference.
@@ -18,7 +16,6 @@ All higher-level business logic (recognize, verify, enroll, etc.)
 is implemented in .NET and NOT in this AI service.
 """
 
->>>>>>> Stashed changes
 import sys
 from pathlib import Path
 from concurrent import futures
@@ -26,22 +23,6 @@ from typing import Optional
 
 import grpc
 import structlog
-<<<<<<< Updated upstream
-
-from ...core.config import settings
-from ...services.ml.Face_Recognition_Service import FaceRecognitionService
-from .servicers.detection_servicer import DetectionServicer
-from .servicers.face_servicer import FaceServicer
-from .servicers.video_stream_servicer import VideoStreamService
-
-contracts_path = Path(__file__).resolve().parents[5] / "packages" / "contracts" / "python"
-sys.path.insert(0, str(contracts_path))
-sys.path.insert(0, str(contracts_path.parent))
-
-from detection_pb2_grpc import add_DetectionServiceServicer_to_server
-from face_pb2_grpc import add_FaceServiceServicer_to_server
-from video_stream_pb2_grpc import add_VideoStreamServiceServicer_to_server
-=======
 
 # ---------------------------------------------------------------------------
 # Sys.path setup so generated protobufs & packages are importable
@@ -84,15 +65,11 @@ from .servicers.face_servicer import FaceServicer
 from .servicers.video_stream_servicer import VideoStreamService
 from ...services.ml.Face_Recognition_Service import FaceRecognitionService
 from ...core.config import settings
->>>>>>> Stashed changes
 
 logger = structlog.get_logger("grpc_server")
 
 
 class GRPCServer:
-<<<<<<< Updated upstream
-    def __init__(self):
-=======
     """
     Simple gRPC server for AI services.
 
@@ -111,7 +88,6 @@ class GRPCServer:
 
     def __init__(self, face_service: Optional[FaceRecognitionService] = None) -> None:
         # Server basic config from settings
->>>>>>> Stashed changes
         self.host = settings.GRPC_HOST
         self.port = settings.GRPC_PORT
         self.max_workers = settings.GRPC_MAX_WORKERS
@@ -122,11 +98,6 @@ class GRPCServer:
         )
 
         self.server: Optional[grpc.Server] = None
-<<<<<<< Updated upstream
-        self.face_service: Optional[FaceRecognitionService] = None
-=======
-
->>>>>>> Stashed changes
         logger.info(
             "grpc_server_initialized",
             host=self.host,
@@ -134,12 +105,6 @@ class GRPCServer:
             max_workers=self.max_workers,
         )
 
-<<<<<<< Updated upstream
-    def start(self) -> None:
-        if self.server is not None:
-            logger.warning("grpc_server_already_started")
-            return
-=======
     # ------------------------------------------------------------------ #
     # Lifecycle
     # ------------------------------------------------------------------ #
@@ -154,43 +119,10 @@ class GRPCServer:
 
         logger.info("creating_grpc_server")
 
->>>>>>> Stashed changes
         try:
             self.server = grpc.server(
                 futures.ThreadPoolExecutor(max_workers=self.max_workers),
                 options=[
-<<<<<<< Updated upstream
-                    ("grpc.max_send_message_length", 100 * 1024 * 1024),
-                    ("grpc.max_receive_message_length", 100 * 1024 * 1024),
-                ],
-            )
-            detection_servicer = DetectionServicer()
-            add_DetectionServiceServicer_to_server(detection_servicer, self.server)
-            logger.info("servicer_registered", servicer="DetectionService")
-            self.face_service = FaceRecognitionService()
-            add_FaceServiceServicer_to_server(
-                FaceServicer(self.face_service),
-                self.server,
-            )
-            logger.info("servicer_registered", servicer="FaceService")
-            add_VideoStreamServiceServicer_to_server(
-                VideoStreamService(self.face_service),
-                self.server,
-            )
-            logger.info("servicer_registered", servicer="VideoStreamService")
-            bind_address = f"{self.host}:{self.port}"
-            self.server.add_insecure_port(bind_address)
-            self.server.start()
-            logger.info("grpc_server_started", address=bind_address)
-        except Exception as e:
-            logger.error("failed_to_start_grpc_server", error=str(e), exc_info=True)
-            raise
-
-    def stop(self, grace_period: int = 5) -> None:
-        if self.server is None:
-            logger.warning("grpc_server_not_running")
-            return
-=======
                     ("grpc.max_send_message_length", 100 * 1024 * 1024),   # 100 MB
                     ("grpc.max_receive_message_length", 100 * 1024 * 1024),  # 100 MB
                 ],
@@ -249,7 +181,6 @@ class GRPCServer:
 
         logger.info("stopping_grpc_server", grace_period=grace_period)
 
->>>>>>> Stashed changes
         try:
             logger.info("stopping_grpc_server", grace_period=grace_period)
             self.server.stop(grace_period)
@@ -258,26 +189,17 @@ class GRPCServer:
             logger.error("error_stopping_grpc_server", error=str(e))
         finally:
             self.server = None
-<<<<<<< Updated upstream
-            self.face_service = None
-
-    def wait_for_termination(self) -> None:
-=======
 
     def wait_for_termination(self) -> None:
         """
         Block the current thread until the server is terminated.
         """
->>>>>>> Stashed changes
         if self.server:
             self.server.wait_for_termination()
 
 
-<<<<<<< Updated upstream
-=======
 # ========================================================================
 # Export
 # ========================================================================
 
->>>>>>> Stashed changes
 __all__ = ["GRPCServer"]
