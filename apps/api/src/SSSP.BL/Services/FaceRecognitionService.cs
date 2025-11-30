@@ -5,14 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SSSP.BL.Interfaces;
-using SSSP.BL.Managers;
 using SSSP.BL.Managers.Interfaces;
+using SSSP.BL.Records;
+using SSSP.BL.Services.Interfaces;
 using SSSP.DAL.Enums;
 using SSSP.DAL.Models;
 using SSSP.Infrastructure.AI.Grpc.Interfaces;
 using SSSP.Infrastructure.Persistence.Interfaces;
-using SSSP.BL.Records;
-using SSSP.BL.Services.Interfaces;
 
 namespace SSSP.BL.Services
 {
@@ -23,6 +22,10 @@ namespace SSSP.BL.Services
         private readonly IFaceProfileCache _faceProfileCache;
         private readonly IUnitOfWork _uow;
         private readonly ILogger<FaceRecognitionService> _logger;
+
+        private const int MIN_EMBEDDING_SIZE = 128;
+        private const double HIGH_CONFIDENCE = 0.85;
+        private const double MEDIUM_CONFIDENCE = 0.65;
 
         public FaceRecognitionService(
             IAIFaceClient ai,
@@ -45,26 +48,16 @@ namespace SSSP.BL.Services
         {
             if (image == null || image.Length == 0)
             {
-                _logger.LogWarning(
-                    "VerifyAsync called with empty image. Camera={CameraId}",
-                    cameraId ?? "N/A");
+                _logger.LogWarning("Verify called with empty image. CameraId={CameraId}", cameraId ?? "N/A");
                 return new FaceMatchResult(false, null, null, 0.0);
             }
-
-            using var scope = _logger.BeginScope(new Dictionary<string, object>
-            {
-                ["CameraId"] = cameraId ?? "N/A",
-                ["Mode"] = "SingleImage"
-            });
 
             var sw = Stopwatch.StartNew();
 
             try
             {
-                _logger.LogInformation(
-                    "Face verify started. Camera={CameraId} ImageSize={Size}",
-                    cameraId,
-                    image.Length);
+                _logger.LogInformation("Face verification started. CameraId={CameraId}, ImageSize={ImageSize}, Mode=SingleImage",
+                    cameraId, image.Length);
 
                 var embeddingResult = await _ai.ExtractEmbeddingAsync(image, cameraId, ct);
 
@@ -76,47 +69,38 @@ namespace SSSP.BL.Services
                     sw.Stop();
 
                     _logger.LogWarning(
-                        "VerifyAsync failed. No valid embedding from AI. Camera={CameraId} FaceDetected={Detected} ElapsedMs={Elapsed}",
+                        "Face extraction failed. CameraId={CameraId}, FaceDetected={FaceDetected}, EmbeddingSize={EmbeddingSize}, ElapsedMs={ElapsedMs}",
                         cameraId,
                         embeddingResult?.FaceDetected ?? false,
+                        embeddingResult?.Embedding?.Count ?? 0,
                         sw.ElapsedMilliseconds);
 
                     return new FaceMatchResult(false, null, null, 0.0);
                 }
 
-                var result = await MatchInternalAsync(
-                    embeddingResult.Embedding,
-                    cameraId,
-                    ct);
+                var result = await MatchInternalAsync(embeddingResult.Embedding, cameraId, ct);
 
                 sw.Stop();
 
                 _logger.LogInformation(
-                    "VerifyAsync completed. Camera={CameraId} IsMatch={IsMatch} Similarity={Similarity} ElapsedMs={Elapsed}",
-                    cameraId,
-                    result.IsMatch,
-                    result.Similarity,
-                    sw.ElapsedMilliseconds);
+                    "Face verification completed. CameraId={CameraId}, Mode=SingleImage, IsMatch={IsMatch}, Similarity={Similarity:F4}, ElapsedMs={ElapsedMs}",
+                    cameraId, result.IsMatch, result.Similarity, sw.ElapsedMilliseconds);
 
                 return result;
             }
             catch (OperationCanceledException)
             {
                 sw.Stop();
-                _logger.LogWarning(
-                    "VerifyAsync canceled. Camera={CameraId} ElapsedMs={Elapsed}",
-                    cameraId,
-                    sw.ElapsedMilliseconds);
+                _logger.LogWarning("Face verification cancelled. CameraId={CameraId}, ElapsedMs={ElapsedMs}",
+                    cameraId, sw.ElapsedMilliseconds);
                 throw;
             }
             catch (Exception ex)
             {
                 sw.Stop();
-                _logger.LogError(
-                    ex,
-                    "VerifyAsync failed with exception. Camera={CameraId} ElapsedMs={Elapsed}",
-                    cameraId,
-                    sw.ElapsedMilliseconds);
+                _logger.LogError(ex,
+                    "Face verification failed. CameraId={CameraId}, ExceptionType={ExceptionType}, ElapsedMs={ElapsedMs}",
+                    cameraId, ex.GetType().Name, sw.ElapsedMilliseconds);
                 throw;
             }
         }
@@ -126,19 +110,12 @@ namespace SSSP.BL.Services
             string cameraId,
             CancellationToken ct = default)
         {
-            if (embedding == null || embedding.Count == 0)
+            if (embedding == null || embedding.Count < MIN_EMBEDDING_SIZE)
             {
-                _logger.LogDebug(
-                    "VerifyEmbeddingAsync skipped. Empty embedding. Camera={CameraId}",
-                    cameraId ?? "N/A");
+                _logger.LogDebug("Invalid embedding. CameraId={CameraId}, EmbeddingSize={EmbeddingSize}",
+                    cameraId ?? "N/A", embedding?.Count ?? 0);
                 return new FaceMatchResult(false, null, null, 0.0);
             }
-
-            using var scope = _logger.BeginScope(new Dictionary<string, object>
-            {
-                ["CameraId"] = cameraId ?? "N/A",
-                ["Mode"] = "Streaming"
-            });
 
             var sw = Stopwatch.StartNew();
 
@@ -148,32 +125,34 @@ namespace SSSP.BL.Services
 
                 sw.Stop();
 
-                _logger.LogDebug(
-                    "VerifyEmbeddingAsync completed. Camera={CameraId} IsMatch={IsMatch} Similarity={Similarity} ElapsedMs={Elapsed}",
-                    cameraId,
-                    result.IsMatch,
-                    result.Similarity,
-                    sw.ElapsedMilliseconds);
+                if (result.IsMatch)
+                {
+                    _logger.LogInformation(
+                        "Face verification completed. CameraId={CameraId}, Mode=Streaming, IsMatch={IsMatch}, UserId={UserId}, FaceProfileId={FaceProfileId}, Similarity={Similarity:F4}, ElapsedMs={ElapsedMs}",
+                        cameraId, result.IsMatch, result.UserId, result.FaceProfileId, result.Similarity, sw.ElapsedMilliseconds);
+                }
+                else
+                {
+                    _logger.LogDebug(
+                        "Face verification completed. CameraId={CameraId}, Mode=Streaming, IsMatch={IsMatch}, BestSimilarity={Similarity:F4}, ElapsedMs={ElapsedMs}",
+                        cameraId, result.IsMatch, result.Similarity, sw.ElapsedMilliseconds);
+                }
 
                 return result;
             }
             catch (OperationCanceledException)
             {
                 sw.Stop();
-                _logger.LogDebug(
-                    "VerifyEmbeddingAsync canceled. Camera={CameraId} ElapsedMs={Elapsed}",
-                    cameraId,
-                    sw.ElapsedMilliseconds);
+                _logger.LogDebug("Embedding verification cancelled. CameraId={CameraId}, ElapsedMs={ElapsedMs}",
+                    cameraId, sw.ElapsedMilliseconds);
                 throw;
             }
             catch (Exception ex)
             {
                 sw.Stop();
-                _logger.LogError(
-                    ex,
-                    "VerifyEmbeddingAsync failed with exception. Camera={CameraId} ElapsedMs={Elapsed}",
-                    cameraId,
-                    sw.ElapsedMilliseconds);
+                _logger.LogError(ex,
+                    "Embedding verification failed. CameraId={CameraId}, ExceptionType={ExceptionType}, ElapsedMs={ElapsedMs}",
+                    cameraId, ex.GetType().Name, sw.ElapsedMilliseconds);
                 throw;
             }
         }
@@ -187,9 +166,8 @@ namespace SSSP.BL.Services
 
             if (policy.Mode == CameraRecognitionMode.Disabled)
             {
-                _logger.LogInformation(
-                    "Recognition disabled for Camera={CameraId}. Skipping match.",
-                    policy.CameraId);
+                _logger.LogDebug("Recognition disabled. CameraId={CameraId}, Mode={Mode}",
+                    policy.CameraId, policy.Mode);
                 return new FaceMatchResult(false, null, null, 0.0);
             }
 
@@ -197,58 +175,44 @@ namespace SSSP.BL.Services
 
             if (profiles.Count == 0)
             {
-                _logger.LogInformation(
-                    "No FaceProfiles found for matching. Camera={CameraId}",
+                _logger.LogWarning("No face profiles available for matching. CameraId={CameraId}",
                     policy.CameraId);
                 return new FaceMatchResult(false, null, null, 0.0);
             }
 
-            var result = _matcher.Match(
-                embedding,
-                profiles,
-                policy.EffectiveThreshold);
+            var result = _matcher.Match(embedding, profiles, policy.EffectiveThreshold);
 
             if (policy.Mode == CameraRecognitionMode.ObserveOnly)
             {
                 _logger.LogInformation(
-                    "ObserveOnly mode. Camera={CameraId} Similarity={Similarity} Threshold={Threshold}",
-                    policy.CameraId,
-                    result.Similarity,
-                    policy.EffectiveThreshold);
+                    "Observe-only mode. CameraId={CameraId}, Mode={Mode}, Similarity={Similarity:F4}, Threshold={Threshold:F4}, Profiles={ProfileCount}",
+                    policy.CameraId, policy.Mode, result.Similarity, policy.EffectiveThreshold, profiles.Count);
 
                 return new FaceMatchResult(false, null, null, result.Similarity);
             }
 
             if (result.IsMatch)
             {
-                var confidenceBucket = BucketizeConfidence(result.Similarity);
+                var confidence = BucketizeConfidence(result.Similarity);
 
                 _logger.LogInformation(
-                    "Face match success. Camera={CameraId} User={UserId} FaceProfile={FaceProfileId} Similarity={Similarity} Threshold={Threshold} Mode={Mode} Confidence={ConfidenceBucket}",
-                    policy.CameraId,
-                    result.UserId,
-                    result.FaceProfileId,
-                    result.Similarity,
-                    policy.EffectiveThreshold,
-                    policy.Mode,
-                    confidenceBucket);
+                    "FACE MATCHED. CameraId={CameraId}, UserId={UserId}, FaceProfileId={FaceProfileId}, Similarity={Similarity:F4}, Threshold={Threshold:F4}, Confidence={Confidence}, Mode={Mode}, Profiles={ProfileCount}",
+                    policy.CameraId, result.UserId, result.FaceProfileId, result.Similarity,
+                    policy.EffectiveThreshold, confidence, policy.Mode, profiles.Count);
             }
             else
             {
                 _logger.LogDebug(
-                    "Face match failed. Camera={CameraId} BestSimilarity={Similarity} Threshold={Threshold} Mode={Mode}",
-                    policy.CameraId,
-                    result.Similarity,
-                    policy.EffectiveThreshold,
-                    policy.Mode);
+                    "No face match. CameraId={CameraId}, BestSimilarity={Similarity:F4}, Threshold={Threshold:F4}, Mode={Mode}, Profiles={ProfileCount}",
+                    policy.CameraId, result.Similarity, policy.EffectiveThreshold, policy.Mode, profiles.Count);
             }
 
             return result;
         }
 
         private async Task<CameraRecognitionPolicy> ResolveCameraPolicyAsync(
-    string cameraId,
-    CancellationToken ct)
+            string cameraId,
+            CancellationToken ct)
         {
             var mode = CameraRecognitionMode.Normal;
             var threshold = _matcher.DefaultThreshold;
@@ -265,11 +229,22 @@ namespace SSSP.BL.Services
                     mode = camera.RecognitionMode;
 
                     if (camera.MatchThresholdOverride.HasValue)
+                    {
                         threshold = camera.MatchThresholdOverride.Value;
+                        _logger.LogDebug("Custom threshold applied. CameraId={CameraId}, Threshold={Threshold:F4}",
+                            resolvedCameraId, threshold);
+                    }
 
-                    // NEW: if this camera is not configured for face AI, treat it as disabled for face recognition
                     if (!camera.Capabilities.HasFlag(CameraAICapabilities.Face))
+                    {
                         mode = CameraRecognitionMode.Disabled;
+                        _logger.LogDebug("Face AI capability disabled. CameraId={CameraId}, Capabilities={Capabilities}",
+                            resolvedCameraId, camera.Capabilities);
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning("Camera not found in database. CameraId={CameraId}", id);
                 }
             }
 
@@ -280,18 +255,18 @@ namespace SSSP.BL.Services
                 _ => threshold
             };
 
-            return new CameraRecognitionPolicy(
-                resolvedCameraId,
-                mode,
-                threshold);
+            return new CameraRecognitionPolicy(resolvedCameraId, mode, threshold);
         }
 
         private static string BucketizeConfidence(double similarity)
         {
-            if (similarity >= 0.85) return "High";
-            if (similarity >= 0.65) return "Medium";
-            if (similarity > 0.0) return "Low";
-            return "None";
+            return similarity switch
+            {
+                >= HIGH_CONFIDENCE => "High",
+                >= MEDIUM_CONFIDENCE => "Medium",
+                > 0.0 => "Low",
+                _ => "None"
+            };
         }
     }
 }

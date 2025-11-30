@@ -20,7 +20,9 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
     {
         private readonly ILogger<AIFaceClient> _logger;
         private readonly FaceService.FaceServiceClient _client;
-        private readonly AsyncPolicy _policy;
+        private readonly IAsyncPolicy _policy;
+
+        private const string ServiceName = "FaceService";
 
         public AIFaceClient(
             GrpcChannelFactory channelFactory,
@@ -33,7 +35,7 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
 
             _policy = BuildPolicy();
 
-            _logger.LogInformation("AIFaceClient initialized.");
+            _logger.LogInformation("{Service} client initialized.", ServiceName);
         }
 
         public async Task<FaceVerifyResponse> VerifyFaceAsync(
@@ -51,21 +53,25 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
 
             var sw = Stopwatch.StartNew();
 
-            return await _policy.ExecuteAsync(async () =>
+            return await _policy.ExecuteAsync(async ct =>
             {
                 try
                 {
                     _logger.LogInformation(
-                        "VerifyFace sent. Camera={CameraId} Size={Size}",
+                        "{Service} VerifyFace sent. Camera={CameraId} Size={Size}",
+                        ServiceName,
                         cameraId,
                         imageBytes.Length);
 
-                    var response = await _client.VerifyFaceAsync(request);
+                    var response = await _client.VerifyFaceAsync(
+                        request,
+                        cancellationToken: ct);
 
                     sw.Stop();
 
                     _logger.LogInformation(
-                        "VerifyFace response. Camera={CameraId} Success={Success} Match={Match} Authorized={Auth} ElapsedMs={Elapsed}",
+                        "{Service} VerifyFace response. Camera={CameraId} Success={Success} Match={Match} Authorized={Auth} ElapsedMs={Elapsed}",
+                        ServiceName,
                         cameraId,
                         response.Success,
                         response.MatchFound,
@@ -79,12 +85,13 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
                     sw.Stop();
                     _logger.LogError(
                         ex,
-                        "VerifyFace failed. Camera={CameraId} ElapsedMs={Elapsed}",
+                        "{Service} VerifyFace failed. Camera={CameraId} ElapsedMs={Elapsed}",
+                        ServiceName,
                         cameraId,
                         sw.ElapsedMilliseconds);
                     throw;
                 }
-            });
+            }, CancellationToken.None);
         }
 
         public async Task<FaceEmbeddingResponse> ExtractEmbeddingAsync(
@@ -104,23 +111,29 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
 
             var sw = Stopwatch.StartNew();
 
-            return await _policy.ExecuteAsync(async () =>
+            return await _policy.ExecuteAsync(async ct =>
             {
+                var effectiveCt = CancellationTokenSource
+                    .CreateLinkedTokenSource(ct, cancellationToken)
+                    .Token;
+
                 try
                 {
                     _logger.LogInformation(
-                        "ExtractEmbedding sent. Camera={CameraId} Size={Size}",
+                        "{Service} ExtractEmbedding sent. Camera={CameraId} Size={Size}",
+                        ServiceName,
                         cameraId ?? "N/A",
                         image.Length);
 
                     var response = await _client.ExtractEmbeddingAsync(
                         request,
-                        cancellationToken: cancellationToken);
+                        cancellationToken: effectiveCt);
 
                     sw.Stop();
 
                     _logger.LogInformation(
-                        "ExtractEmbedding response. Camera={CameraId} Success={Success} Dim={Dim} FaceDetected={Detected} ElapsedMs={Elapsed}",
+                        "{Service} ExtractEmbedding response. Camera={CameraId} Success={Success} Dim={Dim} FaceDetected={Detected} ElapsedMs={Elapsed}",
+                        ServiceName,
                         cameraId ?? "N/A",
                         response.Success,
                         response.Embedding.Count,
@@ -134,12 +147,13 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
                     sw.Stop();
                     _logger.LogError(
                         ex,
-                        "ExtractEmbedding failed. Camera={CameraId} ElapsedMs={Elapsed}",
+                        "{Service} ExtractEmbedding failed. Camera={CameraId} ElapsedMs={Elapsed}",
+                        ServiceName,
                         cameraId ?? "N/A",
                         sw.ElapsedMilliseconds);
                     throw;
                 }
-            });
+            }, cancellationToken);
         }
 
         private static void ValidateImage(byte[] image)
@@ -148,26 +162,32 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
                 throw new ArgumentException("Image is empty", nameof(image));
         }
 
-        private AsyncPolicy BuildPolicy()
+        private IAsyncPolicy BuildPolicy()
         {
-            var retry = Policy
+            // 1) Retry on transient gRPC or timeout, every 3 seconds
+            AsyncRetryPolicy retry = Policy
                 .Handle<RpcException>()
                 .Or<TimeoutRejectedException>()
                 .WaitAndRetryAsync(
                     retryCount: 3,
-                    sleepDurationProvider: attempt => TimeSpan.FromMilliseconds(300 * attempt),
-                    onRetry: (ex, ts, count, _) =>
+                    sleepDurationProvider: _ => TimeSpan.FromSeconds(3),
+                    onRetry: (ex, ts, attempt, _) =>
                     {
                         _logger.LogWarning(
                             ex,
-                            "AIFaceClient retry {Retry} after {Delay}ms",
-                            count,
+                            "{Service} retry {Attempt} after {Delay}ms",
+                            ServiceName,
+                            attempt,
                             ts.TotalMilliseconds);
                     });
 
-            var timeout = Policy.TimeoutAsync(5);
+            // 2) Per-call timeout (hard cap)
+            AsyncTimeoutPolicy timeout = Policy.TimeoutAsync(
+                TimeSpan.FromSeconds(5),
+                TimeoutStrategy.Optimistic);
 
-            var breaker = Policy
+            // 3) Circuit breaker on repeated RpcExceptions
+            AsyncCircuitBreakerPolicy breaker = Policy
                 .Handle<RpcException>()
                 .CircuitBreakerAsync(
                     exceptionsAllowedBeforeBreaking: 5,
@@ -176,12 +196,15 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
                     {
                         _logger.LogCritical(
                             ex,
-                            "AIFaceClient circuit opened for {Seconds}s",
+                            "{Service} circuit opened for {Seconds}s",
+                            ServiceName,
                             ts.TotalSeconds);
                     },
                     onReset: () =>
                     {
-                        _logger.LogInformation("AIFaceClient circuit reset");
+                        _logger.LogInformation(
+                            "{Service} circuit reset",
+                            ServiceName);
                     });
 
             return Policy.WrapAsync(retry, timeout, breaker);

@@ -18,7 +18,9 @@ is implemented in .NET and NOT in this AI service.
 
 import sys
 from pathlib import Path
+import grpc
 from concurrent import futures
+import structlog
 from typing import Optional
 
 import grpc
@@ -102,7 +104,7 @@ class GRPCServer:
             "grpc_server_initialized",
             host=self.host,
             port=self.port,
-            max_workers=self.max_workers,
+            max_workers=self.max_workers
         )
 
     # ------------------------------------------------------------------ #
@@ -120,6 +122,7 @@ class GRPCServer:
         logger.info("creating_grpc_server")
 
         try:
+            # Create server with thread pool
             self.server = grpc.server(
                 futures.ThreadPoolExecutor(max_workers=self.max_workers),
                 options=[
@@ -155,6 +158,8 @@ class GRPCServer:
             # ----------------------------------------------------------
             bind_address = f"{self.host}:{self.port}"
             self.server.add_insecure_port(bind_address)
+            
+            # Start server (non-blocking)
             self.server.start()
 
             logger.info("grpc_server_started", address=bind_address)
@@ -167,7 +172,7 @@ class GRPCServer:
             )
             # Surface the error – better to crash fast and let orchestrator restart
             raise
-
+    
     def stop(self, grace_period: int = 5) -> None:
         """
         Stop gRPC server gracefully.
@@ -182,7 +187,6 @@ class GRPCServer:
         logger.info("stopping_grpc_server", grace_period=grace_period)
 
         try:
-            logger.info("stopping_grpc_server", grace_period=grace_period)
             self.server.stop(grace_period)
             logger.info("grpc_server_stopped")
         except Exception as e:

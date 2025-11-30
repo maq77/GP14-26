@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -17,6 +18,8 @@ namespace SSSP.Api.Controllers
         private readonly FaceRecognitionService _recognitionService;
         private readonly ILogger<FaceController> _logger;
 
+        private const int MAX_IMAGE_SIZE = 10_000_000;
+
         public FaceController(
             FaceEnrollmentService enrollmentService,
             FaceRecognitionService recognitionService,
@@ -29,21 +32,25 @@ namespace SSSP.Api.Controllers
 
         [HttpPost("enroll")]
         //[Authorize(Roles = "Admin")]
-        [RequestSizeLimit(10_000_000)]
-        public async Task<IActionResult> Enroll(
-            [FromForm] EnrollFaceRequest request,
-            CancellationToken ct)
+        [RequestSizeLimit(MAX_IMAGE_SIZE)]
+        public async Task<IActionResult> Enroll([FromForm] EnrollFaceRequest request, CancellationToken ct)
         {
-            _logger.LogInformation(
-                "HTTP face enroll request received for user {UserId}",
-                request.UserId);
+            var sw = Stopwatch.StartNew();
+
+            _logger.LogInformation("Face enrollment request received. UserId={UserId}, HasDescription={HasDescription}",
+                request.UserId, !string.IsNullOrWhiteSpace(request.Description));
 
             if (request.Image == null || request.Image.Length == 0)
             {
-                _logger.LogWarning(
-                    "Face enroll request missing image for user {UserId}",
-                    request.UserId);
-                return BadRequest("Image is required");
+                _logger.LogWarning("Enrollment rejected - missing image. UserId={UserId}", request.UserId);
+                return BadRequest(new { Message = "Image is required", UserId = request.UserId });
+            }
+
+            if (request.Image.Length > MAX_IMAGE_SIZE)
+            {
+                _logger.LogWarning("Enrollment rejected - image too large. UserId={UserId}, ImageSize={ImageSize}",
+                    request.UserId, request.Image.Length);
+                return BadRequest(new { Message = "Image exceeds maximum size", MaxSize = MAX_IMAGE_SIZE, ActualSize = request.Image.Length });
             }
 
             byte[] imageBytes;
@@ -53,10 +60,8 @@ namespace SSSP.Api.Controllers
                 imageBytes = ms.ToArray();
             }
 
-            _logger.LogInformation(
-                "Face enroll image loaded for user {UserId}, size {Length} bytes",
-                request.UserId,
-                imageBytes.Length);
+            _logger.LogInformation("Face enrollment image loaded. UserId={UserId}, ImageSize={ImageSize}, ContentType={ContentType}",
+                request.UserId, imageBytes.Length, request.Image.ContentType);
 
             var profile = await _enrollmentService.EnrollAsync(
                 request.UserId,
@@ -64,10 +69,11 @@ namespace SSSP.Api.Controllers
                 request.Description,
                 ct);
 
+            sw.Stop();
+
             _logger.LogInformation(
-                "Face enroll completed for user {UserId}, face profile {FaceProfileId}",
-                request.UserId,
-                profile.Id);
+                "Face enrollment completed. UserId={UserId}, FaceProfileId={FaceProfileId}, IsPrimary={IsPrimary}, ElapsedMs={ElapsedMs}",
+                request.UserId, profile.Id, profile.IsPrimary, sw.ElapsedMilliseconds);
 
             return Ok(new
             {
@@ -75,27 +81,33 @@ namespace SSSP.Api.Controllers
                 profile.UserId,
                 profile.Description,
                 profile.IsPrimary,
-                profile.CreatedAt
+                profile.CreatedAt,
+                ElapsedMs = sw.ElapsedMilliseconds
             });
         }
 
         [HttpPost("verify")]
         [AllowAnonymous]
-        [RequestSizeLimit(10_000_000)]
-        public async Task<ActionResult<FaceMatchResponse>> Verify(
-            [FromForm] VerifyFaceRequest request,
-            CancellationToken ct)
+        [RequestSizeLimit(MAX_IMAGE_SIZE)]
+        public async Task<ActionResult<FaceMatchResponse>> Verify([FromForm] VerifyFaceRequest request, CancellationToken ct)
         {
-            _logger.LogInformation(
-                "HTTP face verify request received from camera {CameraId}",
-                request.CameraId);
+            var sw = Stopwatch.StartNew();
+
+            _logger.LogInformation("Face verification request received. CameraId={CameraId}",
+                request.CameraId ?? "N/A");
 
             if (request.Image == null || request.Image.Length == 0)
             {
-                _logger.LogWarning(
-                    "Face verify request missing image for camera {CameraId}",
+                _logger.LogWarning("Verification rejected - missing image. CameraId={CameraId}",
                     request.CameraId);
-                return BadRequest("Image is required");
+                return BadRequest(new { Message = "Image is required", CameraId = request.CameraId });
+            }
+
+            if (request.Image.Length > MAX_IMAGE_SIZE)
+            {
+                _logger.LogWarning("Verification rejected - image too large. CameraId={CameraId}, ImageSize={ImageSize}",
+                    request.CameraId, request.Image.Length);
+                return BadRequest(new { Message = "Image exceeds maximum size", MaxSize = MAX_IMAGE_SIZE, ActualSize = request.Image.Length });
             }
 
             byte[] imageBytes;
@@ -105,15 +117,15 @@ namespace SSSP.Api.Controllers
                 imageBytes = ms.ToArray();
             }
 
-            _logger.LogInformation(
-                "Face verify image loaded from camera {CameraId}, size {Length} bytes",
-                request.CameraId,
-                imageBytes.Length);
+            _logger.LogInformation("Face verification image loaded. CameraId={CameraId}, ImageSize={ImageSize}, ContentType={ContentType}",
+                request.CameraId, imageBytes.Length, request.Image.ContentType);
 
             var result = await _recognitionService.VerifyAsync(
                 imageBytes,
                 request.CameraId,
                 ct);
+
+            sw.Stop();
 
             var dto = new FaceMatchResponse
             {
@@ -123,15 +135,20 @@ namespace SSSP.Api.Controllers
                 Similarity = result.Similarity
             };
 
-            _logger.LogInformation(
-                "HTTP face verify result for camera {CameraId}. IsMatch {IsMatch} UserId {UserId} Similarity {Similarity}",
-                request.CameraId,
-                dto.IsMatch,
-                dto.UserId,
-                dto.Similarity);
+            if (result.IsMatch)
+            {
+                _logger.LogInformation(
+                    "Face verification completed - MATCH. CameraId={CameraId}, UserId={UserId}, FaceProfileId={FaceProfileId}, Similarity={Similarity:F4}, ElapsedMs={ElapsedMs}",
+                    request.CameraId, dto.UserId, dto.FaceProfileId, dto.Similarity, sw.ElapsedMilliseconds);
+            }
+            else
+            {
+                _logger.LogInformation(
+                    "Face verification completed - NO MATCH. CameraId={CameraId}, BestSimilarity={Similarity:F4}, ElapsedMs={ElapsedMs}",
+                    request.CameraId, dto.Similarity, sw.ElapsedMilliseconds);
+            }
 
             return Ok(dto);
         }
-
     }
 }

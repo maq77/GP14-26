@@ -12,9 +12,7 @@ using SSSP.Infrastructure.AI.Grpc.Interfaces;
 
 namespace SSSP.BL.Services
 {
-    public sealed class CameraMonitoringWorker :
-        BackgroundService,
-        ICameraMonitoringService
+    public sealed class CameraMonitoringWorker : BackgroundService, ICameraMonitoringService
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IVideoStreamClient _videoStreamClient;
@@ -31,8 +29,7 @@ namespace SSSP.BL.Services
             DateTimeOffset StartedAt,
             CancellationTokenSource Cancellation,
             Task WorkerTask,
-            int RetryCount
-        );
+            int RetryCount);
 
         private readonly ConcurrentDictionary<int, CameraSession> _sessions = new();
 
@@ -46,19 +43,11 @@ namespace SSSP.BL.Services
             _logger = logger;
         }
 
-        // ============================================================
-        // START CAMERA
-        // ============================================================
-        public Task<bool> StartAsync(
-            int cameraId,
-            string rtspUrl,
-            CancellationToken cancellationToken = default)
+        public Task<bool> StartAsync(int cameraId, string rtspUrl, CancellationToken cancellationToken = default)
         {
             if (_sessions.ContainsKey(cameraId))
             {
-                _logger.LogWarning(
-                    "Camera {CameraId} start ignored – already running",
-                    cameraId);
+                _logger.LogWarning("Camera start ignored - already running. CameraId={CameraId}", cameraId);
                 return Task.FromResult(false);
             }
 
@@ -69,49 +58,31 @@ namespace SSSP.BL.Services
                 () => RunCameraSupervisorLoop(cameraId, rtspUrl, cts.Token),
                 CancellationToken.None);
 
-            var session = new CameraSession(
-                cameraId,
-                rtspUrl,
-                startedAt,
-                cts,
-                workerTask,
-                RetryCount: 0);
+            var session = new CameraSession(cameraId, rtspUrl, startedAt, cts, workerTask, 0);
 
             if (!_sessions.TryAdd(cameraId, session))
             {
                 cts.Cancel();
-                _logger.LogError(
-                    "Failed to register camera session in dictionary. Camera={CameraId}",
-                    cameraId);
+                _logger.LogError("Failed to register camera session. CameraId={CameraId}", cameraId);
                 return Task.FromResult(false);
             }
 
-            _logger.LogInformation(
-                "Camera {CameraId} monitoring STARTED on {RtspUrl}",
-                cameraId,
-                rtspUrl);
+            _logger.LogInformation("Camera monitoring started. CameraId={CameraId}, RtspUrl={RtspUrl}, StartedAt={StartedAt:o}",
+                cameraId, rtspUrl, startedAt);
 
             return Task.FromResult(true);
         }
 
-        // ============================================================
-        // STOP CAMERA
-        // ============================================================
-        public async Task<bool> StopAsync(
-            int cameraId,
-            CancellationToken cancellationToken = default)
+        public async Task<bool> StopAsync(int cameraId, CancellationToken cancellationToken = default)
         {
             if (!_sessions.TryRemove(cameraId, out var session))
             {
-                _logger.LogWarning(
-                    "Stop ignored for non-running camera {CameraId}",
-                    cameraId);
+                _logger.LogWarning("Stop ignored - camera not running. CameraId={CameraId}", cameraId);
                 return false;
             }
 
-            _logger.LogInformation(
-                "Stopping camera {CameraId} monitoring",
-                cameraId);
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            _logger.LogInformation("Stopping camera monitoring. CameraId={CameraId}", cameraId);
 
             try
             {
@@ -121,27 +92,28 @@ namespace SSSP.BL.Services
                     session.WorkerTask,
                     Task.Delay(STOP_TIMEOUT, cancellationToken));
 
+                stopwatch.Stop();
+
                 if (completed != session.WorkerTask)
                 {
-                    _logger.LogWarning(
-                        "Camera {CameraId} did not stop in time",
-                        cameraId);
+                    _logger.LogWarning("Camera stop timeout exceeded. CameraId={CameraId}, TimeoutMs={TimeoutMs}, ElapsedMs={ElapsedMs}",
+                        cameraId, STOP_TIMEOUT.TotalMilliseconds, stopwatch.ElapsedMilliseconds);
+                }
+                else
+                {
+                    _logger.LogInformation("Camera monitoring stopped successfully. CameraId={CameraId}, ElapsedMs={ElapsedMs}",
+                        cameraId, stopwatch.ElapsedMilliseconds);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Fatal error while stopping camera {CameraId}",
-                    cameraId);
+                _logger.LogError(ex, "Fatal error stopping camera. CameraId={CameraId}, ElapsedMs={ElapsedMs}",
+                    cameraId, stopwatch.ElapsedMilliseconds);
             }
 
             return true;
         }
 
-        // ============================================================
-        // ACTIVE SESSIONS
-        // ============================================================
         public IReadOnlyCollection<CameraMonitoringStatus> GetActiveSessions()
         {
             return _sessions.Values
@@ -153,136 +125,120 @@ namespace SSSP.BL.Services
                 .ToArray();
         }
 
-        // ============================================================
-        // WORKER SUPERVISOR LOOP (AUTO-RETRY ENGINE)
-        // ============================================================
-        private async Task RunCameraSupervisorLoop(
-            int cameraId,
-            string rtspUrl,
-            CancellationToken cancellationToken)
+        private async Task RunCameraSupervisorLoop(int cameraId, string rtspUrl, CancellationToken cancellationToken)
         {
-            var retry = 0;
+            var attempt = 0;
 
             while (!cancellationToken.IsCancellationRequested)
             {
+                attempt++;
+
                 try
                 {
-                    retry++;
+                    _logger.LogInformation("Camera connection attempt. CameraId={CameraId}, Attempt={Attempt}/{MaxAttempts}",
+                        cameraId, attempt, MAX_RETRY_ATTEMPTS);
 
-                    _logger.LogInformation(
-                        "Camera {CameraId} CONNECT attempt {Attempt}",
-                        cameraId, retry);
+                    await RunCameraStreamOnce(cameraId, rtspUrl, cancellationToken);
 
-                    await RunCameraStreamOnce(
-                        cameraId,
-                        rtspUrl,
-                        cancellationToken);
-
-                    _logger.LogWarning(
-                        "Camera {CameraId} stream ended unexpectedly – reconnecting",
-                        cameraId);
+                    _logger.LogWarning("Camera stream ended unexpectedly. CameraId={CameraId}, Attempt={Attempt}",
+                        cameraId, attempt);
                 }
-                catch (OperationCanceledException)
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
                 {
-                    _logger.LogInformation(
-                        "Camera {CameraId} monitoring cancelled",
-                        cameraId);
+                    _logger.LogInformation("Camera monitoring cancelled. CameraId={CameraId}, TotalAttempts={TotalAttempts}",
+                        cameraId, attempt);
                     break;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(
-                        ex,
-                        "Camera {CameraId} stream crashed. Attempt {Attempt}",
-                        cameraId,
-                        retry);
+                    _logger.LogError(ex, "Camera stream crashed. CameraId={CameraId}, Attempt={Attempt}/{MaxAttempts}, ExceptionType={ExceptionType}",
+                        cameraId, attempt, MAX_RETRY_ATTEMPTS, ex.GetType().Name);
                 }
 
-                if (retry >= MAX_RETRY_ATTEMPTS)
+                if (attempt >= MAX_RETRY_ATTEMPTS)
                 {
-                    _logger.LogCritical(
-                        "Camera {CameraId} exceeded max retry attempts ({Max}). DISABLING.",
-                        cameraId,
-                        MAX_RETRY_ATTEMPTS);
+                    _logger.LogCritical("Camera exceeded max retry attempts - DISABLING. CameraId={CameraId}, MaxAttempts={MaxAttempts}, RtspUrl={RtspUrl}",
+                        cameraId, MAX_RETRY_ATTEMPTS, rtspUrl);
 
                     _sessions.TryRemove(cameraId, out _);
                     return;
                 }
 
-                var delay = ComputeBackoff(retry);
-
-                _logger.LogWarning(
-                    "Camera {CameraId} retrying in {DelaySeconds} sec",
-                    cameraId,
-                    delay.TotalSeconds);
+                var delay = ComputeBackoff(attempt);
+                _logger.LogInformation("Camera retry scheduled. CameraId={CameraId}, Attempt={Attempt}, DelaySeconds={DelaySeconds}",
+                    cameraId, attempt, delay.TotalSeconds);
 
                 await Task.Delay(delay, cancellationToken);
             }
 
-            _logger.LogInformation(
-                "Camera {CameraId} supervisor loop EXITED",
-                cameraId);
+            _logger.LogInformation("Camera supervisor loop exited. CameraId={CameraId}, TotalAttempts={TotalAttempts}",
+                cameraId, attempt);
         }
 
-        // ============================================================
-        // SINGLE STREAM LIFECYCLE
-        // ============================================================
-        private async Task RunCameraStreamOnce(
-            int cameraId,
-            string rtspUrl,
-            CancellationToken cancellationToken)
+        private async Task RunCameraStreamOnce(int cameraId, string rtspUrl, CancellationToken cancellationToken)
         {
             using var scope = _scopeFactory.CreateScope();
-            var recognitionService =
-                scope.ServiceProvider.GetRequiredService<FaceRecognitionService>();
+            var recognitionService = scope.ServiceProvider.GetRequiredService<IFaceRecognitionService>();
+            var sessionStart = DateTimeOffset.UtcNow;
 
-            _logger.LogInformation(
-                "Camera {CameraId} stream session STARTED",
-                cameraId);
+            _logger.LogInformation("Camera stream session started. CameraId={CameraId}, RtspUrl={RtspUrl}, SessionStart={SessionStart:o}",
+                cameraId, rtspUrl, sessionStart);
+
+            var frameCount = 0;
+            var faceCount = 0;
+            var matchCount = 0;
 
             await _videoStreamClient.StreamCameraAsync(
                 cameraId.ToString(),
                 rtspUrl,
                 async response =>
                 {
+                    frameCount++;
+
                     if (response.Faces.Count == 0)
+                    {
+                        if (frameCount % 100 == 0)
+                        {
+                            _logger.LogDebug("Camera heartbeat. CameraId={CameraId}, ProcessedFrames={FrameCount}, DetectedFaces={FaceCount}, Matches={MatchCount}",
+                                cameraId, frameCount, faceCount, matchCount);
+                        }
                         return;
+                    }
+
+                    faceCount += response.Faces.Count;
+
+                    _logger.LogDebug("Frame received with faces. CameraId={CameraId}, FrameId={FrameId}, Faces={FaceCount}, TotalFrames={TotalFrames}",
+                        cameraId, response.FrameId, response.Faces.Count, frameCount);
 
                     foreach (var face in response.Faces)
                     {
-                        var match =
-                            await recognitionService.VerifyEmbeddingAsync(
-                                face.Embedding.Vector,
-                                response.CameraId,
-                                cancellationToken);
+                        var match = await recognitionService.VerifyEmbeddingAsync(
+                            face.Embedding.Vector,
+                            response.CameraId,
+                            cancellationToken);
 
                         if (match.IsMatch)
                         {
+                            matchCount++;
                             _logger.LogInformation(
-                                "MATCH Camera={CameraId} User={UserId} Similarity={Similarity}",
-                                response.CameraId,
-                                match.UserId,
-                                match.Similarity);
+                                "FACE MATCH. CameraId={CameraId}, FrameId={FrameId}, UserId={UserId}, FaceProfileId={FaceProfileId}, Similarity={Similarity:F4}, MatchNumber={MatchNumber}",
+                                cameraId, response.FrameId, match.UserId, match.FaceProfileId, match.Similarity, matchCount);
                         }
                         else
                         {
-                            _logger.LogDebug(
-                                "UNKNOWN Camera={CameraId} Similarity={Similarity}",
-                                response.CameraId,
-                                match.Similarity);
+                            _logger.LogDebug("Unknown face detected. CameraId={CameraId}, FrameId={FrameId}, BestSimilarity={Similarity:F4}",
+                                cameraId, response.FrameId, match.Similarity);
                         }
                     }
                 },
                 cancellationToken);
 
+            var sessionDuration = DateTimeOffset.UtcNow - sessionStart;
             _logger.LogWarning(
-                "Camera {CameraId} stream session STOPPED",
-                cameraId);
+                "Camera stream session ended. CameraId={CameraId}, Duration={DurationSeconds}s, ProcessedFrames={FrameCount}, DetectedFaces={FaceCount}, Matches={MatchCount}",
+                cameraId, sessionDuration.TotalSeconds, frameCount, faceCount, matchCount);
         }
 
-        // ============================================================
-        // EXPONENTIAL BACKOFF
-        // ============================================================
         private static TimeSpan ComputeBackoff(int attempt)
         {
             var delayMs = Math.Min(
@@ -292,23 +248,21 @@ namespace SSSP.BL.Services
             return TimeSpan.FromMilliseconds(delayMs);
         }
 
-        // ============================================================
-        // HOST SHUTDOWN HANDLING
-        // ============================================================
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("CameraMonitoringWorker HOST started");
+            _logger.LogInformation("CameraMonitoringWorker host started. Environment={Environment}",
+                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production");
 
             try
             {
-                while (!stoppingToken.IsCancellationRequested)
-                    await Task.Delay(1000, stoppingToken);
+                await Task.Delay(Timeout.Infinite, stoppingToken);
             }
-            catch (TaskCanceledException) { }
+            catch (TaskCanceledException)
+            {
+            }
 
-            _logger.LogInformation(
-                "CameraMonitoringWorker shutting down – cancelling {Count} sessions",
-                _sessions.Count);
+            var activeSessions = _sessions.Count;
+            _logger.LogInformation("CameraMonitoringWorker shutdown initiated. ActiveSessions={ActiveSessions}", activeSessions);
 
             foreach (var session in _sessions.Values)
                 session.Cancellation.Cancel();
@@ -319,14 +273,11 @@ namespace SSSP.BL.Services
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(
-                    ex,
-                    "Error awaiting camera workers during shutdown");
+                _logger.LogWarning(ex, "Error awaiting camera workers during shutdown. SessionCount={SessionCount}", activeSessions);
             }
 
             _sessions.Clear();
-
-            _logger.LogInformation("CameraMonitoringWorker SHUTDOWN complete");
+            _logger.LogInformation("CameraMonitoringWorker shutdown complete");
         }
     }
 }

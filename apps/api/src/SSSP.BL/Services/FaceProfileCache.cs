@@ -7,6 +7,7 @@ using SSSP.DAL.Models;
 using SSSP.Infrastructure.Persistence.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,12 +18,11 @@ namespace SSSP.BL.Services
         private readonly IUnitOfWork _uow;
         private readonly ILogger<FaceProfileCache> _logger;
         private readonly TimeSpan _expiration;
-
         private readonly SemaphoreSlim _refreshLock = new(1, 1);
 
-        private IReadOnlyList<FaceProfile>? _profiles;
-        private DateTime _lastRefreshUtc = DateTime.MinValue;
-        private bool _disposed;
+        private volatile IReadOnlyList<FaceProfile>? _profiles;
+        private long _lastRefreshTicks = DateTime.MinValue.Ticks;
+        private int _disposed;
 
         public FaceProfileCache(
             IUnitOfWork uow,
@@ -36,33 +36,63 @@ namespace SSSP.BL.Services
             _expiration = opts.AbsoluteExpiration <= TimeSpan.Zero
                 ? TimeSpan.FromMinutes(1)
                 : opts.AbsoluteExpiration;
+
+            _logger.LogInformation("FaceProfileCache initialized. ExpirationMinutes={ExpirationMinutes}",
+                _expiration.TotalMinutes);
+        }
+
+        private DateTime _lastRefreshUtc
+        {
+            get => new DateTime(
+                Interlocked.Read(ref _lastRefreshTicks),
+                DateTimeKind.Utc);
+
+            set => Interlocked.Exchange(ref _lastRefreshTicks, value.Ticks);
         }
 
         public async Task<IReadOnlyList<FaceProfile>> GetAllAsync(CancellationToken ct = default)
         {
             ThrowIfDisposed();
 
-            if (_profiles != null &&
-                (DateTime.UtcNow - _lastRefreshUtc) < _expiration)
+            var currentProfiles = _profiles;
+            var age = DateTime.UtcNow - _lastRefreshUtc;
+
+            if (currentProfiles != null && age < _expiration)
             {
-                return _profiles;
+                return currentProfiles;
             }
 
-            await _refreshLock.WaitAsync(ct);
+            var acquired = await _refreshLock.WaitAsync(0, ct);
+            if (!acquired)
+            {
+                await _refreshLock.WaitAsync(ct);
+                _refreshLock.Release();
+
+                currentProfiles = _profiles;
+                if (currentProfiles != null)
+                    return currentProfiles;
+            }
+
             try
             {
-                if (_profiles != null &&
-                    (DateTime.UtcNow - _lastRefreshUtc) < _expiration)
+                currentProfiles = _profiles;
+                age = DateTime.UtcNow - _lastRefreshUtc;
+
+                if (currentProfiles != null && age < _expiration)
                 {
-                    return _profiles;
+                    return currentProfiles;
                 }
 
-                _logger.LogInformation("Refreshing FaceProfile cache from database...");
+                var sw = Stopwatch.StartNew();
+                var previousCount = currentProfiles?.Count ?? 0;
+
+                _logger.LogInformation("Refreshing FaceProfile cache. PreviousCount={PreviousCount}, CacheAge={CacheAgeSeconds}s",
+                    previousCount, age.TotalSeconds);
 
                 var repo = _uow.GetRepository<FaceProfile, Guid>();
-
                 var list = await repo
                     .Query
+                    .AsNoTracking()
                     .Include(p => p.User)
                     .Include(p => p.Embeddings)
                     .ToListAsync(ct);
@@ -70,15 +100,18 @@ namespace SSSP.BL.Services
                 _profiles = list;
                 _lastRefreshUtc = DateTime.UtcNow;
 
+                sw.Stop();
+
                 _logger.LogInformation(
-                    "FaceProfile cache refreshed. Count={Count}",
-                    _profiles.Count);
+                    "FaceProfile cache refreshed. Count={Count}, PreviousCount={PreviousCount}, Delta={Delta}, ElapsedMs={ElapsedMs}",
+                    list.Count, previousCount, list.Count - previousCount, sw.ElapsedMilliseconds);
 
                 return _profiles;
             }
             finally
             {
-                _refreshLock.Release();
+                if (acquired)
+                    _refreshLock.Release();
             }
         }
 
@@ -86,23 +119,31 @@ namespace SSSP.BL.Services
         {
             ThrowIfDisposed();
 
-            _logger.LogInformation("FaceProfile cache invalidated.");
+            var previousCount = _profiles?.Count ?? 0;
+            var cacheAge = DateTime.UtcNow - _lastRefreshUtc;
+
             _profiles = null;
             _lastRefreshUtc = DateTime.MinValue;
+
+            _logger.LogInformation("FaceProfile cache invalidated. PreviousCount={PreviousCount}, CacheAge={CacheAgeSeconds}s",
+                previousCount, cacheAge.TotalSeconds);
+
             return Task.CompletedTask;
         }
 
         private void ThrowIfDisposed()
         {
-            if (_disposed)
+            if (_disposed != 0)
                 throw new ObjectDisposedException(nameof(FaceProfileCache));
         }
 
         public void Dispose()
         {
-            if (_disposed) return;
-            _disposed = true;
+            if (Interlocked.Exchange(ref _disposed, 1) != 0)
+                return;
+
             _refreshLock.Dispose();
+            _logger.LogDebug("FaceProfileCache disposed");
         }
     }
 }
