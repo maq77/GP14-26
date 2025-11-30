@@ -19,7 +19,7 @@ logger = structlog.get_logger("grpc.face_servicer")
 
 
 class FaceServicer(FaceServiceServicer):
-    def __init__(self, face_service: FaceRecognitionService):
+    def __init__(self, face_service: FaceRecognitionService) -> None:
         self.face_service = face_service
         logger.info("face_servicer_initialized")
 
@@ -29,11 +29,13 @@ class FaceServicer(FaceServiceServicer):
                 image_bytes=request.image,
                 confidence_threshold=request.confidence_threshold,
             )
+
             resp = FaceDetectResponse(
                 success=True,
                 total_faces=len(result["faces"]),
-                total_time_ms=result["time_ms"],
+                total_time_ms=float(result["time_ms"]),
             )
+
             for f in result["faces"]:
                 x, y, w, h = f["bbox"]
                 resp.faces.append(
@@ -47,29 +49,46 @@ class FaceServicer(FaceServiceServicer):
                         confidence=float(f.get("confidence", 1.0)),
                     )
                 )
-            logger.info("detect_faces_rpc_completed", total_faces=len(resp.faces))
+
+            logger.info(
+                "detect_faces_rpc_completed",
+                total_faces=len(resp.faces),
+                time_ms=resp.total_time_ms,
+            )
             return resp
         except Exception as e:
-            logger.error("detect_faces_rpc_error", error=str(e), exc_info=True)
+            logger.error(
+                "detect_faces_rpc_error",
+                error=str(e),
+                exc_info=True,
+            )
             return FaceDetectResponse(success=False, error_message=str(e))
 
     def ExtractEmbedding(self, request, context):
         try:
             result = self.face_service.extract_embedding(
                 image_bytes=request.image,
-                # confidence_threshold=request.confidence_threshold,
+                # request.confidence_threshold,
+                # camera_id=request.camera_id,
             )
+
             resp = FaceEmbeddingResponse(
-                success=result["success"],
-                face_detected=result["face_detected"],
-                total_time_ms=result["time_ms"],
+                success=bool(result["success"]),
+                face_detected=bool(result["face_detected"]),
+                total_time_ms=float(result["time_ms"]),
             )
+
             if not result["success"]:
-                resp.error_message = "embedding_failed"
-                logger.error("extract_embedding_rpc_failed_flag")
+                resp.error_message = result.get("error_message", "embedding_failed")
+                logger.error(
+                    "extract_embedding_rpc_failed_flag",
+                    error_message=resp.error_message,
+                )
                 return resp
-            if result["face_detected"] and result["bbox"] is not None:
-                x, y, w, h = result["bbox"]
+
+            bbox = result.get("bbox")
+            if resp.face_detected and bbox is not None:
+                x, y, w, h = bbox
                 resp.bbox.CopyFrom(
                     BoundingBox(
                         x1=float(x),
@@ -78,42 +97,66 @@ class FaceServicer(FaceServiceServicer):
                         y2=float(y + h),
                     )
                 )
-            resp.embedding.extend(result["embedding"])
+
+            embedding = result.get("embedding") or []
+            resp.embedding.extend(float(v) for v in embedding)
+
             logger.info(
                 "extract_embedding_rpc_completed",
-                face_detected=result["face_detected"],
+                face_detected=resp.face_detected,
+                embedding_dim=len(resp.embedding),
+                time_ms=resp.total_time_ms,
             )
             return resp
         except Exception as e:
-            logger.error("extract_embedding_rpc_error", error=str(e), exc_info=True)
+            logger.error(
+                "extract_embedding_rpc_error",
+                error=str(e),
+                exc_info=True,
+            )
             return FaceEmbeddingResponse(success=False, error_message=str(e))
 
     def GetModelInfo(self, request, context):
         try:
             info = self.face_service.get_model_info()
+
             resp = FaceModelInfoResponse(
-                model_name=info["model_name"],
-                model_version=info["model_version"],
-                device=info["device"],
-                model_size_mb=info["model_size_mb"],
-                input_size=info["input_size"],
-                embedding_dim=info["embedding_dim"],
-                total_faces_enrolled=0,
+                model_name=str(info.get("model_name", "")),
+                model_version=str(info.get("model_version", "")),
+                device=str(info.get("device", "")),
+                model_size_mb=float(info.get("model_size_mb", 0.0)),
+                input_size=int(info.get("input_size", 0)),
+                embedding_dim=int(info.get("embedding_dim", 0)),
+                total_faces_enrolled=int(info.get("total_faces_enrolled", 0)),
             )
-            logger.info("get_model_info_rpc_completed")
+
+            logger.info(
+                "get_model_info_rpc_completed",
+                model_name=resp.model_name,
+                device=resp.device,
+            )
             return resp
         except Exception as e:
-            logger.error("get_model_info_rpc_error", error=str(e), exc_info=True)
+            logger.error(
+                "get_model_info_rpc_error",
+                error=str(e),
+                exc_info=True,
+            )
             return FaceModelInfoResponse(
                 model_name="error",
                 model_version="0.0.0",
+                device="unknown",
             )
+
+    # These are intentionally NOT implemented in AI: .NET does the BL
 
     def RecognizeFace(self, request, context):
         logger.warning("recognize_face_not_implemented_in_ai_service")
         return FaceRecognizeResponse(
             success=False,
-            error_message="RecognizeFace is implemented in .NET business logic, not AI service.",
+            error_message=(
+                "RecognizeFace is implemented in .NET business logic, not AI service."
+            ),
             total_candidates_checked=0,
             total_time_ms=0.0,
         )
@@ -122,7 +165,9 @@ class FaceServicer(FaceServiceServicer):
         logger.warning("verify_face_not_implemented_in_ai_service")
         return FaceVerifyResponse(
             success=False,
-            error_message="VerifyFace is implemented in .NET business logic, not AI service.",
+            error_message=(
+                "VerifyFace is implemented in .NET business logic, not AI service."
+            ),
             face_detected=False,
             match_found=False,
             is_authorized=False,
@@ -136,7 +181,9 @@ class FaceServicer(FaceServiceServicer):
         logger.warning("enroll_face_not_implemented_in_ai_service")
         return FaceEnrollResponse(
             success=False,
-            error_message="EnrollFace is implemented in .NET business logic, not AI service.",
+            error_message=(
+                "EnrollFace is implemented in .NET business logic, not AI service."
+            ),
             person_id=request.person_id,
             images_enrolled=0,
         )

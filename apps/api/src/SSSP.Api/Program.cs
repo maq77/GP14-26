@@ -20,6 +20,9 @@ using SSSP.Infrastructure.Persistence.Interfaces;
 using SSSP.Infrastructure.Persistence.Repos;
 using SSSP.Infrastructure.Persistence.UnitOfWork;
 using Microsoft.AspNetCore.Builder;
+using SSSP.BL.Options;
+using SSSP.BL.Interfaces;
+using SSSP.BL.Managers.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -140,6 +143,11 @@ builder.Services
         };
     });
 
+
+builder.Services.Configure<FaceProfileCacheOptions>(cfg =>
+{
+    cfg.AbsoluteExpiration = TimeSpan.FromMinutes(1);
+});
 // =======================================
 // Domain / Infrastructure Services
 // =======================================
@@ -159,16 +167,25 @@ builder.Services.AddSingleton<GrpcChannelFactory>();
 builder.Services.AddSingleton<IAIFaceClient, AIFaceClient>();
 builder.Services.AddSingleton<IVideoStreamClient, VideoStreamClient>();
 
+
 // Face Matching
-builder.Services.AddSingleton<FaceMatchingManager>(sp =>
+builder.Services.AddSingleton<IFaceMatchingManager>(sp =>
 {
     var logger = sp.GetRequiredService<ILogger<FaceMatchingManager>>();
-    return new FaceMatchingManager(0.6, logger);
+    var config = sp.GetRequiredService<IConfiguration>();
+    var threshold = config.GetValue<double>("FaceRecognition:SimilarityThreshold", 0.6);
+    return new FaceMatchingManager(threshold, logger);
 });
 
 // Face services
-builder.Services.AddScoped<FaceRecognitionService>();
-builder.Services.AddScoped<FaceEnrollmentService>();
+builder.Services.AddScoped<IFaceProfileCache, FaceProfileCache>();
+builder.Services.AddScoped<IFaceEnrollmentService, FaceEnrollmentService>();
+builder.Services.AddScoped<IFaceRecognitionService, FaceRecognitionService>();
+builder.Services.AddScoped<IFaceManagementService, FaceManagementService>();
+
+//Camera Service
+builder.Services.AddScoped<ICameraService, CameraService>();
+
 
 // Camera monitoring as background worker + service
 builder.Services.AddSingleton<CameraMonitoringWorker>();

@@ -48,6 +48,7 @@ namespace SSSP.DAL.Context
             ConfigureOwnedTypes(builder);
             ConfigureRelationships(builder);
             ConfigureFaceProfiles(builder);
+            ConfigureEmbedding(builder);
             //SeedInitialData(builder);
         }
 
@@ -131,15 +132,26 @@ namespace SSSP.DAL.Context
                       .HasForeignKey(x => x.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
 
-                entity.Property(x => x.EmbeddingJson)
-                      .IsRequired()
-                      .HasColumnType("text");
+                entity.HasMany(p => p.Embeddings)
+                      .WithOne(e => e.FaceProfile)
+                      .HasForeignKey(e => e.FaceProfileId)
+                      .OnDelete(DeleteBehavior.Cascade);
 
                 entity.Property(x => x.IsPrimary)
                       .HasDefaultValue(true);
 
                 entity.Property(x => x.CreatedAt)
                       .HasDefaultValueSql("GETUTCDATE()");
+            });
+        }
+        private static void ConfigureEmbedding(ModelBuilder builder)
+        {
+            builder.Entity<FaceEmbedding>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Vector)
+                      .IsRequired();
             });
         }
 

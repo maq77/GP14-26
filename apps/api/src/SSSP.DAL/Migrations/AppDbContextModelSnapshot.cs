@@ -133,7 +133,7 @@ namespace SSSP.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
@@ -146,7 +146,7 @@ namespace SSSP.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OperatorId")
+                    b.Property<int?>("OperatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("RtspUrl")
@@ -158,6 +158,26 @@ namespace SSSP.DAL.Migrations
                     b.HasIndex("OperatorId");
 
                     b.ToTable("Cameras");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 11, 19, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            Name = "Camera 1",
+                            OperatorId = 1,
+                            RtspUrl = "rtsp://camera1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 11, 19, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            Name = "Camera 2",
+                            OperatorId = 2,
+                            RtspUrl = "rtsp://camera2"
+                        });
                 });
 
             modelBuilder.Entity("SSSP.DAL.Models.FaceProfile", b =>
@@ -250,6 +270,20 @@ namespace SSSP.DAL.Migrations
                     b.HasIndex("OperatorId");
 
                     b.ToTable("Incidents");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Example incident",
+                            OperatorId = 1,
+                            Severity = "High",
+                            Source = "Sensor",
+                            Status = "Open",
+                            Timestamp = new DateTime(2025, 11, 19, 12, 30, 0, 0, DateTimeKind.Unspecified),
+                            Title = "Test Incident",
+                            Type = "Waste"
+                        });
                 });
 
             modelBuilder.Entity("SSSP.DAL.Models.Operator", b =>
@@ -278,6 +312,26 @@ namespace SSSP.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Operators");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 11, 19, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            Location = "Downtown",
+                            Name = "City Security",
+                            Type = 5
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 11, 19, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            Location = "Medical District",
+                            Name = "Hospital Central",
+                            Type = 2
+                        });
                 });
 
             modelBuilder.Entity("SSSP.DAL.Models.Role", b =>
@@ -340,6 +394,26 @@ namespace SSSP.DAL.Migrations
                     b.HasIndex("OperatorId");
 
                     b.ToTable("Sensors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2025, 11, 19, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            Name = "Sensor 1",
+                            OperatorId = 1,
+                            Type = 4
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2025, 11, 19, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsActive = true,
+                            Name = "Sensor 2",
+                            OperatorId = 2,
+                            Type = 2
+                        });
                 });
 
             modelBuilder.Entity("User", b =>
@@ -485,8 +559,7 @@ namespace SSSP.DAL.Migrations
                     b.HasOne("SSSP.DAL.Models.Operator", "Operator")
                         .WithMany("Cameras")
                         .HasForeignKey("OperatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.OwnsOne("SSSP.DAL.ValueObjects.Location", "Location", b1 =>
                         {
@@ -508,10 +581,25 @@ namespace SSSP.DAL.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("CameraId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    CameraId = 1,
+                                    Address = "Main Street",
+                                    Latitude = 30.0,
+                                    Longitude = 31.0
+                                },
+                                new
+                                {
+                                    CameraId = 2,
+                                    Address = "Hospital Gate",
+                                    Latitude = 30.100000000000001,
+                                    Longitude = 31.100000000000001
+                                });
                         });
 
-                    b.Navigation("Location")
-                        .IsRequired();
+                    b.Navigation("Location");
 
                     b.Navigation("Operator");
                 });
@@ -560,6 +648,15 @@ namespace SSSP.DAL.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("IncidentId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    IncidentId = 1,
+                                    Address = "Downtown",
+                                    Latitude = 30.0,
+                                    Longitude = 31.0
+                                });
                         });
 
                     b.Navigation("AssignedToUser");
@@ -598,6 +695,22 @@ namespace SSSP.DAL.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("SensorId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    SensorId = 1,
+                                    Address = "City Park",
+                                    Latitude = 30.0,
+                                    Longitude = 31.0
+                                },
+                                new
+                                {
+                                    SensorId = 2,
+                                    Address = "Hospital Roof",
+                                    Latitude = 30.199999999999999,
+                                    Longitude = 31.199999999999999
+                                });
                         });
 
                     b.Navigation("Location")

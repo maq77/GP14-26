@@ -6,6 +6,7 @@ namespace SSSP.Infrastructure.Persistence.Interfaces
     public interface IRepository<T, TKey>
         where T : class, IEntity<TKey>
     {
+        IQueryable<T> Query { get; }
         Task<T?> GetByIdAsync(TKey id, CancellationToken ct = default);
         Task<IEnumerable<T>> GetAllAsync(CancellationToken ct = default);
         Task<IEnumerable<T>> GetWhereAsync(
