@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Abstractions;
 using SSSP.BL.Interfaces;
 using SSSP.BL.Managers.Interfaces;
 using SSSP.BL.Records;
@@ -22,6 +24,8 @@ namespace SSSP.BL.Services
         private readonly IFaceProfileCache _faceProfileCache;
         private readonly IUnitOfWork _uow;
         private readonly ILogger<FaceRecognitionService> _logger;
+        private readonly TelemetryClient _telemetry;
+
 
         private const int MIN_EMBEDDING_SIZE = 128;
         private const double HIGH_CONFIDENCE = 0.85;
@@ -32,13 +36,15 @@ namespace SSSP.BL.Services
             IFaceMatchingManager matcher,
             IFaceProfileCache faceProfileCache,
             IUnitOfWork uow,
-            ILogger<FaceRecognitionService> logger)
+            ILogger<FaceRecognitionService> logger,
+            TelemetryClient telemetry)
         {
             _ai = ai ?? throw new ArgumentNullException(nameof(ai));
             _matcher = matcher ?? throw new ArgumentNullException(nameof(matcher));
             _faceProfileCache = faceProfileCache ?? throw new ArgumentNullException(nameof(faceProfileCache));
             _uow = uow ?? throw new ArgumentNullException(nameof(uow));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _telemetry = telemetry;
         }
 
         public async Task<FaceMatchResult> VerifyAsync(
@@ -82,6 +88,13 @@ namespace SSSP.BL.Services
 
                 sw.Stop();
 
+                TrackFaceRecognitionMetrics(
+                    cameraId,
+                    result.IsMatch,
+                    result.Similarity,
+                    sw.ElapsedMilliseconds,
+                    mode: "SingleImage");
+
                 _logger.LogInformation(
                     "Face verification completed. CameraId={CameraId}, Mode=SingleImage, IsMatch={IsMatch}, Similarity={Similarity:F4}, ElapsedMs={ElapsedMs}",
                     cameraId, result.IsMatch, result.Similarity, sw.ElapsedMilliseconds);
@@ -124,6 +137,14 @@ namespace SSSP.BL.Services
                 var result = await MatchInternalAsync(embedding, cameraId, ct);
 
                 sw.Stop();
+
+                TrackFaceRecognitionMetrics(
+                    cameraId,
+                    result.IsMatch,
+                    result.Similarity,
+                    sw.ElapsedMilliseconds,
+                    mode: "SingleImage");
+
 
                 if (result.IsMatch)
                 {
@@ -268,5 +289,32 @@ namespace SSSP.BL.Services
                 _ => "None"
             };
         }
+
+        private void TrackFaceRecognitionMetrics(
+            string cameraId,
+            bool isMatch,
+            double similarity,
+            long elapsedMs,
+            string mode)
+        {
+            if (_telemetry == null)
+                return;
+
+            var confidence = BucketizeConfidence(similarity);
+
+            var props = new Dictionary<string, string>
+            {
+                ["CameraId"] = cameraId ?? "N/A",
+                ["Result"] = isMatch ? "Match" : "NoMatch",
+                ["Confidence"] = confidence,
+                ["Mode"] = mode   // "SingleImage" أو "Streaming"
+            };
+
+            _telemetry.TrackEvent("FaceRecognitionAttempt", props);
+
+            _telemetry.TrackMetric("FaceRecognitionSimilarity", similarity, props);
+            _telemetry.TrackMetric("FaceRecognitionLatencyMs", elapsedMs, props);
+        }
+
     }
 }

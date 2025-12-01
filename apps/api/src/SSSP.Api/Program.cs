@@ -24,6 +24,11 @@ using SSSP.BL.Options;
 using SSSP.BL.Interfaces;
 using SSSP.BL.Managers.Interfaces;
 using SSSP.BL.HealthChecks;
+using Polly;
+using SSSP.Api.Extentions;
+using SSSP.BL.Startup;
+using System.Threading.RateLimiting;
+using SSSP.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +54,16 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 builder.Host.UseSerilog();
+
+// =======================================
+// Application Insights (Local Monitoring)
+// =======================================
+builder.Services.AddApplicationInsightsTelemetry(options =>
+{
+    options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+    options.EnableAdaptiveSampling = true;
+    options.EnablePerformanceCounterCollectionModule = true;
+});
 
 try
 {
@@ -137,6 +152,15 @@ try
         .ValidateOnStart();
 
     // =======================================
+    // Startup Validation Options
+    // =======================================
+    builder.Services
+        .AddOptions<StartupValidationOptions>()
+        .Bind(builder.Configuration.GetSection("StartupValidation"))
+        .ValidateOnStart();
+
+
+    // =======================================
     // Database
     // =======================================
     var connectionString = builder.Configuration.GetConnectionString("MyCon")
@@ -223,18 +247,45 @@ try
     builder.Services.AddAuthorization();
 
     // =======================================
-    // Cache Configuration
+    // Cache Configuration (env aware)
     // =======================================
     builder.Services.Configure<FaceProfileCacheOptions>(cfg =>
     {
         cfg.AbsoluteExpiration = TimeSpan.FromMinutes(5);
     });
 
-    builder.Services.AddMemoryCache(options =>
+    var useRedisFaceCache = builder.Configuration.GetValue<bool>("Cache:UseRedisFaceCache", false);
+
+    if (useRedisFaceCache)
     {
-        options.SizeLimit = 1024;
-        options.CompactionPercentage = 0.25;
-    });
+        var redisConnection = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+
+        builder.Services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = redisConnection;
+            options.InstanceName = "SSSP:";
+        });
+
+        Log.Information("Using Redis face cache. Connection={RedisConnection}", redisConnection);
+
+        // Redis-backed implementation
+        builder.Services.AddScoped<IFaceProfileCache, DistributedFaceProfileCache>();
+    }
+    else
+    {
+        // In-memory only for dev / simple installs
+        Log.Information("Using in-memory FaceProfileCache (Redis disabled)");
+
+        // If you want extra memory cache under the hood:
+        builder.Services.AddMemoryCache(options =>
+        {
+            options.SizeLimit = 1024;
+            options.CompactionPercentage = 0.25;
+        });
+
+        builder.Services.AddScoped<IFaceProfileCache, FaceProfileCache>();
+    }
+
 
     // =======================================
     // Repository Pattern
@@ -280,14 +331,6 @@ try
         Log.Information("Face matching threshold configured: {Threshold}", threshold);
         return new FaceMatchingManager(threshold, logger);
     });
-
-    builder.Services.AddScoped<IFaceProfileCache, FaceProfileCache>();
-    //builder.Services.AddSingleton<IFaceProfileCache, DistributedFaceProfileCache>();
-    //builder.Services.AddStackExchangeRedisCache(options =>
-    //{
-    //    options.Configuration = "localhost:6379";
-    //    options.InstanceName = "SSSP:";
-    //});
     builder.Services.AddScoped<IFaceEnrollmentService, FaceEnrollmentService>();
     builder.Services.AddScoped<IFaceRecognitionService, FaceRecognitionService>();
     builder.Services.AddScoped<IFaceManagementService, FaceManagementService>();
@@ -300,6 +343,8 @@ try
         sp.GetRequiredService<CameraMonitoringWorker>());
     builder.Services.AddHostedService(sp =>
         sp.GetRequiredService<CameraMonitoringWorker>());
+    builder.Services.AddHostedService<StartupValidationService>();
+
 
     // =======================================
     // SignalR
@@ -344,6 +389,108 @@ try
     {
         options.EnableForHttps = true;
     });
+
+    // =======================================
+    // Polly Resilience Policies (Circuit Breaker)
+    // =======================================
+    builder.Services.AddSingleton<Polly.IAsyncPolicy>(provider =>
+    {
+        return Polly.Policy
+            .Handle<Exception>()
+            .WaitAndRetryAsync(
+                retryCount: 3,
+                sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+                onRetry: (exception, timeSpan, retryCount, context) =>
+                {
+                    Log.Warning(
+                        "Retry {RetryCount} after {Delay}s due to {Exception}",
+                        retryCount, timeSpan.TotalSeconds, exception.Message);
+                });
+    });
+
+    builder.Services.AddSingleton<Polly.CircuitBreaker.ICircuitBreakerPolicy>(provider =>
+    {
+        return Polly.Policy
+            .Handle<Exception>()
+            .CircuitBreakerAsync(
+                exceptionsAllowedBeforeBreaking: 5,
+                durationOfBreak: TimeSpan.FromMinutes(1),
+                onBreak: (exception, duration) =>
+                {
+                    Log.Error("Circuit breaker opened for {Duration}s due to {Exception}",
+                        duration.TotalSeconds, exception.Message);
+                },
+                onReset: () =>
+                {
+                    Log.Information("Circuit breaker reset");
+                });
+    });
+
+    // =======================================
+    // Rate Limiter
+    // =======================================
+    builder.Services.AddRateLimiter(options =>
+    {
+        // 1) Global default policy: per IP, fixed window
+        options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+        {
+            var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+            return RateLimitPartition.GetFixedWindowLimiter(
+                partitionKey: ip,
+                factory: _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 100,            // 100 requests...
+                    Window = TimeSpan.FromMinutes(1), // ...per 1 minute per IP
+                    QueueLimit = 0,
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                });
+        });
+
+        // 2) Named policy for face APIs (stricter)
+        options.AddPolicy("face-api", httpContext =>
+        {
+            // You can partition by user ID / client ID if you add claims later
+            var key =
+                httpContext.User.Identity?.Name
+                ?? httpContext.Connection.RemoteIpAddress?.ToString()
+                ?? "anonymous";
+
+            return RateLimitPartition.GetTokenBucketLimiter(
+                partitionKey: key,
+                factory: _ => new TokenBucketRateLimiterOptions
+                {
+                    TokenLimit = 60,                     // burst size
+                    TokensPerPeriod = 60,                // refill 60 tokens...
+                    ReplenishmentPeriod = TimeSpan.FromMinutes(1), // ...every 1 min
+                    AutoReplenishment = true,
+                    QueueLimit = 0,
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+                });
+        });
+
+        // Optional: nice 429 response
+        options.OnRejected = async (context, token) =>
+        {
+            context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+
+            var logger = context.HttpContext.RequestServices
+                .GetRequiredService<ILoggerFactory>()
+                .CreateLogger("RateLimiting");
+
+            logger.LogWarning(
+                "Rate limit exceeded. Path={Path}, IP={IP}",
+                context.HttpContext.Request.Path.Value,
+                context.HttpContext.Connection.RemoteIpAddress?.ToString());
+
+            await context.HttpContext.Response.WriteAsJsonAsync(new
+            {
+                error = "too_many_requests",
+                message = "Too many requests. Please slow down."
+            }, cancellationToken: token);
+        };
+    });
+
 
     // =======================================
     // Build Application
@@ -406,7 +553,13 @@ try
         app.UseHsts();
     }
 
+    app.UseMiddleware<CorrelationIdMiddleware>();
     app.UseResponseCompression();
+
+    app.UseRateLimiter();
+
+    app.UsePerformanceMonitoring();
+    app.UseGlobalExceptionHandler();
 
     app.UseSerilogRequestLogging(options =>
     {

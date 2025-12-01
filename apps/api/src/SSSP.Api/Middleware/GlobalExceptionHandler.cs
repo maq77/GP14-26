@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.ApplicationInsights;
 
 namespace SSSP.Api.Middleware
 {
@@ -11,13 +12,16 @@ namespace SSSP.Api.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<GlobalExceptionHandler> _logger;
+        private readonly TelemetryClient _telemetry;
 
         public GlobalExceptionHandler(
             RequestDelegate next,
-            ILogger<GlobalExceptionHandler> logger)
+            ILogger<GlobalExceptionHandler> logger,
+            TelemetryClient telemetry)
         {
             _next = next;
             _logger = logger;
+            _telemetry = telemetry;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -43,6 +47,15 @@ namespace SSSP.Api.Middleware
                 context.Request.Path,
                 context.Request.Method,
                 exception.GetType().Name);
+
+            // Track in Application Insights
+            _telemetry.TrackException(exception, new Dictionary<string, string>
+            {
+                ["CorrelationId"] = correlationId,
+                ["Path"] = context.Request.Path,
+                ["Method"] = context.Request.Method,
+                ["StatusCode"] = GetStatusCode(exception).ToString()
+            });
 
             var response = new ErrorResponse
             {
@@ -98,5 +111,4 @@ namespace SSSP.Api.Middleware
             public DateTimeOffset Timestamp { get; init; }
         }
     }
-
 }

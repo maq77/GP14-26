@@ -1,155 +1,372 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Logging;
 using SSSP.Api.DTOs.Face;
-using SSSP.BL.Services;
 using SSSP.BL.Services.Interfaces;
 
 namespace SSSP.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class FaceController : ControllerBase
+    [EnableRateLimiting("face-api")]
+    public sealed class FaceController : ControllerBase
     {
+        private const int MaxImageSizeBytes = 10_000_000;
+
         private readonly IFaceEnrollmentService _enrollmentService;
         private readonly IFaceRecognitionService _recognitionService;
         private readonly ILogger<FaceController> _logger;
-
-        private const int MAX_IMAGE_SIZE = 10_000_000;
+        private readonly TelemetryClient? _telemetry;
 
         public FaceController(
             IFaceEnrollmentService enrollmentService,
             IFaceRecognitionService recognitionService,
-            ILogger<FaceController> logger)
+            ILogger<FaceController> logger,
+            TelemetryClient telemetry)
         {
-            _enrollmentService = enrollmentService;
-            _recognitionService = recognitionService;
-            _logger = logger;
+            _enrollmentService = enrollmentService ?? throw new ArgumentNullException(nameof(enrollmentService));
+            _recognitionService = recognitionService ?? throw new ArgumentNullException(nameof(recognitionService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _telemetry = telemetry ?? throw new ArgumentNullException(nameof(telemetry));
         }
 
-        [HttpPost("enroll")]
+        // POST: api/face/enroll
         //[Authorize(Roles = "Admin")]
-        [RequestSizeLimit(MAX_IMAGE_SIZE)]
+        [HttpPost("enroll")]
+        [RequestSizeLimit(MaxImageSizeBytes)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Enroll([FromForm] EnrollFaceRequest request, CancellationToken ct)
         {
+            if (request is null)
+            {
+                return BadRequest(new { Message = "Request body is required." });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             var sw = Stopwatch.StartNew();
 
-            _logger.LogInformation("Face enrollment request received. UserId={UserId}, HasDescription={HasDescription}",
-                request.UserId, !string.IsNullOrWhiteSpace(request.Description));
-
-            if (request.Image == null || request.Image.Length == 0)
+            try
             {
-                _logger.LogWarning("Enrollment rejected - missing image. UserId={UserId}", request.UserId);
-                return BadRequest(new { Message = "Image is required", UserId = request.UserId });
+                _logger.LogInformation(
+                    "Face enrollment request received. UserId={UserId}, HasDescription={HasDescription}",
+                    request.UserId, !string.IsNullOrWhiteSpace(request.Description));
+
+                if (!IsValidImage(request.Image, out var imageValidationError))
+                {
+                    sw.Stop();
+
+                    _logger.LogWarning(
+                        "Enrollment rejected - invalid image. UserId={UserId}, Reason={Reason}",
+                        request.UserId, imageValidationError);
+
+                    TrackFaceApiMetric(
+                        operation: "Enroll",
+                        elapsedMs: sw.ElapsedMilliseconds,
+                        success: false,
+                        imageSizeBytes: request.Image?.Length,
+                        userId: request.UserId,
+                        errorReason: imageValidationError);
+
+                    return BadRequest(new
+                    {
+                        Message = imageValidationError,
+                        UserId = request.UserId,
+                        MaxSize = MaxImageSizeBytes,
+                        ActualSize = request.Image?.Length
+                    });
+                }
+
+                var imageBytes = await ReadImageAsync(request.Image!, ct);
+
+                _logger.LogInformation(
+                    "Face enrollment image loaded. UserId={UserId}, ImageSize={ImageSize}, ContentType={ContentType}",
+                    request.UserId, imageBytes.Length, request.Image!.ContentType);
+
+                var profile = await _enrollmentService.EnrollAsync(
+                    request.UserId,
+                    imageBytes,
+                    request.Description,
+                    ct);
+
+                sw.Stop();
+
+                TrackFaceApiMetric(
+                    operation: "Enroll",
+                    elapsedMs: sw.ElapsedMilliseconds,
+                    success: true,
+                    imageSizeBytes: imageBytes.Length,
+                    userId: request.UserId);
+
+                _logger.LogInformation(
+                    "Face enrollment completed. UserId={UserId}, FaceProfileId={FaceProfileId}, IsPrimary={IsPrimary}, ElapsedMs={ElapsedMs}",
+                    request.UserId, profile.Id, profile.IsPrimary, sw.ElapsedMilliseconds);
+
+                var response = new
+                {
+                    profile.Id,
+                    profile.UserId,
+                    profile.Description,
+                    profile.IsPrimary,
+                    profile.CreatedAt,
+                    ElapsedMs = sw.ElapsedMilliseconds
+                };
+
+                return Ok(response);
             }
-
-            if (request.Image.Length > MAX_IMAGE_SIZE)
+            catch (OperationCanceledException)
             {
-                _logger.LogWarning("Enrollment rejected - image too large. UserId={UserId}, ImageSize={ImageSize}",
-                    request.UserId, request.Image.Length);
-                return BadRequest(new { Message = "Image exceeds maximum size", MaxSize = MAX_IMAGE_SIZE, ActualSize = request.Image.Length });
+                sw.Stop();
+
+                _logger.LogWarning(
+                    "Face enrollment cancelled. UserId={UserId}, ElapsedMs={ElapsedMs}",
+                    request.UserId, sw.ElapsedMilliseconds);
+
+                TrackFaceApiMetric(
+                    operation: "Enroll",
+                    elapsedMs: sw.ElapsedMilliseconds,
+                    success: false,
+                    imageSizeBytes: request.Image?.Length,
+                    userId: request.UserId,
+                    errorReason: "Cancelled");
+
+                throw;
             }
-
-            byte[] imageBytes;
-            await using (var ms = new MemoryStream())
+            catch (Exception ex)
             {
-                await request.Image.CopyToAsync(ms, ct);
-                imageBytes = ms.ToArray();
+                sw.Stop();
+
+                _logger.LogError(
+                    ex,
+                    "Face enrollment failed. UserId={UserId}, ElapsedMs={ElapsedMs}, ExceptionType={ExceptionType}",
+                    request.UserId, sw.ElapsedMilliseconds, ex.GetType().Name);
+
+                TrackFaceApiMetric(
+                    operation: "Enroll",
+                    elapsedMs: sw.ElapsedMilliseconds,
+                    success: false,
+                    imageSizeBytes: request.Image?.Length,
+                    userId: request.UserId,
+                    errorReason: ex.GetType().Name);
+
+                // Let your global exception handler / middleware shape the final response
+                throw;
             }
-
-            _logger.LogInformation("Face enrollment image loaded. UserId={UserId}, ImageSize={ImageSize}, ContentType={ContentType}",
-                request.UserId, imageBytes.Length, request.Image.ContentType);
-
-            var profile = await _enrollmentService.EnrollAsync(
-                request.UserId,
-                imageBytes,
-                request.Description,
-                ct);
-
-            sw.Stop();
-
-            _logger.LogInformation(
-                "Face enrollment completed. UserId={UserId}, FaceProfileId={FaceProfileId}, IsPrimary={IsPrimary}, ElapsedMs={ElapsedMs}",
-                request.UserId, profile.Id, profile.IsPrimary, sw.ElapsedMilliseconds);
-
-            return Ok(new
-            {
-                profile.Id,
-                profile.UserId,
-                profile.Description,
-                profile.IsPrimary,
-                profile.CreatedAt,
-                ElapsedMs = sw.ElapsedMilliseconds
-            });
         }
 
+        // POST: api/face/verify
         [HttpPost("verify")]
         [AllowAnonymous]
-        [RequestSizeLimit(MAX_IMAGE_SIZE)]
-        public async Task<ActionResult<FaceMatchResponse>> Verify([FromForm] VerifyFaceRequest request, CancellationToken ct)
+        [RequestSizeLimit(MaxImageSizeBytes)]
+        [ProducesResponseType(typeof(FaceMatchResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<FaceMatchResponse>> Verify(
+            [FromForm] VerifyFaceRequest request,
+            CancellationToken ct)
         {
+            if (request is null)
+            {
+                return BadRequest(new { Message = "Request body is required." });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             var sw = Stopwatch.StartNew();
+            var cameraId = request.CameraId ?? "N/A";
 
-            _logger.LogInformation("Face verification request received. CameraId={CameraId}",
-                request.CameraId ?? "N/A");
-
-            if (request.Image == null || request.Image.Length == 0)
+            try
             {
-                _logger.LogWarning("Verification rejected - missing image. CameraId={CameraId}",
-                    request.CameraId);
-                return BadRequest(new { Message = "Image is required", CameraId = request.CameraId });
+                _logger.LogInformation(
+                    "Face verification request received. CameraId={CameraId}",
+                    cameraId);
+
+                if (!IsValidImage(request.Image, out var imageValidationError))
+                {
+                    sw.Stop();
+
+                    _logger.LogWarning(
+                        "Verification rejected - invalid image. CameraId={CameraId}, Reason={Reason}",
+                        cameraId, imageValidationError);
+
+                    TrackFaceApiMetric(
+                        operation: "Verify",
+                        elapsedMs: sw.ElapsedMilliseconds,
+                        success: false,
+                        imageSizeBytes: request.Image?.Length,
+                        cameraId: cameraId,
+                        errorReason: imageValidationError);
+
+                    return BadRequest(new
+                    {
+                        Message = imageValidationError,
+                        CameraId = request.CameraId,
+                        MaxSize = MaxImageSizeBytes,
+                        ActualSize = request.Image?.Length
+                    });
+                }
+
+                var imageBytes = await ReadImageAsync(request.Image!, ct);
+
+                _logger.LogInformation(
+                    "Face verification image loaded. CameraId={CameraId}, ImageSize={ImageSize}, ContentType={ContentType}",
+                    cameraId, imageBytes.Length, request.Image!.ContentType);
+
+                var result = await _recognitionService.VerifyAsync(
+                    imageBytes,
+                    request.CameraId,
+                    ct);
+
+                sw.Stop();
+
+                TrackFaceApiMetric(
+                    operation: "Verify",
+                    elapsedMs: sw.ElapsedMilliseconds,
+                    success: true,
+                    imageSizeBytes: imageBytes.Length,
+                    cameraId: cameraId,
+                    userId: result.UserId);
+
+                var dto = new FaceMatchResponse
+                {
+                    IsMatch = result.IsMatch,
+                    UserId = result.UserId,
+                    FaceProfileId = result.FaceProfileId,
+                    Similarity = result.Similarity
+                };
+
+                if (result.IsMatch)
+                {
+                    _logger.LogInformation(
+                        "Face verification completed - MATCH. CameraId={CameraId}, UserId={UserId}, FaceProfileId={FaceProfileId}, Similarity={Similarity:F4}, ElapsedMs={ElapsedMs}",
+                        cameraId, dto.UserId, dto.FaceProfileId, dto.Similarity, sw.ElapsedMilliseconds);
+                }
+                else
+                {
+                    _logger.LogInformation(
+                        "Face verification completed - NO MATCH. CameraId={CameraId}, BestSimilarity={Similarity:F4}, ElapsedMs={ElapsedMs}",
+                        cameraId, dto.Similarity, sw.ElapsedMilliseconds);
+                }
+
+                return Ok(dto);
+            }
+            catch (OperationCanceledException)
+            {
+                sw.Stop();
+
+                _logger.LogWarning(
+                    "Face verification cancelled. CameraId={CameraId}, ElapsedMs={ElapsedMs}",
+                    cameraId, sw.ElapsedMilliseconds);
+
+                TrackFaceApiMetric(
+                    operation: "Verify",
+                    elapsedMs: sw.ElapsedMilliseconds,
+                    success: false,
+                    imageSizeBytes: request.Image?.Length,
+                    cameraId: cameraId,
+                    errorReason: "Cancelled");
+
+                throw;
+            }
+            catch (Exception ex)
+            {
+                sw.Stop();
+
+                _logger.LogError(
+                    ex,
+                    "Face verification failed. CameraId={CameraId}, ElapsedMs={ElapsedMs}, ExceptionType={ExceptionType}",
+                    cameraId, sw.ElapsedMilliseconds, ex.GetType().Name);
+
+                TrackFaceApiMetric(
+                    operation: "Verify",
+                    elapsedMs: sw.ElapsedMilliseconds,
+                    success: false,
+                    imageSizeBytes: request.Image?.Length,
+                    cameraId: cameraId,
+                    errorReason: ex.GetType().Name);
+
+                throw;
+            }
+        }
+
+        #region Private Helpers
+
+        private static bool IsValidImage(
+            IFormFile? file,
+            out string errorMessage)
+        {
+            if (file is null || file.Length == 0)
+            {
+                errorMessage = "Image is required.";
+                return false;
             }
 
-            if (request.Image.Length > MAX_IMAGE_SIZE)
+            if (file.Length > MaxImageSizeBytes)
             {
-                _logger.LogWarning("Verification rejected - image too large. CameraId={CameraId}, ImageSize={ImageSize}",
-                    request.CameraId, request.Image.Length);
-                return BadRequest(new { Message = "Image exceeds maximum size", MaxSize = MAX_IMAGE_SIZE, ActualSize = request.Image.Length });
+                errorMessage = "Image exceeds maximum allowed size.";
+                return false;
             }
 
-            byte[] imageBytes;
-            await using (var ms = new MemoryStream())
+            errorMessage = string.Empty;
+            return true;
+        }
+
+        private static async Task<byte[]> ReadImageAsync(IFormFile file, CancellationToken ct)
+        {
+            await using var ms = new MemoryStream();
+            await file.CopyToAsync(ms, ct);
+            return ms.ToArray();
+        }
+
+        private void TrackFaceApiMetric(
+            string operation,
+            long elapsedMs,
+            bool success,
+            long? imageSizeBytes = null,
+            string? cameraId = null,
+            Guid? userId = null,
+            string? errorReason = null)
+        {
+            if (_telemetry is null)
+                return;
+
+            var props = new Dictionary<string, string>
             {
-                await request.Image.CopyToAsync(ms, ct);
-                imageBytes = ms.ToArray();
-            }
-
-            _logger.LogInformation("Face verification image loaded. CameraId={CameraId}, ImageSize={ImageSize}, ContentType={ContentType}",
-                request.CameraId, imageBytes.Length, request.Image.ContentType);
-
-            var result = await _recognitionService.VerifyAsync(
-                imageBytes,
-                request.CameraId,
-                ct);
-
-            sw.Stop();
-
-            var dto = new FaceMatchResponse
-            {
-                IsMatch = result.IsMatch,
-                UserId = result.UserId,
-                FaceProfileId = result.FaceProfileId,
-                Similarity = result.Similarity
+                ["Operation"] = operation,
+                ["Success"] = success.ToString(),
+                ["CameraId"] = cameraId ?? "N/A",
+                ["UserId"] = userId?.ToString() ?? "N/A"
             };
 
-            if (result.IsMatch)
+            if (!string.IsNullOrWhiteSpace(errorReason))
             {
-                _logger.LogInformation(
-                    "Face verification completed - MATCH. CameraId={CameraId}, UserId={UserId}, FaceProfileId={FaceProfileId}, Similarity={Similarity:F4}, ElapsedMs={ElapsedMs}",
-                    request.CameraId, dto.UserId, dto.FaceProfileId, dto.Similarity, sw.ElapsedMilliseconds);
-            }
-            else
-            {
-                _logger.LogInformation(
-                    "Face verification completed - NO MATCH. CameraId={CameraId}, BestSimilarity={Similarity:F4}, ElapsedMs={ElapsedMs}",
-                    request.CameraId, dto.Similarity, sw.ElapsedMilliseconds);
+                props["ErrorReason"] = errorReason;
             }
 
-            return Ok(dto);
+            _telemetry.TrackMetric("FaceApiLatencyMs", elapsedMs, props);
+
+            if (imageSizeBytes.HasValue)
+            {
+                _telemetry.TrackMetric("FaceApiImageSizeBytes", imageSizeBytes.Value, props);
+            }
         }
+
+        #endregion
     }
 }

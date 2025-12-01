@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,7 @@ namespace SSSP.BL.Services
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IVideoStreamClient _videoStreamClient;
         private readonly ILogger<CameraMonitoringWorker> _logger;
+        private readonly TelemetryClient _telemetry;
 
         private const int MAX_RETRY_ATTEMPTS = 10;
         private static readonly TimeSpan BASE_RETRY_DELAY = TimeSpan.FromSeconds(5);
@@ -36,11 +38,13 @@ namespace SSSP.BL.Services
         public CameraMonitoringWorker(
             IServiceScopeFactory scopeFactory,
             IVideoStreamClient videoStreamClient,
-            ILogger<CameraMonitoringWorker> logger)
+            ILogger<CameraMonitoringWorker> logger,
+            TelemetryClient telemetry)
         {
             _scopeFactory = scopeFactory;
             _videoStreamClient = videoStreamClient;
             _logger = logger;
+            _telemetry = telemetry;
         }
 
         public Task<bool> StartAsync(int cameraId, string rtspUrl, CancellationToken cancellationToken = default)
@@ -201,6 +205,10 @@ namespace SSSP.BL.Services
                         {
                             _logger.LogDebug("Camera heartbeat. CameraId={CameraId}, ProcessedFrames={FrameCount}, DetectedFaces={FaceCount}, Matches={MatchCount}",
                                 cameraId, frameCount, faceCount, matchCount);
+                            _telemetry.TrackMetric("CameraHeartbeat", 1, new Dictionary<string, string>
+                            {
+                                ["CameraId"] = cameraId.ToString()
+                            });
                         }
                         return;
                     }
@@ -237,6 +245,25 @@ namespace SSSP.BL.Services
             _logger.LogWarning(
                 "Camera stream session ended. CameraId={CameraId}, Duration={DurationSeconds}s, ProcessedFrames={FrameCount}, DetectedFaces={FaceCount}, Matches={MatchCount}",
                 cameraId, sessionDuration.TotalSeconds, frameCount, faceCount, matchCount);
+            var props = new Dictionary<string, string>
+            {
+                ["CameraId"] = cameraId.ToString()
+            };
+
+            _telemetry.TrackMetric("CameraSessionDurationSeconds", sessionDuration.TotalSeconds, props);
+            _telemetry.TrackMetric("CameraSessionFrames", frameCount, props);
+            _telemetry.TrackMetric("CameraSessionFaces", faceCount, props);
+            _telemetry.TrackMetric("CameraSessionMatches", matchCount, props);
+
+            _telemetry.TrackEvent("CameraSessionEnded", new Dictionary<string, string>
+            {
+                ["CameraId"] = cameraId.ToString(),
+                ["DurationSeconds"] = sessionDuration.TotalSeconds.ToString("F2"),
+                ["Frames"] = frameCount.ToString(),
+                ["Faces"] = faceCount.ToString(),
+                ["Matches"] = matchCount.ToString()
+            });
+
         }
 
         private static TimeSpan ComputeBackoff(int attempt)
