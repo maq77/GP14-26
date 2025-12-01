@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SSSP.Api.DTOs.Face;
 using SSSP.BL.Services;
+using SSSP.BL.Services.Interfaces;
 
 namespace SSSP.Api.Controllers
 {
@@ -14,15 +15,15 @@ namespace SSSP.Api.Controllers
     [Route("api/[controller]")]
     public class FaceController : ControllerBase
     {
-        private readonly FaceEnrollmentService _enrollmentService;
-        private readonly FaceRecognitionService _recognitionService;
+        private readonly IFaceEnrollmentService _enrollmentService;
+        private readonly IFaceRecognitionService _recognitionService;
         private readonly ILogger<FaceController> _logger;
 
         private const int MAX_IMAGE_SIZE = 10_000_000;
 
         public FaceController(
-            FaceEnrollmentService enrollmentService,
-            FaceRecognitionService recognitionService,
+            IFaceEnrollmentService enrollmentService,
+            IFaceRecognitionService recognitionService,
             ILogger<FaceController> logger)
         {
             _enrollmentService = enrollmentService;
