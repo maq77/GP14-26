@@ -300,6 +300,9 @@ try
     builder.Services.AddScoped<IRoleService, RoleService>();
     builder.Services.AddScoped<ISensorService, SensorService>();
     builder.Services.AddScoped<ICameraService, CameraService>();
+    builder.Services.AddSingleton<IIncidentManager, IncidentManager>();
+    builder.Services.AddScoped<IIncidentService, IncidentService>();
+
 
     // =======================================
     // HTTP Client
@@ -320,6 +323,7 @@ try
     builder.Services.AddSingleton<GrpcChannelFactory>();
     builder.Services.AddSingleton<IAIFaceClient, AIFaceClient>();
     builder.Services.AddSingleton<IVideoStreamClient, VideoStreamClient>();
+
 
     // =======================================
     // Face Recognition Services

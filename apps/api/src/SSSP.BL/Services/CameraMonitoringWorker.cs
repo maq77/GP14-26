@@ -192,30 +192,41 @@ namespace SSSP.BL.Services
             var faceCount = 0;
             var matchCount = 0;
 
+            // Window counters for FPS / rolling metrics
+            var windowStart = DateTimeOffset.UtcNow;
+            var windowFrames = 0;
+            var windowFaces = 0;
+            var windowMatches = 0;
+
             await _videoStreamClient.StreamCameraAsync(
                 cameraId.ToString(),
                 rtspUrl,
                 async response =>
                 {
                     frameCount++;
+                    windowFrames++;
 
                     if (response.Faces.Count == 0)
                     {
+                        // Heartbeat log every 100 frames
                         if (frameCount % 100 == 0)
                         {
-                            _logger.LogDebug("Camera heartbeat. CameraId={CameraId}, ProcessedFrames={FrameCount}, DetectedFaces={FaceCount}, Matches={MatchCount}",
+                            _logger.LogDebug(
+                                "Camera heartbeat. CameraId={CameraId}, ProcessedFrames={FrameCount}, DetectedFaces={FaceCount}, Matches={MatchCount}",
                                 cameraId, frameCount, faceCount, matchCount);
-                            _telemetry.TrackMetric("CameraHeartbeat", 1, new Dictionary<string, string>
-                            {
-                                ["CameraId"] = cameraId.ToString()
-                            });
+
+                            TrackCameraHeartbeat(cameraId);
                         }
+
+                        TryEmitWindowMetricsIfNeeded(cameraId, ref windowStart, ref windowFrames, ref windowFaces, ref windowMatches);
                         return;
                     }
 
                     faceCount += response.Faces.Count;
+                    windowFaces += response.Faces.Count;
 
-                    _logger.LogDebug("Frame received with faces. CameraId={CameraId}, FrameId={FrameId}, Faces={FaceCount}, TotalFrames={TotalFrames}",
+                    _logger.LogDebug(
+                        "Frame received with faces. CameraId={CameraId}, FrameId={FrameId}, Faces={FaceCount}, TotalFrames={TotalFrames}",
                         cameraId, response.FrameId, response.Faces.Count, frameCount);
 
                     foreach (var face in response.Faces)
@@ -228,42 +239,35 @@ namespace SSSP.BL.Services
                         if (match.IsMatch)
                         {
                             matchCount++;
+                            windowMatches++;
+
                             _logger.LogInformation(
                                 "FACE MATCH. CameraId={CameraId}, FrameId={FrameId}, UserId={UserId}, FaceProfileId={FaceProfileId}, Similarity={Similarity:F4}, MatchNumber={MatchNumber}",
                                 cameraId, response.FrameId, match.UserId, match.FaceProfileId, match.Similarity, matchCount);
                         }
                         else
                         {
-                            _logger.LogDebug("Unknown face detected. CameraId={CameraId}, FrameId={FrameId}, BestSimilarity={Similarity:F4}",
+                            _logger.LogDebug(
+                                "Unknown face detected. CameraId={CameraId}, FrameId={FrameId}, BestSimilarity={Similarity:F4}",
                                 cameraId, response.FrameId, match.Similarity);
                         }
                     }
+
+                    TryEmitWindowMetricsIfNeeded(cameraId, ref windowStart, ref windowFrames, ref windowFaces, ref windowMatches);
                 },
                 cancellationToken);
 
             var sessionDuration = DateTimeOffset.UtcNow - sessionStart;
+
+            // Flush remaining window if any frames left
+            EmitWindowMetrics(cameraId, windowStart, windowFrames, windowFaces, windowMatches);
+
+            // Session-level telemetry
+            TrackCameraSessionSummary(cameraId, sessionDuration, frameCount, faceCount, matchCount);
+
             _logger.LogWarning(
                 "Camera stream session ended. CameraId={CameraId}, Duration={DurationSeconds}s, ProcessedFrames={FrameCount}, DetectedFaces={FaceCount}, Matches={MatchCount}",
                 cameraId, sessionDuration.TotalSeconds, frameCount, faceCount, matchCount);
-            var props = new Dictionary<string, string>
-            {
-                ["CameraId"] = cameraId.ToString()
-            };
-
-            _telemetry.TrackMetric("CameraSessionDurationSeconds", sessionDuration.TotalSeconds, props);
-            _telemetry.TrackMetric("CameraSessionFrames", frameCount, props);
-            _telemetry.TrackMetric("CameraSessionFaces", faceCount, props);
-            _telemetry.TrackMetric("CameraSessionMatches", matchCount, props);
-
-            _telemetry.TrackEvent("CameraSessionEnded", new Dictionary<string, string>
-            {
-                ["CameraId"] = cameraId.ToString(),
-                ["DurationSeconds"] = sessionDuration.TotalSeconds.ToString("F2"),
-                ["Frames"] = frameCount.ToString(),
-                ["Faces"] = faceCount.ToString(),
-                ["Matches"] = matchCount.ToString()
-            });
-
         }
 
         private static TimeSpan ComputeBackoff(int attempt)
@@ -306,5 +310,110 @@ namespace SSSP.BL.Services
             _sessions.Clear();
             _logger.LogInformation("CameraMonitoringWorker shutdown complete");
         }
+
+        private void TrackCameraHeartbeat(int cameraId)
+        {
+            var props = new Dictionary<string, string>
+            {
+                ["CameraId"] = cameraId.ToString()
+            };
+
+            _telemetry.TrackMetric("CameraHeartbeat", 1, props);
+        }
+
+        private void TryEmitWindowMetricsIfNeeded(
+            int cameraId,
+            ref DateTimeOffset windowStart,
+            ref int windowFrames,
+            ref int windowFaces,
+            ref int windowMatches)
+        {
+            var now = DateTimeOffset.UtcNow;
+            var windowDuration = now - windowStart;
+
+            // Emit metrics every 5 seconds OR every 100 frames
+            if (windowFrames == 0)
+                return;
+
+            if (windowDuration.TotalSeconds < 5 && windowFrames < 100)
+                return;
+
+            EmitWindowMetrics(cameraId, windowStart, windowFrames, windowFaces, windowMatches);
+
+            // reset window
+            windowStart = now;
+            windowFrames = 0;
+            windowFaces = 0;
+            windowMatches = 0;
+        }
+
+        private void EmitWindowMetrics(
+            int cameraId,
+            DateTimeOffset windowStart,
+            int windowFrames,
+            int windowFaces,
+            int windowMatches)
+        {
+            if (windowFrames <= 0)
+                return;
+
+            var windowDuration = DateTimeOffset.UtcNow - windowStart;
+            var seconds = windowDuration.TotalSeconds > 0 ? windowDuration.TotalSeconds : 1;
+            var fps = windowFrames / seconds;
+
+            var props = new Dictionary<string, string>
+            {
+                ["CameraId"] = cameraId.ToString()
+            };
+
+            _telemetry.TrackMetric("CameraFramesProcessed", windowFrames, props);
+
+            if (windowFaces > 0)
+                _telemetry.TrackMetric("CameraFacesDetected", windowFaces, props);
+
+            if (windowMatches > 0)
+                _telemetry.TrackMetric("CameraFaceMatches", windowMatches, props);
+
+            _telemetry.TrackMetric("CameraFps", fps, props);
+
+            _logger.LogDebug(
+                "Camera metrics window. CameraId={CameraId}, WindowSeconds={WindowSeconds:F1}, Frames={Frames}, Faces={Faces}, Matches={Matches}, Fps={Fps:F2}",
+                cameraId, seconds, windowFrames, windowFaces, windowMatches, fps);
+        }
+
+        private void TrackCameraSessionSummary(
+            int cameraId,
+            TimeSpan duration,
+            int totalFrames,
+            int totalFaces,
+            int totalMatches)
+        {
+            var props = new Dictionary<string, string>
+            {
+                ["CameraId"] = cameraId.ToString(),
+                ["SessionDurationSeconds"] = duration.TotalSeconds.ToString("F2")
+            };
+
+            _telemetry.TrackMetric("CameraSessionDurationSeconds", duration.TotalSeconds, props);
+            _telemetry.TrackMetric("CameraSessionFrames", totalFrames, props);
+            _telemetry.TrackMetric("CameraSessionFaces", totalFaces, props);
+            _telemetry.TrackMetric("CameraSessionMatches", totalMatches, props);
+
+            if (duration.TotalSeconds > 0 && totalFrames > 0)
+            {
+                var avgFps = totalFrames / duration.TotalSeconds;
+                _telemetry.TrackMetric("CameraSessionAvgFps", avgFps, props);
+            }
+
+            _telemetry.TrackEvent("CameraSessionEnded", new Dictionary<string, string>
+            {
+                ["CameraId"] = cameraId.ToString(),
+                ["DurationSeconds"] = duration.TotalSeconds.ToString("F2"),
+                ["Frames"] = totalFrames.ToString(),
+                ["Faces"] = totalFaces.ToString(),
+                ["Matches"] = totalMatches.ToString()
+            });
+        }
+
     }
 }
