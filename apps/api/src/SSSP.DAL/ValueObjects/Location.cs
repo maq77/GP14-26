@@ -8,13 +8,13 @@ namespace SSSP.DAL.ValueObjects;
 
 public class Location
 {
-    public double Latitude { get; init; }
-    public double Longitude { get; init; }
+    public double? Latitude { get; init; }
+    public double? Longitude { get; init; }
     public string? Address { get; init; }
 
     public Location() { }
 
-    public Location(double latitude, double longitude, string? address = null)
+    public Location(double? latitude = 32.21, double? longitude = 32.21, string? address = null)
     {
         Latitude = latitude;
         Longitude = longitude;

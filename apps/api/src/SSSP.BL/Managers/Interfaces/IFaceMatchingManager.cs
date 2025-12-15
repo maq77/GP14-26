@@ -9,7 +9,7 @@ namespace SSSP.BL.Managers.Interfaces
         double DefaultThreshold { get; }
         FaceMatchResult Match(
             IReadOnlyList<float> probeEmbedding,
-            IEnumerable<FaceProfile> knownProfiles,
+            IReadOnlyList<FaceProfile> knownProfiles,
             double? thresholdOverride = null);
     }
 }

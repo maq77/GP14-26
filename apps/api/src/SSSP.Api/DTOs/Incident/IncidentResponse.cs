@@ -1,10 +1,9 @@
 ﻿using SSSP.DAL.Enums;
 using SSSP.DAL.ValueObjects;
-using SSSP.DAL.Abstractions;
 
-namespace SSSP.DAL.Models
+namespace SSSP.Api.DTOs.Incidents
 {
-    public sealed class Incident : IEntity<int>
+    public sealed class IncidentResponse
     {
         public int Id { get; set; }
 
@@ -21,19 +20,13 @@ namespace SSSP.DAL.Models
         public IncidentSource Source { get; set; } = IncidentSource.Manual;
 
         public int? OperatorId { get; set; }
-        public Operator? Operator { get; set; }
 
         public Location? Location { get; set; }
 
         public Guid? AssignedToUserId { get; set; }
-        public User? AssignedToUser { get; set; }
 
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        public DateTime Timestamp { get; set; }
 
         public DateTime? ResolvedAt { get; set; }
-
-        public string? PayloadJson { get; set; }
-
-        public string? DedupeKey { get; set; }
     }
 }

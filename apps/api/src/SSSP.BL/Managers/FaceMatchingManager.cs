@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using SSSP.BL.Managers.Interfaces;
-using SSSP.DAL.Models;
 using SSSP.BL.Records;
+using SSSP.DAL.Models;
 
 namespace SSSP.BL.Managers
 {
@@ -17,36 +18,56 @@ namespace SSSP.BL.Managers
         public double DefaultThreshold => _defaultThreshold;
 
         public FaceMatchingManager(
-            double threshold,
+            double defaultThreshold,
             ILogger<FaceMatchingManager> logger)
         {
-            if (threshold <= 0 || threshold > 1)
-                throw new ArgumentOutOfRangeException(nameof(threshold), threshold, "Threshold must be in (0, 1].");
+            if (defaultThreshold <= 0 || defaultThreshold > 1)
+                throw new ArgumentOutOfRangeException(
+                    nameof(defaultThreshold),
+                    defaultThreshold,
+                    "Default threshold must be in (0, 1].");
 
-            _defaultThreshold = threshold;
+            _defaultThreshold = defaultThreshold;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public FaceMatchResult Match(
             IReadOnlyList<float> probeEmbedding,
-            IEnumerable<FaceProfile> knownProfiles,
+            IReadOnlyList<FaceProfile> knownProfiles,
             double? thresholdOverride = null)
         {
-            if (probeEmbedding is null || probeEmbedding.Count == 0)
+            var sw = Stopwatch.StartNew();
+
+            if (probeEmbedding == null || probeEmbedding.Count == 0)
             {
-                _logger.LogWarning("Face matching requested with empty embedding.");
+                _logger.LogWarning(
+                    "Face matching requested with empty probe embedding. Profiles={ProfilesCount}",
+                    knownProfiles?.Count ?? 0);
+
                 return new FaceMatchResult(false, null, null, 0.0);
             }
 
-            var profiles = knownProfiles as IList<FaceProfile> ?? knownProfiles.ToList();
+            var profiles = knownProfiles ?? Array.Empty<FaceProfile>();
 
             if (profiles.Count == 0)
             {
-                _logger.LogInformation("Face matching skipped. No FaceProfiles available.");
+                _logger.LogInformation(
+                    "Face matching skipped. No FaceProfiles available. EmbeddingDim={EmbeddingDim}",
+                    probeEmbedding.Count);
+
                 return new FaceMatchResult(false, null, null, 0.0);
             }
 
             var threshold = thresholdOverride ?? _defaultThreshold;
+            if (threshold <= 0 || threshold > 1)
+            {
+                _logger.LogWarning(
+                    "Invalid thresholdOverride={OverrideThreshold}. Falling back to DefaultThreshold={DefaultThreshold}.",
+                    thresholdOverride,
+                    _defaultThreshold);
+
+                threshold = _defaultThreshold;
+            }
 
             using var scope = _logger.BeginScope(new Dictionary<string, object>
             {
@@ -56,11 +77,12 @@ namespace SSSP.BL.Managers
             });
 
             _logger.LogDebug(
-                "Starting face matching. EmbeddingDim={EmbeddingDim}, Profiles={ProfilesCount}, Threshold={Threshold}",
+                "Starting face matching. EmbeddingDim={EmbeddingDim}, Profiles={ProfilesCount}, Threshold={Threshold:F4}",
                 probeEmbedding.Count,
                 profiles.Count,
                 threshold);
 
+            // Convert probe to array + precompute norm for span-based math
             var probeArray = probeEmbedding.ToArray();
             var probeNorm = ComputeNorm(probeArray);
 
@@ -70,6 +92,13 @@ namespace SSSP.BL.Managers
                 return new FaceMatchResult(false, null, null, 0.0);
             }
 
+            // Diagnostics counters
+            var totalEmbeddings = 0;
+            var validEmbeddings = 0;
+            var emptyEmbeddings = 0;
+            var profilesWithEmbeddings = 0;
+            var profilesWithoutEmbeddings = 0;
+
             FaceProfile? bestProfile = null;
             double bestSimilarity = double.NegativeInfinity;
 
@@ -78,66 +107,141 @@ namespace SSSP.BL.Managers
                 if (profile == null)
                     continue;
 
-                var embeddings = profile.Embeddings;
-                if (embeddings == null || embeddings.Count == 0)
-                    continue;
-
-                foreach (var emb in embeddings)
+                if (profile.Embeddings == null || profile.Embeddings.Count == 0)
                 {
+                    profilesWithoutEmbeddings++;
+
+                    _logger.LogDebug(
+                        "Profile has NO embeddings. ProfileId={ProfileId}, UserId={UserId}, UserName={UserName}",
+                        profile.Id,
+                        profile.UserId,
+                        profile.User?.UserName ?? "N/A");
+
+                    continue;
+                }
+
+                profilesWithEmbeddings++;
+
+                var profileEmbeddingCount = 0;
+                var profileValidEmbeddings = 0;
+                var profileBestSimilarity = double.NegativeInfinity;
+
+                foreach (var emb in profile.Embeddings)
+                {
+                    totalEmbeddings++;
+                    profileEmbeddingCount++;
+
                     if (emb?.Vector == null || emb.Vector.Length == 0)
+                    {
+                        emptyEmbeddings++;
+
+                        _logger.LogWarning(
+                            "Empty embedding vector. ProfileId={ProfileId}, EmbeddingId={EmbeddingId}, UserId={UserId}",
+                            profile.Id,
+                            emb?.Id,
+                            profile.UserId);
+
                         continue;
+                    }
 
                     if (!TryGetFloatSpan(emb.Vector, out var storedSpan))
                     {
                         _logger.LogError(
-                            "Invalid embedding length for FaceEmbedding {EmbeddingId} (FaceProfile={FaceProfileId}). Length={Length}",
-                            emb.Id,
+                            "Invalid embedding byte buffer. ProfileId={ProfileId}, EmbeddingId={EmbeddingId}, BytesLength={BytesLength}",
                             profile.Id,
+                            emb.Id,
                             emb.Vector.Length);
+
                         continue;
                     }
 
                     if (storedSpan.Length != probeArray.Length)
                     {
-                        _logger.LogDebug(
-                            "Embedding dimension mismatch for FaceProfile {FaceProfileId} / Embedding {EmbeddingId}. StoredDim={StoredDim}, ProbeDim={ProbeDim}",
+                        _logger.LogError(
+                            "Embedding dimension mismatch. ProfileId={ProfileId}, EmbeddingId={EmbeddingId}, ExpectedDim={Expected}, StoredDim={Stored}, UserId={UserId}",
                             profile.Id,
                             emb.Id,
+                            probeArray.Length,
                             storedSpan.Length,
-                            probeArray.Length);
+                            profile.UserId);
+
                         continue;
                     }
+
+                    validEmbeddings++;
+                    profileValidEmbeddings++;
 
                     var similarity = ComputeCosineSimilarity(
                         probeArray,
                         probeNorm,
                         storedSpan);
 
+                    if (similarity > profileBestSimilarity)
+                    {
+                        profileBestSimilarity = similarity;
+                    }
+
                     if (similarity > bestSimilarity)
                     {
                         bestSimilarity = similarity;
                         bestProfile = profile;
                     }
+
+                    _logger.LogTrace(
+                        "Embedding compared. ProfileId={ProfileId}, EmbeddingId={EmbeddingId}, UserId={UserId}, Similarity={Similarity:F4}",
+                        profile.Id,
+                        emb.Id,
+                        profile.UserId,
+                        similarity);
                 }
+
+                _logger.LogDebug(
+                    "Profile processed. ProfileId={ProfileId}, UserId={UserId}, UserName={UserName}, TotalEmbeddings={TotalEmbeddings}, ValidEmbeddings={ValidEmbeddings}, BestSimilarity={BestSimilarity:F4}",
+                    profile.Id,
+                    profile.UserId,
+                    profile.User?.UserName ?? "N/A",
+                    profileEmbeddingCount,
+                    profileValidEmbeddings,
+                    double.IsNegativeInfinity(profileBestSimilarity) ? 0.0 : profileBestSimilarity);
             }
 
-            if (double.IsNegativeInfinity(bestSimilarity) || bestProfile == null)
+            sw.Stop();
+
+            if (bestProfile == null || double.IsNegativeInfinity(bestSimilarity))
             {
                 _logger.LogInformation(
-                    "Face matching completed. No valid embeddings across {ProfilesCount} profiles.",
-                    profiles.Count);
+                    "Face matching completed. No valid embeddings across {ProfilesCount} profiles. ProfilesWithEmbeddings={ProfilesWithEmbeddings}, ProfilesWithoutEmbeddings={ProfilesWithoutEmbeddings}, TotalEmbeddings={TotalEmbeddings}, ValidEmbeddings={ValidEmbeddings}, EmptyEmbeddings={EmptyEmbeddings}, ElapsedMs={ElapsedMs}",
+                    profiles.Count,
+                    profilesWithEmbeddings,
+                    profilesWithoutEmbeddings,
+                    totalEmbeddings,
+                    validEmbeddings,
+                    emptyEmbeddings,
+                    sw.ElapsedMilliseconds);
+
+                if (profiles.Count > 0)
+                    LogProfileDetails(profiles);
+
                 return new FaceMatchResult(false, null, null, 0.0);
             }
 
-            if (bestSimilarity >= threshold)
-            {
-                _logger.LogInformation(
-                    "Face match success. UserId={UserId}, FaceProfileId={FaceProfileId}, Similarity={Similarity}, Threshold={Threshold}",
-                    bestProfile.UserId,
-                    bestProfile.Id,
-                    bestSimilarity,
-                    threshold);
+            var isMatch = bestSimilarity >= threshold;
 
+            _logger.LogInformation(
+                "Face matching completed. TotalProfiles={ProfileCount}, ProfilesWithEmbeddings={ProfilesWithEmbeddings}, ValidEmbeddings={ValidEmbeddings}, BestSimilarity={BestSimilarity:F4}, Threshold={Threshold:F4}, IsMatch={IsMatch}, MatchedUserId={UserId}, MatchedUserName={UserName}, MatchedFaceProfileId={FaceProfileId}, ElapsedMs={ElapsedMs}",
+                profiles.Count,
+                profilesWithEmbeddings,
+                validEmbeddings,
+                bestSimilarity,
+                threshold,
+                isMatch,
+                bestProfile.UserId,
+                bestProfile.User?.FullName ?? "Name Unassigned",
+                bestProfile.Id,
+                sw.ElapsedMilliseconds);
+
+            if (isMatch)
+            {
                 return new FaceMatchResult(
                     true,
                     bestProfile.UserId,
@@ -145,16 +249,67 @@ namespace SSSP.BL.Managers
                     bestSimilarity);
             }
 
-            _logger.LogInformation(
-                "Face match failed. BestSimilarity={Similarity}, Threshold={Threshold}",
-                bestSimilarity,
-                threshold);
-
             return new FaceMatchResult(
                 false,
                 null,
                 null,
                 bestSimilarity);
+        }
+
+        private void LogProfileDetails(IReadOnlyList<FaceProfile> profiles)
+        {
+            _logger.LogWarning("=== PROFILE DETAILS DIAGNOSTIC ===");
+
+            for (var i = 0; i < profiles.Count; i++)
+            {
+                var profile = profiles[i];
+                if (profile == null)
+                    continue;
+
+                var embeddingDetails = new List<string>();
+
+                if (profile.Embeddings != null && profile.Embeddings.Count > 0)
+                {
+                    foreach (var emb in profile.Embeddings)
+                    {
+                        if (emb == null)
+                        {
+                            embeddingDetails.Add("[NULL-EMBEDDING]");
+                            continue;
+                        }
+
+                        string status;
+
+                        if (emb.Vector == null || emb.Vector.Length == 0)
+                        {
+                            status = "EMPTY";
+                        }
+                        else if (!TryGetFloatSpan(emb.Vector, out var span))
+                        {
+                            status = $"INVALID-BYTES({emb.Vector.Length})";
+                        }
+                        else
+                        {
+                            status = $"OK({span.Length}D)";
+                        }
+
+                        embeddingDetails.Add($"[{emb.Id}: {status}]");
+                    }
+                }
+
+                _logger.LogWarning(
+                    "Profile #{Index}: ProfileId={ProfileId}, UserId={UserId}, UserName={UserName}, IsPrimary={IsPrimary}, EmbeddingCount={EmbeddingCount}, Embeddings={EmbeddingDetails}, CreatedAt={CreatedAt:o}",
+                    i + 1,
+                    profile.Id,
+                    profile.UserId,
+                    profile.User?.UserName ?? "N/A",
+                    profile.IsPrimary,
+                    profile.Embeddings?.Count ?? 0,
+                    embeddingDetails.Count > 0 ? string.Join(", ", embeddingDetails) : "NONE",
+                    profile.CreatedAt);
+            }
+
+            _logger.LogWarning("=== END PROFILE DETAILS ===");
         }
 
         private static double ComputeNorm(ReadOnlySpan<float> vector)
@@ -165,6 +320,7 @@ namespace SSSP.BL.Managers
                 var v = vector[i];
                 sumSq += (double)v * v;
             }
+
             return Math.Sqrt(sumSq);
         }
 
