@@ -2,18 +2,29 @@ syntax = "proto3";
 
 package sssp.ai.face;
 
-
 // ============================================================================
-// Face Service
+// Face Service - Optimized for Performance & Multi-Face Support
 // ============================================================================
 
 service FaceService {
+  // Detect all faces in image (fast, detection only)
   rpc DetectFaces      (FaceDetectRequest)    returns (FaceDetectResponse);
-  rpc RecognizeFace    (FaceRecognizeRequest) returns (FaceRecognizeResponse);
+  
+  // Extract embeddings for all faces (detection + embedding)
+  rpc ExtractEmbedding  (FaceEmbeddingRequest) returns (FaceEmbeddingResponse);  // legacy name
+  rpc ExtractEmbeddings (FaceEmbeddingRequest) returns (FaceEmbeddingResponse);  // new name
+  
+  // Verify single face against known profiles (used by .NET matching)
   rpc VerifyFace       (FaceVerifyRequest)    returns (FaceVerifyResponse);
+  
+  // Enroll new person with multiple images
   rpc EnrollFace       (FaceEnrollRequest)    returns (FaceEnrollResponse);
+  
+  // Get model information and health
   rpc GetModelInfo     (FaceModelInfoRequest) returns (FaceModelInfoResponse);
-  rpc ExtractEmbedding (FaceEmbeddingRequest) returns (FaceEmbeddingResponse);
+  
+  // Process video frame (optimized for streaming)
+  rpc ProcessFrame     (FrameProcessRequest)  returns (FrameProcessResponse);
 }
 
 // ============================================================================
@@ -22,35 +33,43 @@ service FaceService {
 
 message FaceDetectRequest {
   bytes image                 = 1;
-  float confidence_threshold  = 2;
+  float confidence_threshold  = 2;  // default: 0.7
+  int32 max_faces             = 3;  // optional limit
+  bool include_crops          = 4;  // include cropped face images
 }
 
-message FaceRecognizeRequest {
+message FaceEmbeddingRequest {
   bytes image                 = 1;
-  repeated string candidate_ids = 2;
-  float confidence_threshold  = 3;
-  int32 max_results           = 4;
+  string camera_id            = 2;  // for logging/tracking
+  float confidence_threshold  = 3;  // default: 0.7
+  int32 max_faces             = 4;  // optional limit
+  bool include_crops          = 5;  // return face crops
+  int32 max_image_dimension   = 6;  // auto-resize if larger (default: 1280)
 }
 
 message FaceVerifyRequest {
   bytes image                 = 1;
   string camera_id            = 2;
-  bool check_blacklist        = 3;
-  float confidence_threshold  = 4;
+  float confidence_threshold  = 3;
+  bool return_largest_only    = 4;  // backward compat: return only largest face
 }
 
 message FaceEnrollRequest {
-  string person_id      = 1;
-  string person_name    = 2;
-  repeated bytes images = 3;
-  bool is_blacklisted   = 4;
+  string person_id            = 1;
+  string person_name          = 2;
+  repeated bytes images       = 3;  // multiple images per person
+  bool compute_template       = 4;  // average embeddings into template
+  float quality_threshold     = 5;  // minimum quality score (default: 0.5)
 }
 
 message FaceModelInfoRequest {}
 
-message FaceEmbeddingRequest {
-  bytes image      = 1;
-  string camera_id = 2;
+message FrameProcessRequest {
+  bytes frame                 = 1;
+  string camera_id            = 2;
+  float confidence_threshold  = 3;
+  int32 max_faces             = 4;
+  bool skip_embedding         = 5;  // detection only (faster)
 }
 
 // ============================================================================
@@ -58,84 +77,129 @@ message FaceEmbeddingRequest {
 // ============================================================================
 
 message FaceDetectResponse {
-  bool success          = 1;
-  string error_message  = 2;
-  repeated Face faces   = 3;
-  int32 total_faces     = 4;
-  float total_time_ms   = 5;
-}
-
-message FaceRecognizeResponse {
-  bool success                   = 1;
-  string error_message           = 2;
-  repeated FaceMatch matches     = 3;
-  int32 total_candidates_checked = 4;
-  float total_time_ms            = 5;
-}
-
-message FaceVerifyResponse {
-  bool success                  = 1;
-  string error_message          = 2;
-  bool face_detected            = 3;
-  bool match_found              = 4;
-  bool is_authorized            = 5;
-  string person_id              = 6;
-  string person_name            = 7;
-  float confidence              = 8;
-  BoundingBox bbox              = 9;
-  float total_time_ms           = 10;
-  repeated FaceMatch candidate_matches = 11;
+  bool success                = 1;
+  string error_message        = 2;
+  repeated DetectedFace faces = 3;
+  int32 total_faces           = 4;
+  float total_time_ms         = 5;
+  PerformanceMetrics metrics  = 6;
 }
 
 message FaceEmbeddingResponse {
-  bool success          = 1;
-  string error_message  = 2;
-  bool face_detected    = 3;
-  repeated float embedding = 4;
-  BoundingBox bbox      = 5;
-  float total_time_ms   = 6;
+  bool success                = 1;
+  string error_message        = 2;
+  bool face_detected          = 3;
+  repeated Face faces         = 4;  // all faces with embeddings
+  float total_time_ms         = 5;
+  PerformanceMetrics metrics  = 6;
+  string camera_id            = 7;
+  ErrorCode error_code        = 8;
+}
+
+message FaceVerifyResponse {
+  bool success                = 1;
+  string error_message        = 2;
+  bool face_detected          = 3;
+  Face largest_face           = 4;  // backward compat
+  repeated Face faces         = 5;  // all faces
+  float total_time_ms         = 6;
+  PerformanceMetrics metrics  = 7;
 }
 
 message FaceEnrollResponse {
-  bool success          = 1;
-  string error_message  = 2;
-  string person_id      = 3;
-  int32 images_enrolled = 4;
+  bool success                = 1;
+  string error_message        = 2;
+  string person_id            = 3;
+  int32 images_processed      = 4;
+  int32 valid_embeddings      = 5;
+  repeated float template_embedding = 6;  // averaged embedding if requested
+  float avg_quality_score     = 7;
+  float total_time_ms         = 8;
 }
 
 message FaceModelInfoResponse {
-  string model_name          = 1;
-  string model_version       = 2;
-  string device              = 3;
-  float model_size_mb        = 4;
-  int32 input_size           = 5;
-  int32 embedding_dim        = 6;
-  int32 total_faces_enrolled = 7;
+  string model_name           = 1;
+  string model_version        = 2;
+  string device               = 3;
+  float model_size_mb         = 4;
+  int32 input_size            = 5;
+  int32 embedding_dim         = 6;
+  int32 total_faces_enrolled  = 7;
+  bool is_ready               = 8;
+  string detector_type        = 9;
+  DetectorConfig detector_config = 10;
+}
+
+message FrameProcessResponse {
+  bool success                = 1;
+  string error_message        = 2;
+  repeated Face faces         = 3;
+  int32 frame_id              = 4;
+  string camera_id            = 5;
+  float total_time_ms         = 6;
+  PerformanceMetrics metrics  = 7;
 }
 
 // ============================================================================
-// Data Types
+// Data Types - Optimized for Multi-Face
 // ============================================================================
 
 message Face {
-  BoundingBox bbox           = 1;
-  float confidence           = 2;
-  bytes embedding_bytes      = 3;
-  bytes cropped_image        = 4;
-  repeated float embedding_vector = 5;
+  BoundingBox bbox                = 1;
+  float confidence                = 2;  // detection confidence
+  repeated float embedding_vector = 3;  // 512-dim FaceNet embedding
+  bytes cropped_image             = 4;  // optional JPEG crop
+  FaceQuality quality             = 5;  // quality metrics
+  int32 face_id                   = 6;  // unique ID in this frame
 }
 
-message FaceMatch {
-  string person_id    = 1;
-  string person_name  = 2;
-  float score         = 3;
-  Face face           = 4;
-  bool is_blacklisted = 5;
+message DetectedFace {
+  BoundingBox bbox           = 1;
+  float confidence           = 2;
+  bytes cropped_image        = 3;  // optional
+  FaceQuality quality        = 4;
+  int32 face_id              = 5;
 }
 
 message BoundingBox {
-  float x1 = 1;
-  float y1 = 2;
-  float x2 = 3;
-  float y2 = 4;
+  float x = 1;  // top-left x
+  float y = 2;  // top-left y
+  float w = 3;  // width
+  float h = 4;  // height
+}
+
+enum ErrorCode {
+  ERROR_CODE_UNSPECIFIED = 0;
+  INVALID_IMAGE          = 1;
+  NO_FACE_FOUND          = 2;
+  INTERNAL_ERROR         = 3;
+  MODEL_NOT_READY        = 4;
+  TIMEOUT                = 5;
+}
+
+message FaceQuality {
+  float overall_score        = 1;  // 0.0 - 1.0
+  float sharpness            = 2;  // variance of Laplacian
+  float brightness           = 3;  // mean luminance
+  int32 face_size_pixels     = 4;  // width in pixels
+  float pitch                = 5;  // head rotation (optional)
+  float yaw                  = 6;
+  float roll                 = 7;
+}
+
+message PerformanceMetrics {
+  float detection_ms         = 1;
+  float embedding_ms         = 2;
+  float preprocessing_ms     = 3;
+  float total_ms             = 4;
+  int32 image_width          = 5;
+  int32 image_height         = 6;
+  int32 faces_detected       = 7;
+}
+
+message DetectorConfig {
+  int32 min_face_size        = 1;
+  float confidence_threshold = 2;
+  int32 max_faces            = 3;
+  bool keep_all              = 4;
 }

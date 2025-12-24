@@ -25,6 +25,7 @@ from typing import Optional
 
 import grpc
 import structlog
+from ..lifespan.health_registry import get_health_registry, HealthStatus
 
 # ---------------------------------------------------------------------------
 # Sys.path setup so generated protobufs & packages are importable
@@ -121,6 +122,15 @@ class GRPCServer:
 
         logger.info("creating_grpc_server")
 
+        # Register initial health status (NEW!)
+        health_registry = get_health_registry()
+        health_registry.register_component(
+            "grpc_server",
+            HealthStatus.UNKNOWN,
+            host=self.host,
+            port=self.port,
+        )
+
         try:
             # Create server with thread pool
             self.server = grpc.server(
@@ -128,6 +138,10 @@ class GRPCServer:
                 options=[
                     ("grpc.max_send_message_length", 100 * 1024 * 1024),   # 100 MB
                     ("grpc.max_receive_message_length", 100 * 1024 * 1024),  # 100 MB
+                    ("grpc.keepalive_time_ms", 30000),           # 30s keepalive
+                    ("grpc.keepalive_timeout_ms", 10000),        # 10s timeout
+                    ("grpc.http2.max_pings_without_data", 0),    # Unlimited pings
+                    ("grpc.keepalive_permit_without_calls", 1),  # Allow keepalive
                 ],
             )
 
@@ -161,16 +175,22 @@ class GRPCServer:
             
             # Start server (non-blocking)
             self.server.start()
-
+            # Mark as healthy (NEW!)
+            health_registry.mark_healthy(
+                "grpc_server",
+                host=self.host,
+                port=self.port,
+                max_workers=self.max_workers,
+            )
             logger.info("grpc_server_started", address=bind_address)
 
         except Exception as e:
+            health_registry.mark_failed("grpc_server", str(e))
             logger.error(
                 "failed_to_start_grpc_server",
                 error=str(e),
                 exc_info=True,
             )
-            # Surface the error – better to crash fast and let orchestrator restart
             raise
     
     def stop(self, grace_period: int = 5) -> None:
@@ -185,14 +205,34 @@ class GRPCServer:
             return
 
         logger.info("stopping_grpc_server", grace_period=grace_period)
+        health_registry = get_health_registry()
+        health_registry.register_component(
+            "grpc_server",
+            HealthStatus.DEGRADED,
+            status_message="Shutting down"
+        )
 
         try:
-            self.server.stop(grace_period)
+            stop_event = self.server.stop(grace_period)
+            if stop_event:
+                stop_event.wait()
+            health_registry.register_component(
+                "grpc_server",
+                HealthStatus.UNKNOWN,
+                status_message="Stopped"
+            )
             logger.info("grpc_server_stopped")
         except Exception as e:
+            health_registry.mark_failed("grpc_server", str(e))
             logger.error("error_stopping_grpc_server", error=str(e))
         finally:
             self.server = None
+            if self.face_service is not None:
+                logger.info("cleaning_up_face_service_from_grpc")
+                try:
+                    self.face_service.cleanup()
+                except Exception as e:
+                    logger.error("error_cleaning_face_service", error=str(e))
 
     def wait_for_termination(self) -> None:
         """

@@ -3,11 +3,15 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Client;
+using Sssp.Ai.Stream;
+using SSSP.BL.Records;
 using SSSP.BL.Services.Interfaces;
 using SSSP.Infrastructure.AI.Grpc.Interfaces;
 
@@ -19,6 +23,8 @@ namespace SSSP.BL.Services
         private readonly IVideoStreamClient _videoStreamClient;
         private readonly ILogger<CameraMonitoringWorker> _logger;
         private readonly TelemetryClient _telemetry;
+        private readonly Channel<TelemetryEvent> _telemetryBuffer;
+        private readonly CancellationTokenSource _shutdownToken = new();
 
         private const int MAX_RETRY_ATTEMPTS = 10;
         private static readonly TimeSpan BASE_RETRY_DELAY = TimeSpan.FromSeconds(5);
@@ -45,6 +51,12 @@ namespace SSSP.BL.Services
             _videoStreamClient = videoStreamClient;
             _logger = logger;
             _telemetry = telemetry;
+            _telemetryBuffer = Channel.CreateBounded<TelemetryEvent>(
+                                new BoundedChannelOptions(1000)
+                                {
+                                    FullMode = BoundedChannelFullMode.DropOldest
+                                });
+            _ = Task.Run(FlushTelemetryLoop);
         }
 
         public Task<bool> StartAsync(int cameraId, string rtspUrl, CancellationToken cancellationToken = default)
@@ -191,6 +203,8 @@ namespace SSSP.BL.Services
             var frameCount = 0;
             var faceCount = 0;
             var matchCount = 0;
+            var totalAiProcessingMs = 0.0;
+            var avgAiProcessingMs = 0.0;
 
             // Window counters for FPS / rolling metrics
             var windowStart = DateTimeOffset.UtcNow;
@@ -205,7 +219,10 @@ namespace SSSP.BL.Services
                 {
                     frameCount++;
                     windowFrames++;
-
+                    if (response.ProcessingTimeMs > 0)
+                    {
+                        totalAiProcessingMs += response.ProcessingTimeMs;
+                    }
                     if (response.Faces.Count == 0)
                     {
                         // Heartbeat log every 100 frames
@@ -228,13 +245,18 @@ namespace SSSP.BL.Services
                     _logger.LogDebug(
                         "Frame received with faces. CameraId={CameraId}, FrameId={FrameId}, Faces={FaceCount}, TotalFrames={TotalFrames}",
                         cameraId, response.FrameId, response.Faces.Count, frameCount);
-
-                    foreach (var face in response.Faces)
+                    
+                    var embeddings = response.Faces
+                                             .Select(f => (IReadOnlyList<float>)f.Embedding.Vector.ToArray())
+                                             .ToList();
+                    var matches = await recognitionService.VerifyEmbeddingsBatchAsync(
+                                                            embeddings,
+                                                            response.CameraId,
+                                                            cancellationToken);
+                    for (int i = 0; i < matches.Count; i++)
                     {
-                        var match = await recognitionService.VerifyEmbeddingAsync(
-                            face.Embedding.Vector,
-                            response.CameraId,
-                            cancellationToken);
+                        var match = matches[i];
+                        var face = response.Faces[i];
 
                         if (match.IsMatch)
                         {
@@ -252,7 +274,8 @@ namespace SSSP.BL.Services
                                 cameraId, response.FrameId, match.Similarity);
                         }
                     }
-
+                    avgAiProcessingMs = frameCount > 0 ? totalAiProcessingMs / frameCount : 0.0;
+                    LogFaceQualityMetrics(cameraId, response.Faces,avgAiProcessingMs);
                     TryEmitWindowMetricsIfNeeded(cameraId, ref windowStart, ref windowFrames, ref windowFaces, ref windowMatches);
                 },
                 cancellationToken);
@@ -266,10 +289,34 @@ namespace SSSP.BL.Services
             TrackCameraSessionSummary(cameraId, sessionDuration, frameCount, faceCount, matchCount);
 
             _logger.LogWarning(
-                "Camera stream session ended. CameraId={CameraId}, Duration={DurationSeconds}s, ProcessedFrames={FrameCount}, DetectedFaces={FaceCount}, Matches={MatchCount}",
-                cameraId, sessionDuration.TotalSeconds, frameCount, faceCount, matchCount);
+                "Camera stream session ended. CameraId={CameraId}, Duration={DurationSeconds}s, ProcessedFrames={FrameCount}, DetectedFaces={FaceCount}, Matches={MatchCount}, AvgAiMs={AvgAiMs:F2}",
+                cameraId, sessionDuration.TotalSeconds, frameCount, faceCount, matchCount, avgAiProcessingMs);
         }
 
+        private void LogFaceQualityMetrics(
+            int cameraId,
+            IReadOnlyList<FaceResult> faces,
+            double avgAiProcessingMs)
+        {
+            if (faces.Count == 0)
+                return;
+
+            var avgQuality = faces.Average(f => f.Quality?.OverallScore ?? 0f);
+            var avgConfidence = faces.Average(f => f.Confidence);
+            var avgSharpness = faces.Average(f => f.Quality?.Sharpness ?? 0f);
+            var avgBrightness = faces.Average(f => f.Quality?.Brightness ?? 0f);
+
+            var props = new Dictionary<string, string>
+            {
+                ["CameraId"] = cameraId.ToString()
+            };
+
+            _telemetry.TrackMetric("FaceAvgQuality", avgQuality, props);
+            _telemetry.TrackMetric("FaceAvgConfidence", avgConfidence, props);
+            _telemetry.TrackMetric("FaceAvgSharpness", avgSharpness, props);
+            _telemetry.TrackMetric("FaceAvgBrightness", avgBrightness, props);
+            _telemetry.TrackMetric("CameraSessionAvgAiProcessingMs", avgAiProcessingMs, props);
+        }
         private static TimeSpan ComputeBackoff(int attempt)
         {
             var delayMs = Math.Min(
@@ -413,6 +460,55 @@ namespace SSSP.BL.Services
                 ["Faces"] = totalFaces.ToString(),
                 ["Matches"] = totalMatches.ToString()
             });
+        }
+
+        private async Task FlushTelemetryLoop()
+        {
+            var buffer = new List<TelemetryEvent>(100);
+            var timer = new PeriodicTimer(TimeSpan.FromSeconds(10));
+
+            try
+            {
+                while (await timer.WaitForNextTickAsync(_shutdownToken.Token))
+                {
+                    // Drain buffer
+                    while (_telemetryBuffer.Reader.TryRead(out var evt))
+                    {
+                        buffer.Add(evt);
+                        if (buffer.Count >= 100) break;
+                    }
+
+                    if (buffer.Count == 0) continue;
+
+                    // Batch send
+                    foreach (var evt in buffer)
+                    {
+                        foreach (var metric in evt.Metrics)
+                        {
+                            _telemetry.TrackMetric(evt.Name, metric.Value, evt.Properties);
+                        }
+                    }
+
+                    _logger.LogDebug("Flushed {Count} telemetry events", buffer.Count);
+                    buffer.Clear();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Final flush
+                while (_telemetryBuffer.Reader.TryRead(out var evt))
+                {
+                    buffer.Add(evt);
+                }
+
+                foreach (var evt in buffer)
+                {
+                    foreach (var metric in evt.Metrics)
+                    {
+                        _telemetry.TrackMetric(evt.Name, metric.Value, evt.Properties);
+                    }
+                }
+            }
         }
 
     }

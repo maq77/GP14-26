@@ -47,8 +47,7 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
             var request = new FaceVerifyRequest
             {
                 Image = ByteString.CopyFrom(imageBytes),
-                CameraId = cameraId ?? string.Empty,
-                CheckBlacklist = true
+                CameraId = cameraId ?? string.Empty
             };
 
             var sw = Stopwatch.StartNew();
@@ -69,14 +68,21 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
 
                     sw.Stop();
 
+                    var metrics = response.Metrics;
+
                     _logger.LogInformation(
-                        "{Service} VerifyFace response. Camera={CameraId} Success={Success} Match={Match} Authorized={Auth} ElapsedMs={Elapsed}",
+                        "{Service} VerifyFace response. Camera={CameraId} Success={Success} FaceDetected={Detected} Faces={Faces} ElapsedMs={Elapsed} " +
+                        "DetectionMs={DetectionMs} EmbeddingMs={EmbeddingMs} PreMs={PreMs} TotalMs={TotalMs}",
                         ServiceName,
                         cameraId,
                         response.Success,
-                        response.MatchFound,
-                        response.IsAuthorized,
-                        sw.ElapsedMilliseconds);
+                        response.FaceDetected,
+                        response.Faces.Count,
+                        sw.ElapsedMilliseconds,
+                        metrics?.DetectionMs ?? 0f,
+                        metrics?.EmbeddingMs ?? 0f,
+                        metrics?.PreprocessingMs ?? 0f,
+                        metrics?.TotalMs ?? 0f);
 
                     return response;
                 }
@@ -93,6 +99,7 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
                 }
             }, CancellationToken.None);
         }
+
 
         public async Task<FaceEmbeddingResponse> ExtractEmbeddingAsync(
             byte[] image,
@@ -131,14 +138,24 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
 
                     sw.Stop();
 
+                    // optional: log metrics if present
+                    var metrics = response.Metrics;
+
+
                     _logger.LogInformation(
-                        "{Service} ExtractEmbedding response. Camera={CameraId} Success={Success} Dim={Dim} FaceDetected={Detected} ElapsedMs={Elapsed}",
-                        ServiceName,
-                        cameraId ?? "N/A",
-                        response.Success,
-                        response.Embedding.Count,
-                        response.FaceDetected,
-                        sw.ElapsedMilliseconds);
+                         "{Service} ExtractEmbedding response. Camera={CameraId} Success={Success} FaceDetected={Detected} Faces={Faces} ErrorCode={ErrorCode} ElapsedMs={Elapsed} " +
+                         "DetectionMs={DetectionMs} EmbeddingMs={EmbeddingMs} PreMs={PreMs} TotalMs={TotalMs}",
+                         ServiceName,
+                         cameraId ?? "N/A",
+                         response.Success,
+                         response.FaceDetected,
+                         response.Faces.Count,
+                         response.ErrorCode,
+                         sw.ElapsedMilliseconds,
+                         metrics?.DetectionMs ?? 0f,
+                         metrics?.EmbeddingMs ?? 0f,
+                         metrics?.PreprocessingMs ?? 0f,
+                         metrics?.TotalMs ?? 0f);
 
                     return response;
                 }

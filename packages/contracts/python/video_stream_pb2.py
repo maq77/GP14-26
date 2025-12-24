@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12video_stream.proto\x12\x0esssp.ai.stream\"b\n\x11VideoFrameRequest\x12\x11\n\tcamera_id\x18\x01 \x01(\t\x12\x10\n\x08\x66rame_id\x18\x02 \x01(\x03\x12\x14\n\x0ctimestamp_ms\x18\x03 \x01(\x03\x12\x12\n\nimage_jpeg\x18\x04 \x01(\x0c\"5\n\x07\x46\x61\x63\x65\x42ox\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\x12\t\n\x01w\x18\x03 \x01(\x02\x12\t\n\x01h\x18\x04 \x01(\x02\"\x1f\n\rFaceEmbedding\x12\x0e\n\x06vector\x18\x01 \x03(\x02\"d\n\nFaceResult\x12$\n\x03\x62ox\x18\x01 \x01(\x0b\x32\x17.sssp.ai.stream.FaceBox\x12\x30\n\tembedding\x18\x02 \x01(\x0b\x32\x1d.sssp.ai.stream.FaceEmbedding\"d\n\x12VideoFrameResponse\x12\x11\n\tcamera_id\x18\x01 \x01(\t\x12\x10\n\x08\x66rame_id\x18\x02 \x01(\x03\x12)\n\x05\x66\x61\x63\x65s\x18\x03 \x03(\x0b\x32\x1a.sssp.ai.stream.FaceResult2o\n\x12VideoStreamService\x12Y\n\x0cStreamFrames\x12!.sssp.ai.stream.VideoFrameRequest\x1a\".sssp.ai.stream.VideoFrameResponse(\x01\x30\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12video_stream.proto\x12\x0esssp.ai.stream\"b\n\x11VideoFrameRequest\x12\x11\n\tcamera_id\x18\x01 \x01(\t\x12\x10\n\x08\x66rame_id\x18\x02 \x01(\x03\x12\x14\n\x0ctimestamp_ms\x18\x03 \x01(\x03\x12\x12\n\nimage_jpeg\x18\x04 \x01(\x0c\"5\n\x07\x46\x61\x63\x65\x42ox\x12\t\n\x01x\x18\x01 \x01(\x02\x12\t\n\x01y\x18\x02 \x01(\x02\x12\t\n\x01w\x18\x03 \x01(\x02\x12\t\n\x01h\x18\x04 \x01(\x02\"\x1f\n\rFaceEmbedding\x12\x0e\n\x06vector\x18\x01 \x03(\x02\"\xb7\x01\n\nFaceResult\x12$\n\x03\x62ox\x18\x01 \x01(\x0b\x32\x17.sssp.ai.stream.FaceBox\x12\x30\n\tembedding\x18\x02 \x01(\x0b\x32\x1d.sssp.ai.stream.FaceEmbedding\x12\x12\n\nconfidence\x18\x03 \x01(\x02\x12,\n\x07quality\x18\x04 \x01(\x0b\x32\x1b.sssp.ai.stream.FaceQuality\x12\x0f\n\x07\x66\x61\x63\x65_id\x18\x05 \x01(\x05\"\xd3\x01\n\x12VideoFrameResponse\x12\x11\n\tcamera_id\x18\x01 \x01(\t\x12\x10\n\x08\x66rame_id\x18\x02 \x01(\x03\x12)\n\x05\x66\x61\x63\x65s\x18\x03 \x03(\x0b\x32\x1a.sssp.ai.stream.FaceResult\x12\x1a\n\x12processing_time_ms\x18\x04 \x01(\x02\x12\x33\n\x07metrics\x18\x05 \x01(\x0b\x32\".sssp.ai.stream.PerformanceMetrics\x12\x1c\n\x14total_faces_detected\x18\x06 \x01(\x05\"e\n\x0b\x46\x61\x63\x65Quality\x12\x15\n\roverall_score\x18\x01 \x01(\x02\x12\x11\n\tsharpness\x18\x02 \x01(\x02\x12\x12\n\nbrightness\x18\x03 \x01(\x02\x12\x18\n\x10\x66\x61\x63\x65_size_pixels\x18\x04 \x01(\x05\"\xaf\x01\n\x12PerformanceMetrics\x12\x14\n\x0c\x64\x65tection_ms\x18\x01 \x01(\x02\x12\x14\n\x0c\x65mbedding_ms\x18\x02 \x01(\x02\x12\x18\n\x10preprocessing_ms\x18\x03 \x01(\x02\x12\x10\n\x08total_ms\x18\x04 \x01(\x02\x12\x13\n\x0bimage_width\x18\x05 \x01(\x05\x12\x14\n\x0cimage_height\x18\x06 \x01(\x05\x12\x16\n\x0e\x66\x61\x63\x65s_detected\x18\x07 \x01(\x05\x32o\n\x12VideoStreamService\x12Y\n\x0cStreamFrames\x12!.sssp.ai.stream.VideoFrameRequest\x1a\".sssp.ai.stream.VideoFrameResponse(\x01\x30\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -27,10 +27,14 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _globals['_FACEBOX']._serialized_end=191
   _globals['_FACEEMBEDDING']._serialized_start=193
   _globals['_FACEEMBEDDING']._serialized_end=224
-  _globals['_FACERESULT']._serialized_start=226
-  _globals['_FACERESULT']._serialized_end=326
-  _globals['_VIDEOFRAMERESPONSE']._serialized_start=328
-  _globals['_VIDEOFRAMERESPONSE']._serialized_end=428
-  _globals['_VIDEOSTREAMSERVICE']._serialized_start=430
-  _globals['_VIDEOSTREAMSERVICE']._serialized_end=541
+  _globals['_FACERESULT']._serialized_start=227
+  _globals['_FACERESULT']._serialized_end=410
+  _globals['_VIDEOFRAMERESPONSE']._serialized_start=413
+  _globals['_VIDEOFRAMERESPONSE']._serialized_end=624
+  _globals['_FACEQUALITY']._serialized_start=626
+  _globals['_FACEQUALITY']._serialized_end=727
+  _globals['_PERFORMANCEMETRICS']._serialized_start=730
+  _globals['_PERFORMANCEMETRICS']._serialized_end=905
+  _globals['_VIDEOSTREAMSERVICE']._serialized_start=907
+  _globals['_VIDEOSTREAMSERVICE']._serialized_end=1018
 # @@protoc_insertion_point(module_scope)

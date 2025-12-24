@@ -4,9 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
+using SSSP.BL.DTOs.Faces;
 using SSSP.BL.Managers.Interfaces;
 using SSSP.BL.Records;
 using SSSP.DAL.Models;
+using System.Threading;
+
 
 namespace SSSP.BL.Managers
 {
@@ -33,7 +36,7 @@ namespace SSSP.BL.Managers
 
         public FaceMatchResult Match(
             IReadOnlyList<float> probeEmbedding,
-            IReadOnlyList<FaceProfile> knownProfiles,
+            IReadOnlyList<FaceProfileSnapshot> knownProfiles,
             double? thresholdOverride = null)
         {
             var sw = Stopwatch.StartNew();
@@ -47,7 +50,7 @@ namespace SSSP.BL.Managers
                 return new FaceMatchResult(false, null, null, 0.0);
             }
 
-            var profiles = knownProfiles ?? Array.Empty<FaceProfile>();
+            var profiles = knownProfiles ?? Array.Empty<FaceProfileSnapshot>();
 
             if (profiles.Count == 0)
             {
@@ -99,7 +102,7 @@ namespace SSSP.BL.Managers
             var profilesWithEmbeddings = 0;
             var profilesWithoutEmbeddings = 0;
 
-            FaceProfile? bestProfile = null;
+            FaceProfileSnapshot? bestProfile = null;
             double bestSimilarity = double.NegativeInfinity;
 
             foreach (var profile in profiles)
@@ -115,7 +118,7 @@ namespace SSSP.BL.Managers
                         "Profile has NO embeddings. ProfileId={ProfileId}, UserId={UserId}, UserName={UserName}",
                         profile.Id,
                         profile.UserId,
-                        profile.User?.UserName ?? "N/A");
+                        profile.UserName ?? "N/A");
 
                     continue;
                 }
@@ -144,16 +147,7 @@ namespace SSSP.BL.Managers
                         continue;
                     }
 
-                    if (!TryGetFloatSpan(emb.Vector, out var storedSpan))
-                    {
-                        _logger.LogError(
-                            "Invalid embedding byte buffer. ProfileId={ProfileId}, EmbeddingId={EmbeddingId}, BytesLength={BytesLength}",
-                            profile.Id,
-                            emb.Id,
-                            emb.Vector.Length);
-
-                        continue;
-                    }
+                    var storedSpan = emb.Vector.AsSpan();
 
                     if (storedSpan.Length != probeArray.Length)
                     {
@@ -196,13 +190,13 @@ namespace SSSP.BL.Managers
                 }
 
                 _logger.LogDebug(
-                    "Profile processed. ProfileId={ProfileId}, UserId={UserId}, UserName={UserName}, TotalEmbeddings={TotalEmbeddings}, ValidEmbeddings={ValidEmbeddings}, BestSimilarity={BestSimilarity:F4}",
-                    profile.Id,
-                    profile.UserId,
-                    profile.User?.UserName ?? "N/A",
-                    profileEmbeddingCount,
-                    profileValidEmbeddings,
-                    double.IsNegativeInfinity(profileBestSimilarity) ? 0.0 : profileBestSimilarity);
+                        "Profile processed. ProfileId={ProfileId}, UserId={UserId}, UserName={UserName}, TotalEmbeddings={TotalEmbeddings}, ValidEmbeddings={ValidEmbeddings}, BestSimilarity={BestSimilarity:F4}",
+                        profile.Id,
+                        profile.UserId,
+                        profile.UserName,
+                        profileEmbeddingCount,
+                        profileValidEmbeddings,
+                        double.IsNegativeInfinity(profileBestSimilarity) ? 0.0 : profileBestSimilarity);
             }
 
             sw.Stop();
@@ -228,17 +222,18 @@ namespace SSSP.BL.Managers
             var isMatch = bestSimilarity >= threshold;
 
             _logger.LogInformation(
-                "Face matching completed. TotalProfiles={ProfileCount}, ProfilesWithEmbeddings={ProfilesWithEmbeddings}, ValidEmbeddings={ValidEmbeddings}, BestSimilarity={BestSimilarity:F4}, Threshold={Threshold:F4}, IsMatch={IsMatch}, MatchedUserId={UserId}, MatchedUserName={UserName}, MatchedFaceProfileId={FaceProfileId}, ElapsedMs={ElapsedMs}",
-                profiles.Count,
-                profilesWithEmbeddings,
-                validEmbeddings,
-                bestSimilarity,
-                threshold,
-                isMatch,
-                bestProfile.UserId,
-                bestProfile.User?.FullName ?? "Name Unassigned",
-                bestProfile.Id,
-                sw.ElapsedMilliseconds);
+                     "Face matching completed. TotalProfiles={ProfileCount}, ProfilesWithEmbeddings={ProfilesWithEmbeddings}, ValidEmbeddings={ValidEmbeddings}, BestSimilarity={BestSimilarity:F4}, Threshold={Threshold:F4}, IsMatch={IsMatch}, MatchedUserId={UserId}, MatchedUserName={UserName}, MatchedFaceProfileId={FaceProfileId}, ElapsedMs={ElapsedMs}",
+                     profiles.Count,
+                     profilesWithEmbeddings,
+                     validEmbeddings,
+                     bestSimilarity,
+                     threshold,
+                     isMatch,
+                     bestProfile.UserId,
+                     bestProfile.FullName,
+                     bestProfile.Id,
+                     sw.ElapsedMilliseconds);
+
 
             if (isMatch)
             {
@@ -256,7 +251,7 @@ namespace SSSP.BL.Managers
                 bestSimilarity);
         }
 
-        private void LogProfileDetails(IReadOnlyList<FaceProfile> profiles)
+        private void LogProfileDetails(IReadOnlyList<FaceProfileSnapshot> profiles)
         {
             _logger.LogWarning("=== PROFILE DETAILS DIAGNOSTIC ===");
 
@@ -284,13 +279,9 @@ namespace SSSP.BL.Managers
                         {
                             status = "EMPTY";
                         }
-                        else if (!TryGetFloatSpan(emb.Vector, out var span))
-                        {
-                            status = $"INVALID-BYTES({emb.Vector.Length})";
-                        }
                         else
                         {
-                            status = $"OK({span.Length}D)";
+                            status = $"OK({emb.Vector.Length}D)";
                         }
 
                         embeddingDetails.Add($"[{emb.Id}: {status}]");
@@ -302,7 +293,7 @@ namespace SSSP.BL.Managers
                     i + 1,
                     profile.Id,
                     profile.UserId,
-                    profile.User?.UserName ?? "N/A",
+                    profile.UserName,
                     profile.IsPrimary,
                     profile.Embeddings?.Count ?? 0,
                     embeddingDetails.Count > 0 ? string.Join(", ", embeddingDetails) : "NONE",
@@ -311,6 +302,7 @@ namespace SSSP.BL.Managers
 
             _logger.LogWarning("=== END PROFILE DETAILS ===");
         }
+
 
         private static double ComputeNorm(ReadOnlySpan<float> vector)
         {
@@ -348,18 +340,6 @@ namespace SSSP.BL.Managers
                 return 0.0;
 
             return dot / denom;
-        }
-
-        private static bool TryGetFloatSpan(byte[] bytes, out ReadOnlySpan<float> span)
-        {
-            if (bytes.Length == 0 || (bytes.Length % sizeof(float)) != 0)
-            {
-                span = ReadOnlySpan<float>.Empty;
-                return false;
-            }
-
-            span = MemoryMarshal.Cast<byte, float>(bytes);
-            return true;
         }
     }
 }

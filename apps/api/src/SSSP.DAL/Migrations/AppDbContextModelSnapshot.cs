@@ -162,6 +162,10 @@ namespace SSSP.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ZoneId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OperatorId");
@@ -244,7 +248,7 @@ namespace SSSP.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OperatorId")
+                    b.Property<int?>("OperatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("PayloadJson")
@@ -528,10 +532,10 @@ namespace SSSP.DAL.Migrations
                             b1.Property<string>("Address")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<double>("Latitude")
+                            b1.Property<double?>("Latitude")
                                 .HasColumnType("float");
 
-                            b1.Property<double>("Longitude")
+                            b1.Property<double?>("Longitude")
                                 .HasColumnType("float");
 
                             b1.HasKey("CameraId");
@@ -579,8 +583,7 @@ namespace SSSP.DAL.Migrations
                     b.HasOne("SSSP.DAL.Models.Operator", "Operator")
                         .WithMany("Incidents")
                         .HasForeignKey("OperatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.OwnsOne("SSSP.DAL.ValueObjects.Location", "Location", b1 =>
                         {
@@ -590,10 +593,10 @@ namespace SSSP.DAL.Migrations
                             b1.Property<string>("Address")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<double>("Latitude")
+                            b1.Property<double?>("Latitude")
                                 .HasColumnType("float");
 
-                            b1.Property<double>("Longitude")
+                            b1.Property<double?>("Longitude")
                                 .HasColumnType("float");
 
                             b1.HasKey("IncidentId");
@@ -606,8 +609,7 @@ namespace SSSP.DAL.Migrations
 
                     b.Navigation("AssignedToUser");
 
-                    b.Navigation("Location")
-                        .IsRequired();
+                    b.Navigation("Location");
 
                     b.Navigation("Operator");
                 });
@@ -628,10 +630,10 @@ namespace SSSP.DAL.Migrations
                             b1.Property<string>("Address")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<double>("Latitude")
+                            b1.Property<double?>("Latitude")
                                 .HasColumnType("float");
 
-                            b1.Property<double>("Longitude")
+                            b1.Property<double?>("Longitude")
                                 .HasColumnType("float");
 
                             b1.HasKey("SensorId");

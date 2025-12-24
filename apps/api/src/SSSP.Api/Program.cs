@@ -29,6 +29,10 @@ using SSSP.Api.Extentions;
 using SSSP.BL.Startup;
 using System.Threading.RateLimiting;
 using SSSP.Api.Middleware;
+using SSSP.Api.Hubs;
+using SSSP.Api.Services;
+using SSSP.BL.Monitoring;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -150,6 +154,13 @@ try
         .Validate(opt => !string.IsNullOrWhiteSpace(opt.GrpcUrl), "AI:GrpcUrl is required")
         .Validate(opt => !string.IsNullOrWhiteSpace(opt.RestUrl), "AI:RestUrl is required")
         .ValidateOnStart();
+    // =======================================
+    // Camera Topology Configuration
+    // =======================================
+    builder.Services
+    .AddOptions<CameraTopologyOptions>()
+    .Bind(builder.Configuration.GetSection("CameraTopology"))
+    .ValidateOnStart();
 
     // =======================================
     // Startup Validation Options
@@ -158,6 +169,12 @@ try
         .AddOptions<StartupValidationOptions>()
         .Bind(builder.Configuration.GetSection("StartupValidation"))
         .ValidateOnStart();
+
+    builder.Services
+    .AddOptions<FaceRecognitionOptions>()
+    .Bind(builder.Configuration.GetSection("FaceRecognition"))
+    .ValidateOnStart();
+
 
 
     // =======================================
@@ -249,6 +266,9 @@ try
     // =======================================
     // Cache Configuration (env aware)
     // =======================================
+
+    builder.Services.AddSingleton<FaceProfileCacheMetrics>();
+
     builder.Services.Configure<FaceProfileCacheOptions>(cfg =>
     {
         cfg.AbsoluteExpiration = TimeSpan.FromMinutes(5);
@@ -266,25 +286,27 @@ try
             options.InstanceName = "SSSP:";
         });
 
-        Log.Information("Using Redis face cache. Connection={RedisConnection}", redisConnection);
+        Log.Information("Using Hybrid face cache (L1 + l2(Redis) + DB). Connection={RedisConnection}", redisConnection);
 
-        // Redis-backed implementation
-        builder.Services.AddScoped<IFaceProfileCache, DistributedFaceProfileCache>();
-    }
-    else
-    {
-        // In-memory only for dev / simple installs
-        Log.Information("Using in-memory FaceProfileCache (Redis disabled)");
+        // L2 concrete
+        builder.Services.AddScoped<DistributedFaceProfileCache>();
 
-        // If you want extra memory cache under the hood:
+        // L1 Hybrid as the IFaceProfileCache
         builder.Services.AddMemoryCache(options =>
         {
             options.SizeLimit = 1024;
             options.CompactionPercentage = 0.25;
         });
 
+        builder.Services.AddScoped<IFaceProfileCache, HybridFaceProfileCache>();
+    }
+    else
+    {
+        Log.Information("Using in-memory FaceProfileCache (Redis disabled)");
+
         builder.Services.AddScoped<IFaceProfileCache, FaceProfileCache>();
     }
+
 
 
     // =======================================
@@ -302,6 +324,8 @@ try
     builder.Services.AddScoped<ICameraService, CameraService>();
     builder.Services.AddSingleton<IIncidentManager, IncidentManager>();
     builder.Services.AddScoped<IIncidentService, IncidentService>();
+    builder.Services.AddSingleton<ICameraTopologyService, CameraTopologyService>();
+
 
 
     // =======================================
@@ -335,6 +359,12 @@ try
         Log.Information("Face matching threshold configured: {Threshold}", threshold);
         return new FaceMatchingManager(threshold, logger);
     });
+
+    // DI of SignalR - Notifiaction System - Realtime
+    builder.Services.AddSingleton<ITrackingNotificationService, TrackingNotificationService>();
+
+    builder.Services.AddScoped<IFaceTrackingManager, FaceTrackingManager>();
+    builder.Services.AddScoped<IFaceAutoEnrollmentService, FaceAutoEnrollmentService>();
     builder.Services.AddScoped<IFaceEnrollmentService, FaceEnrollmentService>();
     builder.Services.AddScoped<IFaceRecognitionService, FaceRecognitionService>();
     builder.Services.AddScoped<IFaceManagementService, FaceManagementService>();
@@ -348,6 +378,10 @@ try
     builder.Services.AddHostedService(sp =>
         sp.GetRequiredService<CameraMonitoringWorker>());
     builder.Services.AddHostedService<StartupValidationService>();
+    builder.Services.AddHostedService<FaceProfileCacheWarmupService>();
+    builder.Services.AddHostedService<CameraTopologyWarmupService>();
+
+
 
 
     // =======================================
@@ -590,7 +624,12 @@ try
     app.UseCors("AllowAll");
     app.UseAuthentication();
     app.UseAuthorization();
+    
     app.MapControllers();
+    app.MapHub<TrackingHub>(TrackingHub.HubUrl);
+    // Prometheus metrics endpoint (for scraping)
+    app.MapMetrics("/metrics");
+
 
     // =======================================
     // Health Check Endpoints

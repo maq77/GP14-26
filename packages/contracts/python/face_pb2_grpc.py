@@ -7,7 +7,7 @@ import face_pb2 as face__pb2
 
 class FaceServiceStub(object):
     """============================================================================
-    Face Service
+    Face Service - Optimized for Performance & Multi-Face Support
     ============================================================================
 
     """
@@ -23,10 +23,15 @@ class FaceServiceStub(object):
                 request_serializer=face__pb2.FaceDetectRequest.SerializeToString,
                 response_deserializer=face__pb2.FaceDetectResponse.FromString,
                 )
-        self.RecognizeFace = channel.unary_unary(
-                '/sssp.ai.face.FaceService/RecognizeFace',
-                request_serializer=face__pb2.FaceRecognizeRequest.SerializeToString,
-                response_deserializer=face__pb2.FaceRecognizeResponse.FromString,
+        self.ExtractEmbedding = channel.unary_unary(
+                '/sssp.ai.face.FaceService/ExtractEmbedding',
+                request_serializer=face__pb2.FaceEmbeddingRequest.SerializeToString,
+                response_deserializer=face__pb2.FaceEmbeddingResponse.FromString,
+                )
+        self.ExtractEmbeddings = channel.unary_unary(
+                '/sssp.ai.face.FaceService/ExtractEmbeddings',
+                request_serializer=face__pb2.FaceEmbeddingRequest.SerializeToString,
+                response_deserializer=face__pb2.FaceEmbeddingResponse.FromString,
                 )
         self.VerifyFace = channel.unary_unary(
                 '/sssp.ai.face.FaceService/VerifyFace',
@@ -43,52 +48,66 @@ class FaceServiceStub(object):
                 request_serializer=face__pb2.FaceModelInfoRequest.SerializeToString,
                 response_deserializer=face__pb2.FaceModelInfoResponse.FromString,
                 )
-        self.ExtractEmbedding = channel.unary_unary(
-                '/sssp.ai.face.FaceService/ExtractEmbedding',
-                request_serializer=face__pb2.FaceEmbeddingRequest.SerializeToString,
-                response_deserializer=face__pb2.FaceEmbeddingResponse.FromString,
+        self.ProcessFrame = channel.unary_unary(
+                '/sssp.ai.face.FaceService/ProcessFrame',
+                request_serializer=face__pb2.FrameProcessRequest.SerializeToString,
+                response_deserializer=face__pb2.FrameProcessResponse.FromString,
                 )
 
 
 class FaceServiceServicer(object):
     """============================================================================
-    Face Service
+    Face Service - Optimized for Performance & Multi-Face Support
     ============================================================================
 
     """
 
     def DetectFaces(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def RecognizeFace(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def VerifyFace(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def EnrollFace(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetModelInfo(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Detect all faces in image (fast, detection only)
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def ExtractEmbedding(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Extract embeddings for all faces (detection + embedding)
+        legacy name
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ExtractEmbeddings(self, request, context):
+        """new name
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def VerifyFace(self, request, context):
+        """Verify single face against known profiles (used by .NET matching)
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def EnrollFace(self, request, context):
+        """Enroll new person with multiple images
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetModelInfo(self, request, context):
+        """Get model information and health
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ProcessFrame(self, request, context):
+        """Process video frame (optimized for streaming)
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -101,10 +120,15 @@ def add_FaceServiceServicer_to_server(servicer, server):
                     request_deserializer=face__pb2.FaceDetectRequest.FromString,
                     response_serializer=face__pb2.FaceDetectResponse.SerializeToString,
             ),
-            'RecognizeFace': grpc.unary_unary_rpc_method_handler(
-                    servicer.RecognizeFace,
-                    request_deserializer=face__pb2.FaceRecognizeRequest.FromString,
-                    response_serializer=face__pb2.FaceRecognizeResponse.SerializeToString,
+            'ExtractEmbedding': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExtractEmbedding,
+                    request_deserializer=face__pb2.FaceEmbeddingRequest.FromString,
+                    response_serializer=face__pb2.FaceEmbeddingResponse.SerializeToString,
+            ),
+            'ExtractEmbeddings': grpc.unary_unary_rpc_method_handler(
+                    servicer.ExtractEmbeddings,
+                    request_deserializer=face__pb2.FaceEmbeddingRequest.FromString,
+                    response_serializer=face__pb2.FaceEmbeddingResponse.SerializeToString,
             ),
             'VerifyFace': grpc.unary_unary_rpc_method_handler(
                     servicer.VerifyFace,
@@ -121,10 +145,10 @@ def add_FaceServiceServicer_to_server(servicer, server):
                     request_deserializer=face__pb2.FaceModelInfoRequest.FromString,
                     response_serializer=face__pb2.FaceModelInfoResponse.SerializeToString,
             ),
-            'ExtractEmbedding': grpc.unary_unary_rpc_method_handler(
-                    servicer.ExtractEmbedding,
-                    request_deserializer=face__pb2.FaceEmbeddingRequest.FromString,
-                    response_serializer=face__pb2.FaceEmbeddingResponse.SerializeToString,
+            'ProcessFrame': grpc.unary_unary_rpc_method_handler(
+                    servicer.ProcessFrame,
+                    request_deserializer=face__pb2.FrameProcessRequest.FromString,
+                    response_serializer=face__pb2.FrameProcessResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -135,7 +159,7 @@ def add_FaceServiceServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class FaceService(object):
     """============================================================================
-    Face Service
+    Face Service - Optimized for Performance & Multi-Face Support
     ============================================================================
 
     """
@@ -158,7 +182,7 @@ class FaceService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def RecognizeFace(request,
+    def ExtractEmbedding(request,
             target,
             options=(),
             channel_credentials=None,
@@ -168,9 +192,26 @@ class FaceService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sssp.ai.face.FaceService/RecognizeFace',
-            face__pb2.FaceRecognizeRequest.SerializeToString,
-            face__pb2.FaceRecognizeResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/sssp.ai.face.FaceService/ExtractEmbedding',
+            face__pb2.FaceEmbeddingRequest.SerializeToString,
+            face__pb2.FaceEmbeddingResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ExtractEmbeddings(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/sssp.ai.face.FaceService/ExtractEmbeddings',
+            face__pb2.FaceEmbeddingRequest.SerializeToString,
+            face__pb2.FaceEmbeddingResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -226,7 +267,7 @@ class FaceService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def ExtractEmbedding(request,
+    def ProcessFrame(request,
             target,
             options=(),
             channel_credentials=None,
@@ -236,8 +277,8 @@ class FaceService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/sssp.ai.face.FaceService/ExtractEmbedding',
-            face__pb2.FaceEmbeddingRequest.SerializeToString,
-            face__pb2.FaceEmbeddingResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/sssp.ai.face.FaceService/ProcessFrame',
+            face__pb2.FrameProcessRequest.SerializeToString,
+            face__pb2.FrameProcessResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

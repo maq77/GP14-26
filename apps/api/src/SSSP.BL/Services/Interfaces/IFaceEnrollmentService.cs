@@ -12,5 +12,6 @@ namespace SSSP.BL.Services.Interfaces
             byte[] image,
             string? description,
             CancellationToken ct);
+
     }
 }
