@@ -24,84 +24,127 @@ namespace Sssp.Ai.Face {
     static FaceReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgpmYWNlLnByb3RvEgxzc3NwLmFpLmZhY2UiQAoRRmFjZURldGVjdFJlcXVl",
+            "CgpmYWNlLnByb3RvEgxzc3NwLmFpLmZhY2UiagoRRmFjZURldGVjdFJlcXVl",
             "c3QSDQoFaW1hZ2UYASABKAwSHAoUY29uZmlkZW5jZV90aHJlc2hvbGQYAiAB",
-            "KAIibwoURmFjZVJlY29nbml6ZVJlcXVlc3QSDQoFaW1hZ2UYASABKAwSFQoN",
-            "Y2FuZGlkYXRlX2lkcxgCIAMoCRIcChRjb25maWRlbmNlX3RocmVzaG9sZBgD",
-            "IAEoAhITCgttYXhfcmVzdWx0cxgEIAEoBSJsChFGYWNlVmVyaWZ5UmVxdWVz",
-            "dBINCgVpbWFnZRgBIAEoDBIRCgljYW1lcmFfaWQYAiABKAkSFwoPY2hlY2tf",
-            "YmxhY2tsaXN0GAMgASgIEhwKFGNvbmZpZGVuY2VfdGhyZXNob2xkGAQgASgC",
-            "ImMKEUZhY2VFbnJvbGxSZXF1ZXN0EhEKCXBlcnNvbl9pZBgBIAEoCRITCgtw",
-            "ZXJzb25fbmFtZRgCIAEoCRIOCgZpbWFnZXMYAyADKAwSFgoOaXNfYmxhY2ts",
-            "aXN0ZWQYBCABKAgiFgoURmFjZU1vZGVsSW5mb1JlcXVlc3QiOAoURmFjZUVt",
-            "YmVkZGluZ1JlcXVlc3QSDQoFaW1hZ2UYASABKAwSEQoJY2FtZXJhX2lkGAIg",
-            "ASgJIosBChJGYWNlRGV0ZWN0UmVzcG9uc2USDwoHc3VjY2VzcxgBIAEoCBIV",
-            "Cg1lcnJvcl9tZXNzYWdlGAIgASgJEiEKBWZhY2VzGAMgAygLMhIuc3NzcC5h",
-            "aS5mYWNlLkZhY2USEwoLdG90YWxfZmFjZXMYBCABKAUSFQoNdG90YWxfdGlt",
-            "ZV9tcxgFIAEoAiKiAQoVRmFjZVJlY29nbml6ZVJlc3BvbnNlEg8KB3N1Y2Nl",
-            "c3MYASABKAgSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCRIoCgdtYXRjaGVzGAMg",
-            "AygLMhcuc3NzcC5haS5mYWNlLkZhY2VNYXRjaBIgChh0b3RhbF9jYW5kaWRh",
-            "dGVzX2NoZWNrZWQYBCABKAUSFQoNdG90YWxfdGltZV9tcxgFIAEoAiKvAgoS",
-            "RmFjZVZlcmlmeVJlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSFQoNZXJyb3Jf",
-            "bWVzc2FnZRgCIAEoCRIVCg1mYWNlX2RldGVjdGVkGAMgASgIEhMKC21hdGNo",
-            "X2ZvdW5kGAQgASgIEhUKDWlzX2F1dGhvcml6ZWQYBSABKAgSEQoJcGVyc29u",
-            "X2lkGAYgASgJEhMKC3BlcnNvbl9uYW1lGAcgASgJEhIKCmNvbmZpZGVuY2UY",
-            "CCABKAISJwoEYmJveBgJIAEoCzIZLnNzc3AuYWkuZmFjZS5Cb3VuZGluZ0Jv",
-            "eBIVCg10b3RhbF90aW1lX21zGAogASgCEjIKEWNhbmRpZGF0ZV9tYXRjaGVz",
-            "GAsgAygLMhcuc3NzcC5haS5mYWNlLkZhY2VNYXRjaCKpAQoVRmFjZUVtYmVk",
-            "ZGluZ1Jlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSFQoNZXJyb3JfbWVzc2Fn",
-            "ZRgCIAEoCRIVCg1mYWNlX2RldGVjdGVkGAMgASgIEhEKCWVtYmVkZGluZxgE",
-            "IAMoAhInCgRiYm94GAUgASgLMhkuc3NzcC5haS5mYWNlLkJvdW5kaW5nQm94",
-            "EhUKDXRvdGFsX3RpbWVfbXMYBiABKAIiaAoSRmFjZUVucm9sbFJlc3BvbnNl",
-            "Eg8KB3N1Y2Nlc3MYASABKAgSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCRIRCglw",
-            "ZXJzb25faWQYAyABKAkSFwoPaW1hZ2VzX2Vucm9sbGVkGAQgASgFIrIBChVG",
-            "YWNlTW9kZWxJbmZvUmVzcG9uc2USEgoKbW9kZWxfbmFtZRgBIAEoCRIVCg1t",
-            "b2RlbF92ZXJzaW9uGAIgASgJEg4KBmRldmljZRgDIAEoCRIVCg1tb2RlbF9z",
-            "aXplX21iGAQgASgCEhIKCmlucHV0X3NpemUYBSABKAUSFQoNZW1iZWRkaW5n",
-            "X2RpbRgGIAEoBRIcChR0b3RhbF9mYWNlc19lbnJvbGxlZBgHIAEoBSKNAQoE",
-            "RmFjZRInCgRiYm94GAEgASgLMhkuc3NzcC5haS5mYWNlLkJvdW5kaW5nQm94",
-            "EhIKCmNvbmZpZGVuY2UYAiABKAISFwoPZW1iZWRkaW5nX2J5dGVzGAMgASgM",
-            "EhUKDWNyb3BwZWRfaW1hZ2UYBCABKAwSGAoQZW1iZWRkaW5nX3ZlY3RvchgF",
-            "IAMoAiJ8CglGYWNlTWF0Y2gSEQoJcGVyc29uX2lkGAEgASgJEhMKC3BlcnNv",
-            "bl9uYW1lGAIgASgJEg0KBXNjb3JlGAMgASgCEiAKBGZhY2UYBCABKAsyEi5z",
-            "c3NwLmFpLmZhY2UuRmFjZRIWCg5pc19ibGFja2xpc3RlZBgFIAEoCCI9CgtC",
-            "b3VuZGluZ0JveBIKCgJ4MRgBIAEoAhIKCgJ5MRgCIAEoAhIKCgJ4MhgDIAEo",
-            "AhIKCgJ5MhgEIAEoAjKRBAoLRmFjZVNlcnZpY2USUAoLRGV0ZWN0RmFjZXMS",
-            "Hy5zc3NwLmFpLmZhY2UuRmFjZURldGVjdFJlcXVlc3QaIC5zc3NwLmFpLmZh",
-            "Y2UuRmFjZURldGVjdFJlc3BvbnNlElgKDVJlY29nbml6ZUZhY2USIi5zc3Nw",
-            "LmFpLmZhY2UuRmFjZVJlY29nbml6ZVJlcXVlc3QaIy5zc3NwLmFpLmZhY2Uu",
-            "RmFjZVJlY29nbml6ZVJlc3BvbnNlEk8KClZlcmlmeUZhY2USHy5zc3NwLmFp",
-            "LmZhY2UuRmFjZVZlcmlmeVJlcXVlc3QaIC5zc3NwLmFpLmZhY2UuRmFjZVZl",
-            "cmlmeVJlc3BvbnNlEk8KCkVucm9sbEZhY2USHy5zc3NwLmFpLmZhY2UuRmFj",
-            "ZUVucm9sbFJlcXVlc3QaIC5zc3NwLmFpLmZhY2UuRmFjZUVucm9sbFJlc3Bv",
-            "bnNlElcKDEdldE1vZGVsSW5mbxIiLnNzc3AuYWkuZmFjZS5GYWNlTW9kZWxJ",
-            "bmZvUmVxdWVzdBojLnNzc3AuYWkuZmFjZS5GYWNlTW9kZWxJbmZvUmVzcG9u",
-            "c2USWwoQRXh0cmFjdEVtYmVkZGluZxIiLnNzc3AuYWkuZmFjZS5GYWNlRW1i",
-            "ZWRkaW5nUmVxdWVzdBojLnNzc3AuYWkuZmFjZS5GYWNlRW1iZWRkaW5nUmVz",
-            "cG9uc2ViBnByb3RvMw=="));
+            "KAISEQoJbWF4X2ZhY2VzGAMgASgFEhUKDWluY2x1ZGVfY3JvcHMYBCABKAgi",
+            "nQEKFEZhY2VFbWJlZGRpbmdSZXF1ZXN0Eg0KBWltYWdlGAEgASgMEhEKCWNh",
+            "bWVyYV9pZBgCIAEoCRIcChRjb25maWRlbmNlX3RocmVzaG9sZBgDIAEoAhIR",
+            "CgltYXhfZmFjZXMYBCABKAUSFQoNaW5jbHVkZV9jcm9wcxgFIAEoCBIbChNt",
+            "YXhfaW1hZ2VfZGltZW5zaW9uGAYgASgFInAKEUZhY2VWZXJpZnlSZXF1ZXN0",
+            "Eg0KBWltYWdlGAEgASgMEhEKCWNhbWVyYV9pZBgCIAEoCRIcChRjb25maWRl",
+            "bmNlX3RocmVzaG9sZBgDIAEoAhIbChNyZXR1cm5fbGFyZ2VzdF9vbmx5GAQg",
+            "ASgIIoABChFGYWNlRW5yb2xsUmVxdWVzdBIRCglwZXJzb25faWQYASABKAkS",
+            "EwoLcGVyc29uX25hbWUYAiABKAkSDgoGaW1hZ2VzGAMgAygMEhgKEGNvbXB1",
+            "dGVfdGVtcGxhdGUYBCABKAgSGQoRcXVhbGl0eV90aHJlc2hvbGQYBSABKAIi",
+            "FgoURmFjZU1vZGVsSW5mb1JlcXVlc3QigAEKE0ZyYW1lUHJvY2Vzc1JlcXVl",
+            "c3QSDQoFZnJhbWUYASABKAwSEQoJY2FtZXJhX2lkGAIgASgJEhwKFGNvbmZp",
+            "ZGVuY2VfdGhyZXNob2xkGAMgASgCEhEKCW1heF9mYWNlcxgEIAEoBRIWCg5z",
+            "a2lwX2VtYmVkZGluZxgFIAEoCCLGAQoSRmFjZURldGVjdFJlc3BvbnNlEg8K",
+            "B3N1Y2Nlc3MYASABKAgSFQoNZXJyb3JfbWVzc2FnZRgCIAEoCRIpCgVmYWNl",
+            "cxgDIAMoCzIaLnNzc3AuYWkuZmFjZS5EZXRlY3RlZEZhY2USEwoLdG90YWxf",
+            "ZmFjZXMYBCABKAUSFQoNdG90YWxfdGltZV9tcxgFIAEoAhIxCgdtZXRyaWNz",
+            "GAYgASgLMiAuc3NzcC5haS5mYWNlLlBlcmZvcm1hbmNlTWV0cmljcyKDAgoV",
+            "RmFjZUVtYmVkZGluZ1Jlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSFQoNZXJy",
+            "b3JfbWVzc2FnZRgCIAEoCRIVCg1mYWNlX2RldGVjdGVkGAMgASgIEiEKBWZh",
+            "Y2VzGAQgAygLMhIuc3NzcC5haS5mYWNlLkZhY2USFQoNdG90YWxfdGltZV9t",
+            "cxgFIAEoAhIxCgdtZXRyaWNzGAYgASgLMiAuc3NzcC5haS5mYWNlLlBlcmZv",
+            "cm1hbmNlTWV0cmljcxIRCgljYW1lcmFfaWQYByABKAkSKwoKZXJyb3JfY29k",
+            "ZRgIIAEoDjIXLnNzc3AuYWkuZmFjZS5FcnJvckNvZGUi6gEKEkZhY2VWZXJp",
+            "ZnlSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIEhUKDWVycm9yX21lc3NhZ2UY",
+            "AiABKAkSFQoNZmFjZV9kZXRlY3RlZBgDIAEoCBIoCgxsYXJnZXN0X2ZhY2UY",
+            "BCABKAsyEi5zc3NwLmFpLmZhY2UuRmFjZRIhCgVmYWNlcxgFIAMoCzISLnNz",
+            "c3AuYWkuZmFjZS5GYWNlEhUKDXRvdGFsX3RpbWVfbXMYBiABKAISMQoHbWV0",
+            "cmljcxgHIAEoCzIgLnNzc3AuYWkuZmFjZS5QZXJmb3JtYW5jZU1ldHJpY3Mi",
+            "0QEKEkZhY2VFbnJvbGxSZXNwb25zZRIPCgdzdWNjZXNzGAEgASgIEhUKDWVy",
+            "cm9yX21lc3NhZ2UYAiABKAkSEQoJcGVyc29uX2lkGAMgASgJEhgKEGltYWdl",
+            "c19wcm9jZXNzZWQYBCABKAUSGAoQdmFsaWRfZW1iZWRkaW5ncxgFIAEoBRIa",
+            "ChJ0ZW1wbGF0ZV9lbWJlZGRpbmcYBiADKAISGQoRYXZnX3F1YWxpdHlfc2Nv",
+            "cmUYByABKAISFQoNdG90YWxfdGltZV9tcxgIIAEoAiKSAgoVRmFjZU1vZGVs",
+            "SW5mb1Jlc3BvbnNlEhIKCm1vZGVsX25hbWUYASABKAkSFQoNbW9kZWxfdmVy",
+            "c2lvbhgCIAEoCRIOCgZkZXZpY2UYAyABKAkSFQoNbW9kZWxfc2l6ZV9tYhgE",
+            "IAEoAhISCgppbnB1dF9zaXplGAUgASgFEhUKDWVtYmVkZGluZ19kaW0YBiAB",
+            "KAUSHAoUdG90YWxfZmFjZXNfZW5yb2xsZWQYByABKAUSEAoIaXNfcmVhZHkY",
+            "CCABKAgSFQoNZGV0ZWN0b3JfdHlwZRgJIAEoCRI1Cg9kZXRlY3Rvcl9jb25m",
+            "aWcYCiABKAsyHC5zc3NwLmFpLmZhY2UuRGV0ZWN0b3JDb25maWci0AEKFEZy",
+            "YW1lUHJvY2Vzc1Jlc3BvbnNlEg8KB3N1Y2Nlc3MYASABKAgSFQoNZXJyb3Jf",
+            "bWVzc2FnZRgCIAEoCRIhCgVmYWNlcxgDIAMoCzISLnNzc3AuYWkuZmFjZS5G",
+            "YWNlEhAKCGZyYW1lX2lkGAQgASgFEhEKCWNhbWVyYV9pZBgFIAEoCRIVCg10",
+            "b3RhbF90aW1lX21zGAYgASgCEjEKB21ldHJpY3MYByABKAsyIC5zc3NwLmFp",
+            "LmZhY2UuUGVyZm9ybWFuY2VNZXRyaWNzIrEBCgRGYWNlEicKBGJib3gYASAB",
+            "KAsyGS5zc3NwLmFpLmZhY2UuQm91bmRpbmdCb3gSEgoKY29uZmlkZW5jZRgC",
+            "IAEoAhIYChBlbWJlZGRpbmdfdmVjdG9yGAMgAygCEhUKDWNyb3BwZWRfaW1h",
+            "Z2UYBCABKAwSKgoHcXVhbGl0eRgFIAEoCzIZLnNzc3AuYWkuZmFjZS5GYWNl",
+            "UXVhbGl0eRIPCgdmYWNlX2lkGAYgASgFIp8BCgxEZXRlY3RlZEZhY2USJwoE",
+            "YmJveBgBIAEoCzIZLnNzc3AuYWkuZmFjZS5Cb3VuZGluZ0JveBISCgpjb25m",
+            "aWRlbmNlGAIgASgCEhUKDWNyb3BwZWRfaW1hZ2UYAyABKAwSKgoHcXVhbGl0",
+            "eRgEIAEoCzIZLnNzc3AuYWkuZmFjZS5GYWNlUXVhbGl0eRIPCgdmYWNlX2lk",
+            "GAUgASgFIjkKC0JvdW5kaW5nQm94EgkKAXgYASABKAISCQoBeRgCIAEoAhIJ",
+            "CgF3GAMgASgCEgkKAWgYBCABKAIijwEKC0ZhY2VRdWFsaXR5EhUKDW92ZXJh",
+            "bGxfc2NvcmUYASABKAISEQoJc2hhcnBuZXNzGAIgASgCEhIKCmJyaWdodG5l",
+            "c3MYAyABKAISGAoQZmFjZV9zaXplX3BpeGVscxgEIAEoBRINCgVwaXRjaBgF",
+            "IAEoAhILCgN5YXcYBiABKAISDAoEcm9sbBgHIAEoAiKvAQoSUGVyZm9ybWFu",
+            "Y2VNZXRyaWNzEhQKDGRldGVjdGlvbl9tcxgBIAEoAhIUCgxlbWJlZGRpbmdf",
+            "bXMYAiABKAISGAoQcHJlcHJvY2Vzc2luZ19tcxgDIAEoAhIQCgh0b3RhbF9t",
+            "cxgEIAEoAhITCgtpbWFnZV93aWR0aBgFIAEoBRIUCgxpbWFnZV9oZWlnaHQY",
+            "BiABKAUSFgoOZmFjZXNfZGV0ZWN0ZWQYByABKAUiagoORGV0ZWN0b3JDb25m",
+            "aWcSFQoNbWluX2ZhY2Vfc2l6ZRgBIAEoBRIcChRjb25maWRlbmNlX3RocmVz",
+            "aG9sZBgCIAEoAhIRCgltYXhfZmFjZXMYAyABKAUSEAoIa2VlcF9hbGwYBCAB",
+            "KAgqgwEKCUVycm9yQ29kZRIaChZFUlJPUl9DT0RFX1VOU1BFQ0lGSUVEEAAS",
+            "EQoNSU5WQUxJRF9JTUFHRRABEhEKDU5PX0ZBQ0VfRk9VTkQQAhISCg5JTlRF",
+            "Uk5BTF9FUlJPUhADEhMKD01PREVMX05PVF9SRUFEWRAEEgsKB1RJTUVPVVQQ",
+            "BTLsBAoLRmFjZVNlcnZpY2USUAoLRGV0ZWN0RmFjZXMSHy5zc3NwLmFpLmZh",
+            "Y2UuRmFjZURldGVjdFJlcXVlc3QaIC5zc3NwLmFpLmZhY2UuRmFjZURldGVj",
+            "dFJlc3BvbnNlElsKEEV4dHJhY3RFbWJlZGRpbmcSIi5zc3NwLmFpLmZhY2Uu",
+            "RmFjZUVtYmVkZGluZ1JlcXVlc3QaIy5zc3NwLmFpLmZhY2UuRmFjZUVtYmVk",
+            "ZGluZ1Jlc3BvbnNlElwKEUV4dHJhY3RFbWJlZGRpbmdzEiIuc3NzcC5haS5m",
+            "YWNlLkZhY2VFbWJlZGRpbmdSZXF1ZXN0GiMuc3NzcC5haS5mYWNlLkZhY2VF",
+            "bWJlZGRpbmdSZXNwb25zZRJPCgpWZXJpZnlGYWNlEh8uc3NzcC5haS5mYWNl",
+            "LkZhY2VWZXJpZnlSZXF1ZXN0GiAuc3NzcC5haS5mYWNlLkZhY2VWZXJpZnlS",
+            "ZXNwb25zZRJPCgpFbnJvbGxGYWNlEh8uc3NzcC5haS5mYWNlLkZhY2VFbnJv",
+            "bGxSZXF1ZXN0GiAuc3NzcC5haS5mYWNlLkZhY2VFbnJvbGxSZXNwb25zZRJX",
+            "CgxHZXRNb2RlbEluZm8SIi5zc3NwLmFpLmZhY2UuRmFjZU1vZGVsSW5mb1Jl",
+            "cXVlc3QaIy5zc3NwLmFpLmZhY2UuRmFjZU1vZGVsSW5mb1Jlc3BvbnNlElUK",
+            "DFByb2Nlc3NGcmFtZRIhLnNzc3AuYWkuZmFjZS5GcmFtZVByb2Nlc3NSZXF1",
+            "ZXN0GiIuc3NzcC5haS5mYWNlLkZyYW1lUHJvY2Vzc1Jlc3BvbnNlYgZwcm90",
+            "bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceDetectRequest), global::Sssp.Ai.Face.FaceDetectRequest.Parser, new[]{ "Image", "ConfidenceThreshold" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceRecognizeRequest), global::Sssp.Ai.Face.FaceRecognizeRequest.Parser, new[]{ "Image", "CandidateIds", "ConfidenceThreshold", "MaxResults" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceVerifyRequest), global::Sssp.Ai.Face.FaceVerifyRequest.Parser, new[]{ "Image", "CameraId", "CheckBlacklist", "ConfidenceThreshold" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceEnrollRequest), global::Sssp.Ai.Face.FaceEnrollRequest.Parser, new[]{ "PersonId", "PersonName", "Images", "IsBlacklisted" }, null, null, null, null),
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Sssp.Ai.Face.ErrorCode), }, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceDetectRequest), global::Sssp.Ai.Face.FaceDetectRequest.Parser, new[]{ "Image", "ConfidenceThreshold", "MaxFaces", "IncludeCrops" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceEmbeddingRequest), global::Sssp.Ai.Face.FaceEmbeddingRequest.Parser, new[]{ "Image", "CameraId", "ConfidenceThreshold", "MaxFaces", "IncludeCrops", "MaxImageDimension" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceVerifyRequest), global::Sssp.Ai.Face.FaceVerifyRequest.Parser, new[]{ "Image", "CameraId", "ConfidenceThreshold", "ReturnLargestOnly" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceEnrollRequest), global::Sssp.Ai.Face.FaceEnrollRequest.Parser, new[]{ "PersonId", "PersonName", "Images", "ComputeTemplate", "QualityThreshold" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceModelInfoRequest), global::Sssp.Ai.Face.FaceModelInfoRequest.Parser, null, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceEmbeddingRequest), global::Sssp.Ai.Face.FaceEmbeddingRequest.Parser, new[]{ "Image", "CameraId" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceDetectResponse), global::Sssp.Ai.Face.FaceDetectResponse.Parser, new[]{ "Success", "ErrorMessage", "Faces", "TotalFaces", "TotalTimeMs" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceRecognizeResponse), global::Sssp.Ai.Face.FaceRecognizeResponse.Parser, new[]{ "Success", "ErrorMessage", "Matches", "TotalCandidatesChecked", "TotalTimeMs" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceVerifyResponse), global::Sssp.Ai.Face.FaceVerifyResponse.Parser, new[]{ "Success", "ErrorMessage", "FaceDetected", "MatchFound", "IsAuthorized", "PersonId", "PersonName", "Confidence", "Bbox", "TotalTimeMs", "CandidateMatches" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceEmbeddingResponse), global::Sssp.Ai.Face.FaceEmbeddingResponse.Parser, new[]{ "Success", "ErrorMessage", "FaceDetected", "Embedding", "Bbox", "TotalTimeMs" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceEnrollResponse), global::Sssp.Ai.Face.FaceEnrollResponse.Parser, new[]{ "Success", "ErrorMessage", "PersonId", "ImagesEnrolled" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceModelInfoResponse), global::Sssp.Ai.Face.FaceModelInfoResponse.Parser, new[]{ "ModelName", "ModelVersion", "Device", "ModelSizeMb", "InputSize", "EmbeddingDim", "TotalFacesEnrolled" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.Face), global::Sssp.Ai.Face.Face.Parser, new[]{ "Bbox", "Confidence", "EmbeddingBytes", "CroppedImage", "EmbeddingVector" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceMatch), global::Sssp.Ai.Face.FaceMatch.Parser, new[]{ "PersonId", "PersonName", "Score", "Face", "IsBlacklisted" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.BoundingBox), global::Sssp.Ai.Face.BoundingBox.Parser, new[]{ "X1", "Y1", "X2", "Y2" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FrameProcessRequest), global::Sssp.Ai.Face.FrameProcessRequest.Parser, new[]{ "Frame", "CameraId", "ConfidenceThreshold", "MaxFaces", "SkipEmbedding" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceDetectResponse), global::Sssp.Ai.Face.FaceDetectResponse.Parser, new[]{ "Success", "ErrorMessage", "Faces", "TotalFaces", "TotalTimeMs", "Metrics" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceEmbeddingResponse), global::Sssp.Ai.Face.FaceEmbeddingResponse.Parser, new[]{ "Success", "ErrorMessage", "FaceDetected", "Faces", "TotalTimeMs", "Metrics", "CameraId", "ErrorCode" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceVerifyResponse), global::Sssp.Ai.Face.FaceVerifyResponse.Parser, new[]{ "Success", "ErrorMessage", "FaceDetected", "LargestFace", "Faces", "TotalTimeMs", "Metrics" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceEnrollResponse), global::Sssp.Ai.Face.FaceEnrollResponse.Parser, new[]{ "Success", "ErrorMessage", "PersonId", "ImagesProcessed", "ValidEmbeddings", "TemplateEmbedding", "AvgQualityScore", "TotalTimeMs" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceModelInfoResponse), global::Sssp.Ai.Face.FaceModelInfoResponse.Parser, new[]{ "ModelName", "ModelVersion", "Device", "ModelSizeMb", "InputSize", "EmbeddingDim", "TotalFacesEnrolled", "IsReady", "DetectorType", "DetectorConfig" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FrameProcessResponse), global::Sssp.Ai.Face.FrameProcessResponse.Parser, new[]{ "Success", "ErrorMessage", "Faces", "FrameId", "CameraId", "TotalTimeMs", "Metrics" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.Face), global::Sssp.Ai.Face.Face.Parser, new[]{ "Bbox", "Confidence", "EmbeddingVector", "CroppedImage", "Quality", "FaceId" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.DetectedFace), global::Sssp.Ai.Face.DetectedFace.Parser, new[]{ "Bbox", "Confidence", "CroppedImage", "Quality", "FaceId" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.BoundingBox), global::Sssp.Ai.Face.BoundingBox.Parser, new[]{ "X", "Y", "W", "H" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.FaceQuality), global::Sssp.Ai.Face.FaceQuality.Parser, new[]{ "OverallScore", "Sharpness", "Brightness", "FaceSizePixels", "Pitch", "Yaw", "Roll" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.PerformanceMetrics), global::Sssp.Ai.Face.PerformanceMetrics.Parser, new[]{ "DetectionMs", "EmbeddingMs", "PreprocessingMs", "TotalMs", "ImageWidth", "ImageHeight", "FacesDetected" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sssp.Ai.Face.DetectorConfig), global::Sssp.Ai.Face.DetectorConfig.Parser, new[]{ "MinFaceSize", "ConfidenceThreshold", "MaxFaces", "KeepAll" }, null, null, null, null)
           }));
     }
     #endregion
 
   }
+  #region Enums
+  public enum ErrorCode {
+    [pbr::OriginalName("ERROR_CODE_UNSPECIFIED")] Unspecified = 0,
+    [pbr::OriginalName("INVALID_IMAGE")] InvalidImage = 1,
+    [pbr::OriginalName("NO_FACE_FOUND")] NoFaceFound = 2,
+    [pbr::OriginalName("INTERNAL_ERROR")] InternalError = 3,
+    [pbr::OriginalName("MODEL_NOT_READY")] ModelNotReady = 4,
+    [pbr::OriginalName("TIMEOUT")] Timeout = 5,
+  }
+
+  #endregion
+
   #region Messages
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
   public sealed partial class FaceDetectRequest : pb::IMessage<FaceDetectRequest>
@@ -140,6 +183,8 @@ namespace Sssp.Ai.Face {
     public FaceDetectRequest(FaceDetectRequest other) : this() {
       image_ = other.image_;
       confidenceThreshold_ = other.confidenceThreshold_;
+      maxFaces_ = other.maxFaces_;
+      includeCrops_ = other.includeCrops_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -164,12 +209,45 @@ namespace Sssp.Ai.Face {
     /// <summary>Field number for the "confidence_threshold" field.</summary>
     public const int ConfidenceThresholdFieldNumber = 2;
     private float confidenceThreshold_;
+    /// <summary>
+    /// default: 0.7
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public float ConfidenceThreshold {
       get { return confidenceThreshold_; }
       set {
         confidenceThreshold_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "max_faces" field.</summary>
+    public const int MaxFacesFieldNumber = 3;
+    private int maxFaces_;
+    /// <summary>
+    /// optional limit
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int MaxFaces {
+      get { return maxFaces_; }
+      set {
+        maxFaces_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "include_crops" field.</summary>
+    public const int IncludeCropsFieldNumber = 4;
+    private bool includeCrops_;
+    /// <summary>
+    /// include cropped face images
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool IncludeCrops {
+      get { return includeCrops_; }
+      set {
+        includeCrops_ = value;
       }
     }
 
@@ -190,6 +268,8 @@ namespace Sssp.Ai.Face {
       }
       if (Image != other.Image) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ConfidenceThreshold, other.ConfidenceThreshold)) return false;
+      if (MaxFaces != other.MaxFaces) return false;
+      if (IncludeCrops != other.IncludeCrops) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -199,6 +279,8 @@ namespace Sssp.Ai.Face {
       int hash = 1;
       if (Image.Length != 0) hash ^= Image.GetHashCode();
       if (ConfidenceThreshold != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ConfidenceThreshold);
+      if (MaxFaces != 0) hash ^= MaxFaces.GetHashCode();
+      if (IncludeCrops != false) hash ^= IncludeCrops.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -225,6 +307,14 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(21);
         output.WriteFloat(ConfidenceThreshold);
       }
+      if (MaxFaces != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(MaxFaces);
+      }
+      if (IncludeCrops != false) {
+        output.WriteRawTag(32);
+        output.WriteBool(IncludeCrops);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -243,6 +333,14 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(21);
         output.WriteFloat(ConfidenceThreshold);
       }
+      if (MaxFaces != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(MaxFaces);
+      }
+      if (IncludeCrops != false) {
+        output.WriteRawTag(32);
+        output.WriteBool(IncludeCrops);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -258,6 +356,12 @@ namespace Sssp.Ai.Face {
       }
       if (ConfidenceThreshold != 0F) {
         size += 1 + 4;
+      }
+      if (MaxFaces != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxFaces);
+      }
+      if (IncludeCrops != false) {
+        size += 1 + 1;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -277,6 +381,12 @@ namespace Sssp.Ai.Face {
       if (other.ConfidenceThreshold != 0F) {
         ConfidenceThreshold = other.ConfidenceThreshold;
       }
+      if (other.MaxFaces != 0) {
+        MaxFaces = other.MaxFaces;
+      }
+      if (other.IncludeCrops != false) {
+        IncludeCrops = other.IncludeCrops;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -302,6 +412,14 @@ namespace Sssp.Ai.Face {
           }
           case 21: {
             ConfidenceThreshold = input.ReadFloat();
+            break;
+          }
+          case 24: {
+            MaxFaces = input.ReadInt32();
+            break;
+          }
+          case 32: {
+            IncludeCrops = input.ReadBool();
             break;
           }
         }
@@ -331,6 +449,14 @@ namespace Sssp.Ai.Face {
             ConfidenceThreshold = input.ReadFloat();
             break;
           }
+          case 24: {
+            MaxFaces = input.ReadInt32();
+            break;
+          }
+          case 32: {
+            IncludeCrops = input.ReadBool();
+            break;
+          }
         }
       }
     }
@@ -339,16 +465,16 @@ namespace Sssp.Ai.Face {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class FaceRecognizeRequest : pb::IMessage<FaceRecognizeRequest>
+  public sealed partial class FaceEmbeddingRequest : pb::IMessage<FaceEmbeddingRequest>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<FaceRecognizeRequest> _parser = new pb::MessageParser<FaceRecognizeRequest>(() => new FaceRecognizeRequest());
+    private static readonly pb::MessageParser<FaceEmbeddingRequest> _parser = new pb::MessageParser<FaceEmbeddingRequest>(() => new FaceEmbeddingRequest());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<FaceRecognizeRequest> Parser { get { return _parser; } }
+    public static pb::MessageParser<FaceEmbeddingRequest> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -364,7 +490,7 @@ namespace Sssp.Ai.Face {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceRecognizeRequest() {
+    public FaceEmbeddingRequest() {
       OnConstruction();
     }
 
@@ -372,18 +498,20 @@ namespace Sssp.Ai.Face {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceRecognizeRequest(FaceRecognizeRequest other) : this() {
+    public FaceEmbeddingRequest(FaceEmbeddingRequest other) : this() {
       image_ = other.image_;
-      candidateIds_ = other.candidateIds_.Clone();
+      cameraId_ = other.cameraId_;
       confidenceThreshold_ = other.confidenceThreshold_;
-      maxResults_ = other.maxResults_;
+      maxFaces_ = other.maxFaces_;
+      includeCrops_ = other.includeCrops_;
+      maxImageDimension_ = other.maxImageDimension_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceRecognizeRequest Clone() {
-      return new FaceRecognizeRequest(this);
+    public FaceEmbeddingRequest Clone() {
+      return new FaceEmbeddingRequest(this);
     }
 
     /// <summary>Field number for the "image" field.</summary>
@@ -398,20 +526,27 @@ namespace Sssp.Ai.Face {
       }
     }
 
-    /// <summary>Field number for the "candidate_ids" field.</summary>
-    public const int CandidateIdsFieldNumber = 2;
-    private static readonly pb::FieldCodec<string> _repeated_candidateIds_codec
-        = pb::FieldCodec.ForString(18);
-    private readonly pbc::RepeatedField<string> candidateIds_ = new pbc::RepeatedField<string>();
+    /// <summary>Field number for the "camera_id" field.</summary>
+    public const int CameraIdFieldNumber = 2;
+    private string cameraId_ = "";
+    /// <summary>
+    /// for logging/tracking
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<string> CandidateIds {
-      get { return candidateIds_; }
+    public string CameraId {
+      get { return cameraId_; }
+      set {
+        cameraId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
     }
 
     /// <summary>Field number for the "confidence_threshold" field.</summary>
     public const int ConfidenceThresholdFieldNumber = 3;
     private float confidenceThreshold_;
+    /// <summary>
+    /// default: 0.7
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public float ConfidenceThreshold {
@@ -421,27 +556,60 @@ namespace Sssp.Ai.Face {
       }
     }
 
-    /// <summary>Field number for the "max_results" field.</summary>
-    public const int MaxResultsFieldNumber = 4;
-    private int maxResults_;
+    /// <summary>Field number for the "max_faces" field.</summary>
+    public const int MaxFacesFieldNumber = 4;
+    private int maxFaces_;
+    /// <summary>
+    /// optional limit
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int MaxResults {
-      get { return maxResults_; }
+    public int MaxFaces {
+      get { return maxFaces_; }
       set {
-        maxResults_ = value;
+        maxFaces_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "include_crops" field.</summary>
+    public const int IncludeCropsFieldNumber = 5;
+    private bool includeCrops_;
+    /// <summary>
+    /// return face crops
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool IncludeCrops {
+      get { return includeCrops_; }
+      set {
+        includeCrops_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "max_image_dimension" field.</summary>
+    public const int MaxImageDimensionFieldNumber = 6;
+    private int maxImageDimension_;
+    /// <summary>
+    /// auto-resize if larger (default: 1280)
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int MaxImageDimension {
+      get { return maxImageDimension_; }
+      set {
+        maxImageDimension_ = value;
       }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as FaceRecognizeRequest);
+      return Equals(other as FaceEmbeddingRequest);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(FaceRecognizeRequest other) {
+    public bool Equals(FaceEmbeddingRequest other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -449,9 +617,11 @@ namespace Sssp.Ai.Face {
         return true;
       }
       if (Image != other.Image) return false;
-      if(!candidateIds_.Equals(other.candidateIds_)) return false;
+      if (CameraId != other.CameraId) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ConfidenceThreshold, other.ConfidenceThreshold)) return false;
-      if (MaxResults != other.MaxResults) return false;
+      if (MaxFaces != other.MaxFaces) return false;
+      if (IncludeCrops != other.IncludeCrops) return false;
+      if (MaxImageDimension != other.MaxImageDimension) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -460,9 +630,11 @@ namespace Sssp.Ai.Face {
     public override int GetHashCode() {
       int hash = 1;
       if (Image.Length != 0) hash ^= Image.GetHashCode();
-      hash ^= candidateIds_.GetHashCode();
+      if (CameraId.Length != 0) hash ^= CameraId.GetHashCode();
       if (ConfidenceThreshold != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ConfidenceThreshold);
-      if (MaxResults != 0) hash ^= MaxResults.GetHashCode();
+      if (MaxFaces != 0) hash ^= MaxFaces.GetHashCode();
+      if (IncludeCrops != false) hash ^= IncludeCrops.GetHashCode();
+      if (MaxImageDimension != 0) hash ^= MaxImageDimension.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -485,14 +657,25 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(10);
         output.WriteBytes(Image);
       }
-      candidateIds_.WriteTo(output, _repeated_candidateIds_codec);
+      if (CameraId.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(CameraId);
+      }
       if (ConfidenceThreshold != 0F) {
         output.WriteRawTag(29);
         output.WriteFloat(ConfidenceThreshold);
       }
-      if (MaxResults != 0) {
+      if (MaxFaces != 0) {
         output.WriteRawTag(32);
-        output.WriteInt32(MaxResults);
+        output.WriteInt32(MaxFaces);
+      }
+      if (IncludeCrops != false) {
+        output.WriteRawTag(40);
+        output.WriteBool(IncludeCrops);
+      }
+      if (MaxImageDimension != 0) {
+        output.WriteRawTag(48);
+        output.WriteInt32(MaxImageDimension);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -508,14 +691,25 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(10);
         output.WriteBytes(Image);
       }
-      candidateIds_.WriteTo(ref output, _repeated_candidateIds_codec);
+      if (CameraId.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(CameraId);
+      }
       if (ConfidenceThreshold != 0F) {
         output.WriteRawTag(29);
         output.WriteFloat(ConfidenceThreshold);
       }
-      if (MaxResults != 0) {
+      if (MaxFaces != 0) {
         output.WriteRawTag(32);
-        output.WriteInt32(MaxResults);
+        output.WriteInt32(MaxFaces);
+      }
+      if (IncludeCrops != false) {
+        output.WriteRawTag(40);
+        output.WriteBool(IncludeCrops);
+      }
+      if (MaxImageDimension != 0) {
+        output.WriteRawTag(48);
+        output.WriteInt32(MaxImageDimension);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -530,12 +724,20 @@ namespace Sssp.Ai.Face {
       if (Image.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeBytesSize(Image);
       }
-      size += candidateIds_.CalculateSize(_repeated_candidateIds_codec);
+      if (CameraId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(CameraId);
+      }
       if (ConfidenceThreshold != 0F) {
         size += 1 + 4;
       }
-      if (MaxResults != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxResults);
+      if (MaxFaces != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxFaces);
+      }
+      if (IncludeCrops != false) {
+        size += 1 + 1;
+      }
+      if (MaxImageDimension != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxImageDimension);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -545,19 +747,27 @@ namespace Sssp.Ai.Face {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(FaceRecognizeRequest other) {
+    public void MergeFrom(FaceEmbeddingRequest other) {
       if (other == null) {
         return;
       }
       if (other.Image.Length != 0) {
         Image = other.Image;
       }
-      candidateIds_.Add(other.candidateIds_);
+      if (other.CameraId.Length != 0) {
+        CameraId = other.CameraId;
+      }
       if (other.ConfidenceThreshold != 0F) {
         ConfidenceThreshold = other.ConfidenceThreshold;
       }
-      if (other.MaxResults != 0) {
-        MaxResults = other.MaxResults;
+      if (other.MaxFaces != 0) {
+        MaxFaces = other.MaxFaces;
+      }
+      if (other.IncludeCrops != false) {
+        IncludeCrops = other.IncludeCrops;
+      }
+      if (other.MaxImageDimension != 0) {
+        MaxImageDimension = other.MaxImageDimension;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -583,7 +793,7 @@ namespace Sssp.Ai.Face {
             break;
           }
           case 18: {
-            candidateIds_.AddEntriesFrom(input, _repeated_candidateIds_codec);
+            CameraId = input.ReadString();
             break;
           }
           case 29: {
@@ -591,7 +801,15 @@ namespace Sssp.Ai.Face {
             break;
           }
           case 32: {
-            MaxResults = input.ReadInt32();
+            MaxFaces = input.ReadInt32();
+            break;
+          }
+          case 40: {
+            IncludeCrops = input.ReadBool();
+            break;
+          }
+          case 48: {
+            MaxImageDimension = input.ReadInt32();
             break;
           }
         }
@@ -618,7 +836,7 @@ namespace Sssp.Ai.Face {
             break;
           }
           case 18: {
-            candidateIds_.AddEntriesFrom(ref input, _repeated_candidateIds_codec);
+            CameraId = input.ReadString();
             break;
           }
           case 29: {
@@ -626,7 +844,15 @@ namespace Sssp.Ai.Face {
             break;
           }
           case 32: {
-            MaxResults = input.ReadInt32();
+            MaxFaces = input.ReadInt32();
+            break;
+          }
+          case 40: {
+            IncludeCrops = input.ReadBool();
+            break;
+          }
+          case 48: {
+            MaxImageDimension = input.ReadInt32();
             break;
           }
         }
@@ -673,8 +899,8 @@ namespace Sssp.Ai.Face {
     public FaceVerifyRequest(FaceVerifyRequest other) : this() {
       image_ = other.image_;
       cameraId_ = other.cameraId_;
-      checkBlacklist_ = other.checkBlacklist_;
       confidenceThreshold_ = other.confidenceThreshold_;
+      returnLargestOnly_ = other.returnLargestOnly_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -708,20 +934,8 @@ namespace Sssp.Ai.Face {
       }
     }
 
-    /// <summary>Field number for the "check_blacklist" field.</summary>
-    public const int CheckBlacklistFieldNumber = 3;
-    private bool checkBlacklist_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool CheckBlacklist {
-      get { return checkBlacklist_; }
-      set {
-        checkBlacklist_ = value;
-      }
-    }
-
     /// <summary>Field number for the "confidence_threshold" field.</summary>
-    public const int ConfidenceThresholdFieldNumber = 4;
+    public const int ConfidenceThresholdFieldNumber = 3;
     private float confidenceThreshold_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -729,6 +943,21 @@ namespace Sssp.Ai.Face {
       get { return confidenceThreshold_; }
       set {
         confidenceThreshold_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "return_largest_only" field.</summary>
+    public const int ReturnLargestOnlyFieldNumber = 4;
+    private bool returnLargestOnly_;
+    /// <summary>
+    /// backward compat: return only largest face
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool ReturnLargestOnly {
+      get { return returnLargestOnly_; }
+      set {
+        returnLargestOnly_ = value;
       }
     }
 
@@ -749,8 +978,8 @@ namespace Sssp.Ai.Face {
       }
       if (Image != other.Image) return false;
       if (CameraId != other.CameraId) return false;
-      if (CheckBlacklist != other.CheckBlacklist) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ConfidenceThreshold, other.ConfidenceThreshold)) return false;
+      if (ReturnLargestOnly != other.ReturnLargestOnly) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -760,8 +989,8 @@ namespace Sssp.Ai.Face {
       int hash = 1;
       if (Image.Length != 0) hash ^= Image.GetHashCode();
       if (CameraId.Length != 0) hash ^= CameraId.GetHashCode();
-      if (CheckBlacklist != false) hash ^= CheckBlacklist.GetHashCode();
       if (ConfidenceThreshold != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ConfidenceThreshold);
+      if (ReturnLargestOnly != false) hash ^= ReturnLargestOnly.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -788,13 +1017,13 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(18);
         output.WriteString(CameraId);
       }
-      if (CheckBlacklist != false) {
-        output.WriteRawTag(24);
-        output.WriteBool(CheckBlacklist);
-      }
       if (ConfidenceThreshold != 0F) {
-        output.WriteRawTag(37);
+        output.WriteRawTag(29);
         output.WriteFloat(ConfidenceThreshold);
+      }
+      if (ReturnLargestOnly != false) {
+        output.WriteRawTag(32);
+        output.WriteBool(ReturnLargestOnly);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -814,13 +1043,13 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(18);
         output.WriteString(CameraId);
       }
-      if (CheckBlacklist != false) {
-        output.WriteRawTag(24);
-        output.WriteBool(CheckBlacklist);
-      }
       if (ConfidenceThreshold != 0F) {
-        output.WriteRawTag(37);
+        output.WriteRawTag(29);
         output.WriteFloat(ConfidenceThreshold);
+      }
+      if (ReturnLargestOnly != false) {
+        output.WriteRawTag(32);
+        output.WriteBool(ReturnLargestOnly);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -838,11 +1067,11 @@ namespace Sssp.Ai.Face {
       if (CameraId.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(CameraId);
       }
-      if (CheckBlacklist != false) {
-        size += 1 + 1;
-      }
       if (ConfidenceThreshold != 0F) {
         size += 1 + 4;
+      }
+      if (ReturnLargestOnly != false) {
+        size += 1 + 1;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -862,11 +1091,11 @@ namespace Sssp.Ai.Face {
       if (other.CameraId.Length != 0) {
         CameraId = other.CameraId;
       }
-      if (other.CheckBlacklist != false) {
-        CheckBlacklist = other.CheckBlacklist;
-      }
       if (other.ConfidenceThreshold != 0F) {
         ConfidenceThreshold = other.ConfidenceThreshold;
+      }
+      if (other.ReturnLargestOnly != false) {
+        ReturnLargestOnly = other.ReturnLargestOnly;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -895,12 +1124,12 @@ namespace Sssp.Ai.Face {
             CameraId = input.ReadString();
             break;
           }
-          case 24: {
-            CheckBlacklist = input.ReadBool();
+          case 29: {
+            ConfidenceThreshold = input.ReadFloat();
             break;
           }
-          case 37: {
-            ConfidenceThreshold = input.ReadFloat();
+          case 32: {
+            ReturnLargestOnly = input.ReadBool();
             break;
           }
         }
@@ -930,12 +1159,12 @@ namespace Sssp.Ai.Face {
             CameraId = input.ReadString();
             break;
           }
-          case 24: {
-            CheckBlacklist = input.ReadBool();
+          case 29: {
+            ConfidenceThreshold = input.ReadFloat();
             break;
           }
-          case 37: {
-            ConfidenceThreshold = input.ReadFloat();
+          case 32: {
+            ReturnLargestOnly = input.ReadBool();
             break;
           }
         }
@@ -983,7 +1212,8 @@ namespace Sssp.Ai.Face {
       personId_ = other.personId_;
       personName_ = other.personName_;
       images_ = other.images_.Clone();
-      isBlacklisted_ = other.isBlacklisted_;
+      computeTemplate_ = other.computeTemplate_;
+      qualityThreshold_ = other.qualityThreshold_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1022,21 +1252,42 @@ namespace Sssp.Ai.Face {
     private static readonly pb::FieldCodec<pb::ByteString> _repeated_images_codec
         = pb::FieldCodec.ForBytes(26);
     private readonly pbc::RepeatedField<pb::ByteString> images_ = new pbc::RepeatedField<pb::ByteString>();
+    /// <summary>
+    /// multiple images per person
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public pbc::RepeatedField<pb::ByteString> Images {
       get { return images_; }
     }
 
-    /// <summary>Field number for the "is_blacklisted" field.</summary>
-    public const int IsBlacklistedFieldNumber = 4;
-    private bool isBlacklisted_;
+    /// <summary>Field number for the "compute_template" field.</summary>
+    public const int ComputeTemplateFieldNumber = 4;
+    private bool computeTemplate_;
+    /// <summary>
+    /// average embeddings into template
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool IsBlacklisted {
-      get { return isBlacklisted_; }
+    public bool ComputeTemplate {
+      get { return computeTemplate_; }
       set {
-        isBlacklisted_ = value;
+        computeTemplate_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "quality_threshold" field.</summary>
+    public const int QualityThresholdFieldNumber = 5;
+    private float qualityThreshold_;
+    /// <summary>
+    /// minimum quality score (default: 0.5)
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float QualityThreshold {
+      get { return qualityThreshold_; }
+      set {
+        qualityThreshold_ = value;
       }
     }
 
@@ -1058,7 +1309,8 @@ namespace Sssp.Ai.Face {
       if (PersonId != other.PersonId) return false;
       if (PersonName != other.PersonName) return false;
       if(!images_.Equals(other.images_)) return false;
-      if (IsBlacklisted != other.IsBlacklisted) return false;
+      if (ComputeTemplate != other.ComputeTemplate) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(QualityThreshold, other.QualityThreshold)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1069,7 +1321,8 @@ namespace Sssp.Ai.Face {
       if (PersonId.Length != 0) hash ^= PersonId.GetHashCode();
       if (PersonName.Length != 0) hash ^= PersonName.GetHashCode();
       hash ^= images_.GetHashCode();
-      if (IsBlacklisted != false) hash ^= IsBlacklisted.GetHashCode();
+      if (ComputeTemplate != false) hash ^= ComputeTemplate.GetHashCode();
+      if (QualityThreshold != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(QualityThreshold);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1097,9 +1350,13 @@ namespace Sssp.Ai.Face {
         output.WriteString(PersonName);
       }
       images_.WriteTo(output, _repeated_images_codec);
-      if (IsBlacklisted != false) {
+      if (ComputeTemplate != false) {
         output.WriteRawTag(32);
-        output.WriteBool(IsBlacklisted);
+        output.WriteBool(ComputeTemplate);
+      }
+      if (QualityThreshold != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(QualityThreshold);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1120,9 +1377,13 @@ namespace Sssp.Ai.Face {
         output.WriteString(PersonName);
       }
       images_.WriteTo(ref output, _repeated_images_codec);
-      if (IsBlacklisted != false) {
+      if (ComputeTemplate != false) {
         output.WriteRawTag(32);
-        output.WriteBool(IsBlacklisted);
+        output.WriteBool(ComputeTemplate);
+      }
+      if (QualityThreshold != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(QualityThreshold);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1141,8 +1402,11 @@ namespace Sssp.Ai.Face {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(PersonName);
       }
       size += images_.CalculateSize(_repeated_images_codec);
-      if (IsBlacklisted != false) {
+      if (ComputeTemplate != false) {
         size += 1 + 1;
+      }
+      if (QualityThreshold != 0F) {
+        size += 1 + 4;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1163,8 +1427,11 @@ namespace Sssp.Ai.Face {
         PersonName = other.PersonName;
       }
       images_.Add(other.images_);
-      if (other.IsBlacklisted != false) {
-        IsBlacklisted = other.IsBlacklisted;
+      if (other.ComputeTemplate != false) {
+        ComputeTemplate = other.ComputeTemplate;
+      }
+      if (other.QualityThreshold != 0F) {
+        QualityThreshold = other.QualityThreshold;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1198,7 +1465,11 @@ namespace Sssp.Ai.Face {
             break;
           }
           case 32: {
-            IsBlacklisted = input.ReadBool();
+            ComputeTemplate = input.ReadBool();
+            break;
+          }
+          case 45: {
+            QualityThreshold = input.ReadFloat();
             break;
           }
         }
@@ -1233,7 +1504,11 @@ namespace Sssp.Ai.Face {
             break;
           }
           case 32: {
-            IsBlacklisted = input.ReadBool();
+            ComputeTemplate = input.ReadBool();
+            break;
+          }
+          case 45: {
+            QualityThreshold = input.ReadFloat();
             break;
           }
         }
@@ -1405,16 +1680,16 @@ namespace Sssp.Ai.Face {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class FaceEmbeddingRequest : pb::IMessage<FaceEmbeddingRequest>
+  public sealed partial class FrameProcessRequest : pb::IMessage<FrameProcessRequest>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<FaceEmbeddingRequest> _parser = new pb::MessageParser<FaceEmbeddingRequest>(() => new FaceEmbeddingRequest());
+    private static readonly pb::MessageParser<FrameProcessRequest> _parser = new pb::MessageParser<FrameProcessRequest>(() => new FrameProcessRequest());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<FaceEmbeddingRequest> Parser { get { return _parser; } }
+    public static pb::MessageParser<FrameProcessRequest> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1430,7 +1705,7 @@ namespace Sssp.Ai.Face {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceEmbeddingRequest() {
+    public FrameProcessRequest() {
       OnConstruction();
     }
 
@@ -1438,27 +1713,30 @@ namespace Sssp.Ai.Face {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceEmbeddingRequest(FaceEmbeddingRequest other) : this() {
-      image_ = other.image_;
+    public FrameProcessRequest(FrameProcessRequest other) : this() {
+      frame_ = other.frame_;
       cameraId_ = other.cameraId_;
+      confidenceThreshold_ = other.confidenceThreshold_;
+      maxFaces_ = other.maxFaces_;
+      skipEmbedding_ = other.skipEmbedding_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceEmbeddingRequest Clone() {
-      return new FaceEmbeddingRequest(this);
+    public FrameProcessRequest Clone() {
+      return new FrameProcessRequest(this);
     }
 
-    /// <summary>Field number for the "image" field.</summary>
-    public const int ImageFieldNumber = 1;
-    private pb::ByteString image_ = pb::ByteString.Empty;
+    /// <summary>Field number for the "frame" field.</summary>
+    public const int FrameFieldNumber = 1;
+    private pb::ByteString frame_ = pb::ByteString.Empty;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pb::ByteString Image {
-      get { return image_; }
+    public pb::ByteString Frame {
+      get { return frame_; }
       set {
-        image_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        frame_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1474,23 +1752,65 @@ namespace Sssp.Ai.Face {
       }
     }
 
+    /// <summary>Field number for the "confidence_threshold" field.</summary>
+    public const int ConfidenceThresholdFieldNumber = 3;
+    private float confidenceThreshold_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override bool Equals(object other) {
-      return Equals(other as FaceEmbeddingRequest);
+    public float ConfidenceThreshold {
+      get { return confidenceThreshold_; }
+      set {
+        confidenceThreshold_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "max_faces" field.</summary>
+    public const int MaxFacesFieldNumber = 4;
+    private int maxFaces_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int MaxFaces {
+      get { return maxFaces_; }
+      set {
+        maxFaces_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "skip_embedding" field.</summary>
+    public const int SkipEmbeddingFieldNumber = 5;
+    private bool skipEmbedding_;
+    /// <summary>
+    /// detection only (faster)
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool SkipEmbedding {
+      get { return skipEmbedding_; }
+      set {
+        skipEmbedding_ = value;
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(FaceEmbeddingRequest other) {
+    public override bool Equals(object other) {
+      return Equals(other as FrameProcessRequest);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(FrameProcessRequest other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (Image != other.Image) return false;
+      if (Frame != other.Frame) return false;
       if (CameraId != other.CameraId) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ConfidenceThreshold, other.ConfidenceThreshold)) return false;
+      if (MaxFaces != other.MaxFaces) return false;
+      if (SkipEmbedding != other.SkipEmbedding) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1498,8 +1818,11 @@ namespace Sssp.Ai.Face {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (Image.Length != 0) hash ^= Image.GetHashCode();
+      if (Frame.Length != 0) hash ^= Frame.GetHashCode();
       if (CameraId.Length != 0) hash ^= CameraId.GetHashCode();
+      if (ConfidenceThreshold != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ConfidenceThreshold);
+      if (MaxFaces != 0) hash ^= MaxFaces.GetHashCode();
+      if (SkipEmbedding != false) hash ^= SkipEmbedding.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1518,13 +1841,25 @@ namespace Sssp.Ai.Face {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (Image.Length != 0) {
+      if (Frame.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteBytes(Image);
+        output.WriteBytes(Frame);
       }
       if (CameraId.Length != 0) {
         output.WriteRawTag(18);
         output.WriteString(CameraId);
+      }
+      if (ConfidenceThreshold != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(ConfidenceThreshold);
+      }
+      if (MaxFaces != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(MaxFaces);
+      }
+      if (SkipEmbedding != false) {
+        output.WriteRawTag(40);
+        output.WriteBool(SkipEmbedding);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1536,13 +1871,25 @@ namespace Sssp.Ai.Face {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Image.Length != 0) {
+      if (Frame.Length != 0) {
         output.WriteRawTag(10);
-        output.WriteBytes(Image);
+        output.WriteBytes(Frame);
       }
       if (CameraId.Length != 0) {
         output.WriteRawTag(18);
         output.WriteString(CameraId);
+      }
+      if (ConfidenceThreshold != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(ConfidenceThreshold);
+      }
+      if (MaxFaces != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(MaxFaces);
+      }
+      if (SkipEmbedding != false) {
+        output.WriteRawTag(40);
+        output.WriteBool(SkipEmbedding);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1554,11 +1901,20 @@ namespace Sssp.Ai.Face {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (Image.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Image);
+      if (Frame.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(Frame);
       }
       if (CameraId.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(CameraId);
+      }
+      if (ConfidenceThreshold != 0F) {
+        size += 1 + 4;
+      }
+      if (MaxFaces != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxFaces);
+      }
+      if (SkipEmbedding != false) {
+        size += 1 + 1;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1568,15 +1924,24 @@ namespace Sssp.Ai.Face {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(FaceEmbeddingRequest other) {
+    public void MergeFrom(FrameProcessRequest other) {
       if (other == null) {
         return;
       }
-      if (other.Image.Length != 0) {
-        Image = other.Image;
+      if (other.Frame.Length != 0) {
+        Frame = other.Frame;
       }
       if (other.CameraId.Length != 0) {
         CameraId = other.CameraId;
+      }
+      if (other.ConfidenceThreshold != 0F) {
+        ConfidenceThreshold = other.ConfidenceThreshold;
+      }
+      if (other.MaxFaces != 0) {
+        MaxFaces = other.MaxFaces;
+      }
+      if (other.SkipEmbedding != false) {
+        SkipEmbedding = other.SkipEmbedding;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1598,11 +1963,23 @@ namespace Sssp.Ai.Face {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            Image = input.ReadBytes();
+            Frame = input.ReadBytes();
             break;
           }
           case 18: {
             CameraId = input.ReadString();
+            break;
+          }
+          case 29: {
+            ConfidenceThreshold = input.ReadFloat();
+            break;
+          }
+          case 32: {
+            MaxFaces = input.ReadInt32();
+            break;
+          }
+          case 40: {
+            SkipEmbedding = input.ReadBool();
             break;
           }
         }
@@ -1625,11 +2002,23 @@ namespace Sssp.Ai.Face {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            Image = input.ReadBytes();
+            Frame = input.ReadBytes();
             break;
           }
           case 18: {
             CameraId = input.ReadString();
+            break;
+          }
+          case 29: {
+            ConfidenceThreshold = input.ReadFloat();
+            break;
+          }
+          case 32: {
+            MaxFaces = input.ReadInt32();
+            break;
+          }
+          case 40: {
+            SkipEmbedding = input.ReadBool();
             break;
           }
         }
@@ -1679,6 +2068,7 @@ namespace Sssp.Ai.Face {
       faces_ = other.faces_.Clone();
       totalFaces_ = other.totalFaces_;
       totalTimeMs_ = other.totalTimeMs_;
+      metrics_ = other.metrics_ != null ? other.metrics_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1714,12 +2104,12 @@ namespace Sssp.Ai.Face {
 
     /// <summary>Field number for the "faces" field.</summary>
     public const int FacesFieldNumber = 3;
-    private static readonly pb::FieldCodec<global::Sssp.Ai.Face.Face> _repeated_faces_codec
-        = pb::FieldCodec.ForMessage(26, global::Sssp.Ai.Face.Face.Parser);
-    private readonly pbc::RepeatedField<global::Sssp.Ai.Face.Face> faces_ = new pbc::RepeatedField<global::Sssp.Ai.Face.Face>();
+    private static readonly pb::FieldCodec<global::Sssp.Ai.Face.DetectedFace> _repeated_faces_codec
+        = pb::FieldCodec.ForMessage(26, global::Sssp.Ai.Face.DetectedFace.Parser);
+    private readonly pbc::RepeatedField<global::Sssp.Ai.Face.DetectedFace> faces_ = new pbc::RepeatedField<global::Sssp.Ai.Face.DetectedFace>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sssp.Ai.Face.Face> Faces {
+    public pbc::RepeatedField<global::Sssp.Ai.Face.DetectedFace> Faces {
       get { return faces_; }
     }
 
@@ -1747,6 +2137,18 @@ namespace Sssp.Ai.Face {
       }
     }
 
+    /// <summary>Field number for the "metrics" field.</summary>
+    public const int MetricsFieldNumber = 6;
+    private global::Sssp.Ai.Face.PerformanceMetrics metrics_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Sssp.Ai.Face.PerformanceMetrics Metrics {
+      get { return metrics_; }
+      set {
+        metrics_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -1767,6 +2169,7 @@ namespace Sssp.Ai.Face {
       if(!faces_.Equals(other.faces_)) return false;
       if (TotalFaces != other.TotalFaces) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TotalTimeMs, other.TotalTimeMs)) return false;
+      if (!object.Equals(Metrics, other.Metrics)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1779,6 +2182,7 @@ namespace Sssp.Ai.Face {
       hash ^= faces_.GetHashCode();
       if (TotalFaces != 0) hash ^= TotalFaces.GetHashCode();
       if (TotalTimeMs != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TotalTimeMs);
+      if (metrics_ != null) hash ^= Metrics.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1814,6 +2218,10 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(45);
         output.WriteFloat(TotalTimeMs);
       }
+      if (metrics_ != null) {
+        output.WriteRawTag(50);
+        output.WriteMessage(Metrics);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1841,6 +2249,10 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(45);
         output.WriteFloat(TotalTimeMs);
       }
+      if (metrics_ != null) {
+        output.WriteRawTag(50);
+        output.WriteMessage(Metrics);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1863,6 +2275,9 @@ namespace Sssp.Ai.Face {
       }
       if (TotalTimeMs != 0F) {
         size += 1 + 4;
+      }
+      if (metrics_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Metrics);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1888,6 +2303,12 @@ namespace Sssp.Ai.Face {
       }
       if (other.TotalTimeMs != 0F) {
         TotalTimeMs = other.TotalTimeMs;
+      }
+      if (other.metrics_ != null) {
+        if (metrics_ == null) {
+          Metrics = new global::Sssp.Ai.Face.PerformanceMetrics();
+        }
+        Metrics.MergeFrom(other.Metrics);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1926,6 +2347,13 @@ namespace Sssp.Ai.Face {
           }
           case 45: {
             TotalTimeMs = input.ReadFloat();
+            break;
+          }
+          case 50: {
+            if (metrics_ == null) {
+              Metrics = new global::Sssp.Ai.Face.PerformanceMetrics();
+            }
+            input.ReadMessage(Metrics);
             break;
           }
         }
@@ -1967,6 +2395,13 @@ namespace Sssp.Ai.Face {
             TotalTimeMs = input.ReadFloat();
             break;
           }
+          case 50: {
+            if (metrics_ == null) {
+              Metrics = new global::Sssp.Ai.Face.PerformanceMetrics();
+            }
+            input.ReadMessage(Metrics);
+            break;
+          }
         }
       }
     }
@@ -1975,16 +2410,16 @@ namespace Sssp.Ai.Face {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class FaceRecognizeResponse : pb::IMessage<FaceRecognizeResponse>
+  public sealed partial class FaceEmbeddingResponse : pb::IMessage<FaceEmbeddingResponse>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<FaceRecognizeResponse> _parser = new pb::MessageParser<FaceRecognizeResponse>(() => new FaceRecognizeResponse());
+    private static readonly pb::MessageParser<FaceEmbeddingResponse> _parser = new pb::MessageParser<FaceEmbeddingResponse>(() => new FaceEmbeddingResponse());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<FaceRecognizeResponse> Parser { get { return _parser; } }
+    public static pb::MessageParser<FaceEmbeddingResponse> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -2000,7 +2435,7 @@ namespace Sssp.Ai.Face {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceRecognizeResponse() {
+    public FaceEmbeddingResponse() {
       OnConstruction();
     }
 
@@ -2008,19 +2443,22 @@ namespace Sssp.Ai.Face {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceRecognizeResponse(FaceRecognizeResponse other) : this() {
+    public FaceEmbeddingResponse(FaceEmbeddingResponse other) : this() {
       success_ = other.success_;
       errorMessage_ = other.errorMessage_;
-      matches_ = other.matches_.Clone();
-      totalCandidatesChecked_ = other.totalCandidatesChecked_;
+      faceDetected_ = other.faceDetected_;
+      faces_ = other.faces_.Clone();
       totalTimeMs_ = other.totalTimeMs_;
+      metrics_ = other.metrics_ != null ? other.metrics_.Clone() : null;
+      cameraId_ = other.cameraId_;
+      errorCode_ = other.errorCode_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceRecognizeResponse Clone() {
-      return new FaceRecognizeResponse(this);
+    public FaceEmbeddingResponse Clone() {
+      return new FaceEmbeddingResponse(this);
     }
 
     /// <summary>Field number for the "success" field.</summary>
@@ -2047,27 +2485,30 @@ namespace Sssp.Ai.Face {
       }
     }
 
-    /// <summary>Field number for the "matches" field.</summary>
-    public const int MatchesFieldNumber = 3;
-    private static readonly pb::FieldCodec<global::Sssp.Ai.Face.FaceMatch> _repeated_matches_codec
-        = pb::FieldCodec.ForMessage(26, global::Sssp.Ai.Face.FaceMatch.Parser);
-    private readonly pbc::RepeatedField<global::Sssp.Ai.Face.FaceMatch> matches_ = new pbc::RepeatedField<global::Sssp.Ai.Face.FaceMatch>();
+    /// <summary>Field number for the "face_detected" field.</summary>
+    public const int FaceDetectedFieldNumber = 3;
+    private bool faceDetected_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sssp.Ai.Face.FaceMatch> Matches {
-      get { return matches_; }
+    public bool FaceDetected {
+      get { return faceDetected_; }
+      set {
+        faceDetected_ = value;
+      }
     }
 
-    /// <summary>Field number for the "total_candidates_checked" field.</summary>
-    public const int TotalCandidatesCheckedFieldNumber = 4;
-    private int totalCandidatesChecked_;
+    /// <summary>Field number for the "faces" field.</summary>
+    public const int FacesFieldNumber = 4;
+    private static readonly pb::FieldCodec<global::Sssp.Ai.Face.Face> _repeated_faces_codec
+        = pb::FieldCodec.ForMessage(34, global::Sssp.Ai.Face.Face.Parser);
+    private readonly pbc::RepeatedField<global::Sssp.Ai.Face.Face> faces_ = new pbc::RepeatedField<global::Sssp.Ai.Face.Face>();
+    /// <summary>
+    /// all faces with embeddings
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int TotalCandidatesChecked {
-      get { return totalCandidatesChecked_; }
-      set {
-        totalCandidatesChecked_ = value;
-      }
+    public pbc::RepeatedField<global::Sssp.Ai.Face.Face> Faces {
+      get { return faces_; }
     }
 
     /// <summary>Field number for the "total_time_ms" field.</summary>
@@ -2082,15 +2523,51 @@ namespace Sssp.Ai.Face {
       }
     }
 
+    /// <summary>Field number for the "metrics" field.</summary>
+    public const int MetricsFieldNumber = 6;
+    private global::Sssp.Ai.Face.PerformanceMetrics metrics_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override bool Equals(object other) {
-      return Equals(other as FaceRecognizeResponse);
+    public global::Sssp.Ai.Face.PerformanceMetrics Metrics {
+      get { return metrics_; }
+      set {
+        metrics_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "camera_id" field.</summary>
+    public const int CameraIdFieldNumber = 7;
+    private string cameraId_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string CameraId {
+      get { return cameraId_; }
+      set {
+        cameraId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "error_code" field.</summary>
+    public const int ErrorCodeFieldNumber = 8;
+    private global::Sssp.Ai.Face.ErrorCode errorCode_ = global::Sssp.Ai.Face.ErrorCode.Unspecified;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Sssp.Ai.Face.ErrorCode ErrorCode {
+      get { return errorCode_; }
+      set {
+        errorCode_ = value;
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(FaceRecognizeResponse other) {
+    public override bool Equals(object other) {
+      return Equals(other as FaceEmbeddingResponse);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(FaceEmbeddingResponse other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -2099,9 +2576,12 @@ namespace Sssp.Ai.Face {
       }
       if (Success != other.Success) return false;
       if (ErrorMessage != other.ErrorMessage) return false;
-      if(!matches_.Equals(other.matches_)) return false;
-      if (TotalCandidatesChecked != other.TotalCandidatesChecked) return false;
+      if (FaceDetected != other.FaceDetected) return false;
+      if(!faces_.Equals(other.faces_)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TotalTimeMs, other.TotalTimeMs)) return false;
+      if (!object.Equals(Metrics, other.Metrics)) return false;
+      if (CameraId != other.CameraId) return false;
+      if (ErrorCode != other.ErrorCode) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2111,9 +2591,12 @@ namespace Sssp.Ai.Face {
       int hash = 1;
       if (Success != false) hash ^= Success.GetHashCode();
       if (ErrorMessage.Length != 0) hash ^= ErrorMessage.GetHashCode();
-      hash ^= matches_.GetHashCode();
-      if (TotalCandidatesChecked != 0) hash ^= TotalCandidatesChecked.GetHashCode();
+      if (FaceDetected != false) hash ^= FaceDetected.GetHashCode();
+      hash ^= faces_.GetHashCode();
       if (TotalTimeMs != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TotalTimeMs);
+      if (metrics_ != null) hash ^= Metrics.GetHashCode();
+      if (CameraId.Length != 0) hash ^= CameraId.GetHashCode();
+      if (ErrorCode != global::Sssp.Ai.Face.ErrorCode.Unspecified) hash ^= ErrorCode.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -2140,14 +2623,26 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(18);
         output.WriteString(ErrorMessage);
       }
-      matches_.WriteTo(output, _repeated_matches_codec);
-      if (TotalCandidatesChecked != 0) {
-        output.WriteRawTag(32);
-        output.WriteInt32(TotalCandidatesChecked);
+      if (FaceDetected != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(FaceDetected);
       }
+      faces_.WriteTo(output, _repeated_faces_codec);
       if (TotalTimeMs != 0F) {
         output.WriteRawTag(45);
         output.WriteFloat(TotalTimeMs);
+      }
+      if (metrics_ != null) {
+        output.WriteRawTag(50);
+        output.WriteMessage(Metrics);
+      }
+      if (CameraId.Length != 0) {
+        output.WriteRawTag(58);
+        output.WriteString(CameraId);
+      }
+      if (ErrorCode != global::Sssp.Ai.Face.ErrorCode.Unspecified) {
+        output.WriteRawTag(64);
+        output.WriteEnum((int) ErrorCode);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -2167,14 +2662,26 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(18);
         output.WriteString(ErrorMessage);
       }
-      matches_.WriteTo(ref output, _repeated_matches_codec);
-      if (TotalCandidatesChecked != 0) {
-        output.WriteRawTag(32);
-        output.WriteInt32(TotalCandidatesChecked);
+      if (FaceDetected != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(FaceDetected);
       }
+      faces_.WriteTo(ref output, _repeated_faces_codec);
       if (TotalTimeMs != 0F) {
         output.WriteRawTag(45);
         output.WriteFloat(TotalTimeMs);
+      }
+      if (metrics_ != null) {
+        output.WriteRawTag(50);
+        output.WriteMessage(Metrics);
+      }
+      if (CameraId.Length != 0) {
+        output.WriteRawTag(58);
+        output.WriteString(CameraId);
+      }
+      if (ErrorCode != global::Sssp.Ai.Face.ErrorCode.Unspecified) {
+        output.WriteRawTag(64);
+        output.WriteEnum((int) ErrorCode);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -2192,12 +2699,21 @@ namespace Sssp.Ai.Face {
       if (ErrorMessage.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(ErrorMessage);
       }
-      size += matches_.CalculateSize(_repeated_matches_codec);
-      if (TotalCandidatesChecked != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(TotalCandidatesChecked);
+      if (FaceDetected != false) {
+        size += 1 + 1;
       }
+      size += faces_.CalculateSize(_repeated_faces_codec);
       if (TotalTimeMs != 0F) {
         size += 1 + 4;
+      }
+      if (metrics_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Metrics);
+      }
+      if (CameraId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(CameraId);
+      }
+      if (ErrorCode != global::Sssp.Ai.Face.ErrorCode.Unspecified) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) ErrorCode);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -2207,7 +2723,7 @@ namespace Sssp.Ai.Face {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(FaceRecognizeResponse other) {
+    public void MergeFrom(FaceEmbeddingResponse other) {
       if (other == null) {
         return;
       }
@@ -2217,12 +2733,24 @@ namespace Sssp.Ai.Face {
       if (other.ErrorMessage.Length != 0) {
         ErrorMessage = other.ErrorMessage;
       }
-      matches_.Add(other.matches_);
-      if (other.TotalCandidatesChecked != 0) {
-        TotalCandidatesChecked = other.TotalCandidatesChecked;
+      if (other.FaceDetected != false) {
+        FaceDetected = other.FaceDetected;
       }
+      faces_.Add(other.faces_);
       if (other.TotalTimeMs != 0F) {
         TotalTimeMs = other.TotalTimeMs;
+      }
+      if (other.metrics_ != null) {
+        if (metrics_ == null) {
+          Metrics = new global::Sssp.Ai.Face.PerformanceMetrics();
+        }
+        Metrics.MergeFrom(other.Metrics);
+      }
+      if (other.CameraId.Length != 0) {
+        CameraId = other.CameraId;
+      }
+      if (other.ErrorCode != global::Sssp.Ai.Face.ErrorCode.Unspecified) {
+        ErrorCode = other.ErrorCode;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -2251,16 +2779,31 @@ namespace Sssp.Ai.Face {
             ErrorMessage = input.ReadString();
             break;
           }
-          case 26: {
-            matches_.AddEntriesFrom(input, _repeated_matches_codec);
+          case 24: {
+            FaceDetected = input.ReadBool();
             break;
           }
-          case 32: {
-            TotalCandidatesChecked = input.ReadInt32();
+          case 34: {
+            faces_.AddEntriesFrom(input, _repeated_faces_codec);
             break;
           }
           case 45: {
             TotalTimeMs = input.ReadFloat();
+            break;
+          }
+          case 50: {
+            if (metrics_ == null) {
+              Metrics = new global::Sssp.Ai.Face.PerformanceMetrics();
+            }
+            input.ReadMessage(Metrics);
+            break;
+          }
+          case 58: {
+            CameraId = input.ReadString();
+            break;
+          }
+          case 64: {
+            ErrorCode = (global::Sssp.Ai.Face.ErrorCode) input.ReadEnum();
             break;
           }
         }
@@ -2290,16 +2833,31 @@ namespace Sssp.Ai.Face {
             ErrorMessage = input.ReadString();
             break;
           }
-          case 26: {
-            matches_.AddEntriesFrom(ref input, _repeated_matches_codec);
+          case 24: {
+            FaceDetected = input.ReadBool();
             break;
           }
-          case 32: {
-            TotalCandidatesChecked = input.ReadInt32();
+          case 34: {
+            faces_.AddEntriesFrom(ref input, _repeated_faces_codec);
             break;
           }
           case 45: {
             TotalTimeMs = input.ReadFloat();
+            break;
+          }
+          case 50: {
+            if (metrics_ == null) {
+              Metrics = new global::Sssp.Ai.Face.PerformanceMetrics();
+            }
+            input.ReadMessage(Metrics);
+            break;
+          }
+          case 58: {
+            CameraId = input.ReadString();
+            break;
+          }
+          case 64: {
+            ErrorCode = (global::Sssp.Ai.Face.ErrorCode) input.ReadEnum();
             break;
           }
         }
@@ -2347,14 +2905,10 @@ namespace Sssp.Ai.Face {
       success_ = other.success_;
       errorMessage_ = other.errorMessage_;
       faceDetected_ = other.faceDetected_;
-      matchFound_ = other.matchFound_;
-      isAuthorized_ = other.isAuthorized_;
-      personId_ = other.personId_;
-      personName_ = other.personName_;
-      confidence_ = other.confidence_;
-      bbox_ = other.bbox_ != null ? other.bbox_.Clone() : null;
+      largestFace_ = other.largestFace_ != null ? other.largestFace_.Clone() : null;
+      faces_ = other.faces_.Clone();
       totalTimeMs_ = other.totalTimeMs_;
-      candidateMatches_ = other.candidateMatches_.Clone();
+      metrics_ = other.metrics_ != null ? other.metrics_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -2400,80 +2954,37 @@ namespace Sssp.Ai.Face {
       }
     }
 
-    /// <summary>Field number for the "match_found" field.</summary>
-    public const int MatchFoundFieldNumber = 4;
-    private bool matchFound_;
+    /// <summary>Field number for the "largest_face" field.</summary>
+    public const int LargestFaceFieldNumber = 4;
+    private global::Sssp.Ai.Face.Face largestFace_;
+    /// <summary>
+    /// backward compat
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool MatchFound {
-      get { return matchFound_; }
+    public global::Sssp.Ai.Face.Face LargestFace {
+      get { return largestFace_; }
       set {
-        matchFound_ = value;
+        largestFace_ = value;
       }
     }
 
-    /// <summary>Field number for the "is_authorized" field.</summary>
-    public const int IsAuthorizedFieldNumber = 5;
-    private bool isAuthorized_;
+    /// <summary>Field number for the "faces" field.</summary>
+    public const int FacesFieldNumber = 5;
+    private static readonly pb::FieldCodec<global::Sssp.Ai.Face.Face> _repeated_faces_codec
+        = pb::FieldCodec.ForMessage(42, global::Sssp.Ai.Face.Face.Parser);
+    private readonly pbc::RepeatedField<global::Sssp.Ai.Face.Face> faces_ = new pbc::RepeatedField<global::Sssp.Ai.Face.Face>();
+    /// <summary>
+    /// all faces
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool IsAuthorized {
-      get { return isAuthorized_; }
-      set {
-        isAuthorized_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "person_id" field.</summary>
-    public const int PersonIdFieldNumber = 6;
-    private string personId_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string PersonId {
-      get { return personId_; }
-      set {
-        personId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    /// <summary>Field number for the "person_name" field.</summary>
-    public const int PersonNameFieldNumber = 7;
-    private string personName_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string PersonName {
-      get { return personName_; }
-      set {
-        personName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    /// <summary>Field number for the "confidence" field.</summary>
-    public const int ConfidenceFieldNumber = 8;
-    private float confidence_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float Confidence {
-      get { return confidence_; }
-      set {
-        confidence_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "bbox" field.</summary>
-    public const int BboxFieldNumber = 9;
-    private global::Sssp.Ai.Face.BoundingBox bbox_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Sssp.Ai.Face.BoundingBox Bbox {
-      get { return bbox_; }
-      set {
-        bbox_ = value;
-      }
+    public pbc::RepeatedField<global::Sssp.Ai.Face.Face> Faces {
+      get { return faces_; }
     }
 
     /// <summary>Field number for the "total_time_ms" field.</summary>
-    public const int TotalTimeMsFieldNumber = 10;
+    public const int TotalTimeMsFieldNumber = 6;
     private float totalTimeMs_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -2484,15 +2995,16 @@ namespace Sssp.Ai.Face {
       }
     }
 
-    /// <summary>Field number for the "candidate_matches" field.</summary>
-    public const int CandidateMatchesFieldNumber = 11;
-    private static readonly pb::FieldCodec<global::Sssp.Ai.Face.FaceMatch> _repeated_candidateMatches_codec
-        = pb::FieldCodec.ForMessage(90, global::Sssp.Ai.Face.FaceMatch.Parser);
-    private readonly pbc::RepeatedField<global::Sssp.Ai.Face.FaceMatch> candidateMatches_ = new pbc::RepeatedField<global::Sssp.Ai.Face.FaceMatch>();
+    /// <summary>Field number for the "metrics" field.</summary>
+    public const int MetricsFieldNumber = 7;
+    private global::Sssp.Ai.Face.PerformanceMetrics metrics_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sssp.Ai.Face.FaceMatch> CandidateMatches {
-      get { return candidateMatches_; }
+    public global::Sssp.Ai.Face.PerformanceMetrics Metrics {
+      get { return metrics_; }
+      set {
+        metrics_ = value;
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2513,14 +3025,10 @@ namespace Sssp.Ai.Face {
       if (Success != other.Success) return false;
       if (ErrorMessage != other.ErrorMessage) return false;
       if (FaceDetected != other.FaceDetected) return false;
-      if (MatchFound != other.MatchFound) return false;
-      if (IsAuthorized != other.IsAuthorized) return false;
-      if (PersonId != other.PersonId) return false;
-      if (PersonName != other.PersonName) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Confidence, other.Confidence)) return false;
-      if (!object.Equals(Bbox, other.Bbox)) return false;
+      if (!object.Equals(LargestFace, other.LargestFace)) return false;
+      if(!faces_.Equals(other.faces_)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TotalTimeMs, other.TotalTimeMs)) return false;
-      if(!candidateMatches_.Equals(other.candidateMatches_)) return false;
+      if (!object.Equals(Metrics, other.Metrics)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2531,14 +3039,10 @@ namespace Sssp.Ai.Face {
       if (Success != false) hash ^= Success.GetHashCode();
       if (ErrorMessage.Length != 0) hash ^= ErrorMessage.GetHashCode();
       if (FaceDetected != false) hash ^= FaceDetected.GetHashCode();
-      if (MatchFound != false) hash ^= MatchFound.GetHashCode();
-      if (IsAuthorized != false) hash ^= IsAuthorized.GetHashCode();
-      if (PersonId.Length != 0) hash ^= PersonId.GetHashCode();
-      if (PersonName.Length != 0) hash ^= PersonName.GetHashCode();
-      if (Confidence != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Confidence);
-      if (bbox_ != null) hash ^= Bbox.GetHashCode();
+      if (largestFace_ != null) hash ^= LargestFace.GetHashCode();
+      hash ^= faces_.GetHashCode();
       if (TotalTimeMs != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TotalTimeMs);
-      hash ^= candidateMatches_.GetHashCode();
+      if (metrics_ != null) hash ^= Metrics.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -2569,35 +3073,19 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(24);
         output.WriteBool(FaceDetected);
       }
-      if (MatchFound != false) {
-        output.WriteRawTag(32);
-        output.WriteBool(MatchFound);
+      if (largestFace_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(LargestFace);
       }
-      if (IsAuthorized != false) {
-        output.WriteRawTag(40);
-        output.WriteBool(IsAuthorized);
-      }
-      if (PersonId.Length != 0) {
-        output.WriteRawTag(50);
-        output.WriteString(PersonId);
-      }
-      if (PersonName.Length != 0) {
-        output.WriteRawTag(58);
-        output.WriteString(PersonName);
-      }
-      if (Confidence != 0F) {
-        output.WriteRawTag(69);
-        output.WriteFloat(Confidence);
-      }
-      if (bbox_ != null) {
-        output.WriteRawTag(74);
-        output.WriteMessage(Bbox);
-      }
+      faces_.WriteTo(output, _repeated_faces_codec);
       if (TotalTimeMs != 0F) {
-        output.WriteRawTag(85);
+        output.WriteRawTag(53);
         output.WriteFloat(TotalTimeMs);
       }
-      candidateMatches_.WriteTo(output, _repeated_candidateMatches_codec);
+      if (metrics_ != null) {
+        output.WriteRawTag(58);
+        output.WriteMessage(Metrics);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -2620,35 +3108,19 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(24);
         output.WriteBool(FaceDetected);
       }
-      if (MatchFound != false) {
-        output.WriteRawTag(32);
-        output.WriteBool(MatchFound);
+      if (largestFace_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(LargestFace);
       }
-      if (IsAuthorized != false) {
-        output.WriteRawTag(40);
-        output.WriteBool(IsAuthorized);
-      }
-      if (PersonId.Length != 0) {
-        output.WriteRawTag(50);
-        output.WriteString(PersonId);
-      }
-      if (PersonName.Length != 0) {
-        output.WriteRawTag(58);
-        output.WriteString(PersonName);
-      }
-      if (Confidence != 0F) {
-        output.WriteRawTag(69);
-        output.WriteFloat(Confidence);
-      }
-      if (bbox_ != null) {
-        output.WriteRawTag(74);
-        output.WriteMessage(Bbox);
-      }
+      faces_.WriteTo(ref output, _repeated_faces_codec);
       if (TotalTimeMs != 0F) {
-        output.WriteRawTag(85);
+        output.WriteRawTag(53);
         output.WriteFloat(TotalTimeMs);
       }
-      candidateMatches_.WriteTo(ref output, _repeated_candidateMatches_codec);
+      if (metrics_ != null) {
+        output.WriteRawTag(58);
+        output.WriteMessage(Metrics);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -2668,28 +3140,16 @@ namespace Sssp.Ai.Face {
       if (FaceDetected != false) {
         size += 1 + 1;
       }
-      if (MatchFound != false) {
-        size += 1 + 1;
+      if (largestFace_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(LargestFace);
       }
-      if (IsAuthorized != false) {
-        size += 1 + 1;
-      }
-      if (PersonId.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(PersonId);
-      }
-      if (PersonName.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(PersonName);
-      }
-      if (Confidence != 0F) {
-        size += 1 + 4;
-      }
-      if (bbox_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Bbox);
-      }
+      size += faces_.CalculateSize(_repeated_faces_codec);
       if (TotalTimeMs != 0F) {
         size += 1 + 4;
       }
-      size += candidateMatches_.CalculateSize(_repeated_candidateMatches_codec);
+      if (metrics_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Metrics);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -2711,31 +3171,22 @@ namespace Sssp.Ai.Face {
       if (other.FaceDetected != false) {
         FaceDetected = other.FaceDetected;
       }
-      if (other.MatchFound != false) {
-        MatchFound = other.MatchFound;
-      }
-      if (other.IsAuthorized != false) {
-        IsAuthorized = other.IsAuthorized;
-      }
-      if (other.PersonId.Length != 0) {
-        PersonId = other.PersonId;
-      }
-      if (other.PersonName.Length != 0) {
-        PersonName = other.PersonName;
-      }
-      if (other.Confidence != 0F) {
-        Confidence = other.Confidence;
-      }
-      if (other.bbox_ != null) {
-        if (bbox_ == null) {
-          Bbox = new global::Sssp.Ai.Face.BoundingBox();
+      if (other.largestFace_ != null) {
+        if (largestFace_ == null) {
+          LargestFace = new global::Sssp.Ai.Face.Face();
         }
-        Bbox.MergeFrom(other.Bbox);
+        LargestFace.MergeFrom(other.LargestFace);
       }
+      faces_.Add(other.faces_);
       if (other.TotalTimeMs != 0F) {
         TotalTimeMs = other.TotalTimeMs;
       }
-      candidateMatches_.Add(other.candidateMatches_);
+      if (other.metrics_ != null) {
+        if (metrics_ == null) {
+          Metrics = new global::Sssp.Ai.Face.PerformanceMetrics();
+        }
+        Metrics.MergeFrom(other.Metrics);
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -2767,39 +3218,26 @@ namespace Sssp.Ai.Face {
             FaceDetected = input.ReadBool();
             break;
           }
-          case 32: {
-            MatchFound = input.ReadBool();
-            break;
-          }
-          case 40: {
-            IsAuthorized = input.ReadBool();
-            break;
-          }
-          case 50: {
-            PersonId = input.ReadString();
-            break;
-          }
-          case 58: {
-            PersonName = input.ReadString();
-            break;
-          }
-          case 69: {
-            Confidence = input.ReadFloat();
-            break;
-          }
-          case 74: {
-            if (bbox_ == null) {
-              Bbox = new global::Sssp.Ai.Face.BoundingBox();
+          case 34: {
+            if (largestFace_ == null) {
+              LargestFace = new global::Sssp.Ai.Face.Face();
             }
-            input.ReadMessage(Bbox);
+            input.ReadMessage(LargestFace);
             break;
           }
-          case 85: {
+          case 42: {
+            faces_.AddEntriesFrom(input, _repeated_faces_codec);
+            break;
+          }
+          case 53: {
             TotalTimeMs = input.ReadFloat();
             break;
           }
-          case 90: {
-            candidateMatches_.AddEntriesFrom(input, _repeated_candidateMatches_codec);
+          case 58: {
+            if (metrics_ == null) {
+              Metrics = new global::Sssp.Ai.Face.PerformanceMetrics();
+            }
+            input.ReadMessage(Metrics);
             break;
           }
         }
@@ -2833,422 +3271,26 @@ namespace Sssp.Ai.Face {
             FaceDetected = input.ReadBool();
             break;
           }
-          case 32: {
-            MatchFound = input.ReadBool();
+          case 34: {
+            if (largestFace_ == null) {
+              LargestFace = new global::Sssp.Ai.Face.Face();
+            }
+            input.ReadMessage(LargestFace);
             break;
           }
-          case 40: {
-            IsAuthorized = input.ReadBool();
+          case 42: {
+            faces_.AddEntriesFrom(ref input, _repeated_faces_codec);
             break;
           }
-          case 50: {
-            PersonId = input.ReadString();
+          case 53: {
+            TotalTimeMs = input.ReadFloat();
             break;
           }
           case 58: {
-            PersonName = input.ReadString();
-            break;
-          }
-          case 69: {
-            Confidence = input.ReadFloat();
-            break;
-          }
-          case 74: {
-            if (bbox_ == null) {
-              Bbox = new global::Sssp.Ai.Face.BoundingBox();
+            if (metrics_ == null) {
+              Metrics = new global::Sssp.Ai.Face.PerformanceMetrics();
             }
-            input.ReadMessage(Bbox);
-            break;
-          }
-          case 85: {
-            TotalTimeMs = input.ReadFloat();
-            break;
-          }
-          case 90: {
-            candidateMatches_.AddEntriesFrom(ref input, _repeated_candidateMatches_codec);
-            break;
-          }
-        }
-      }
-    }
-    #endif
-
-  }
-
-  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class FaceEmbeddingResponse : pb::IMessage<FaceEmbeddingResponse>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<FaceEmbeddingResponse> _parser = new pb::MessageParser<FaceEmbeddingResponse>(() => new FaceEmbeddingResponse());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<FaceEmbeddingResponse> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Sssp.Ai.Face.FaceReflection.Descriptor.MessageTypes[9]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceEmbeddingResponse() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceEmbeddingResponse(FaceEmbeddingResponse other) : this() {
-      success_ = other.success_;
-      errorMessage_ = other.errorMessage_;
-      faceDetected_ = other.faceDetected_;
-      embedding_ = other.embedding_.Clone();
-      bbox_ = other.bbox_ != null ? other.bbox_.Clone() : null;
-      totalTimeMs_ = other.totalTimeMs_;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceEmbeddingResponse Clone() {
-      return new FaceEmbeddingResponse(this);
-    }
-
-    /// <summary>Field number for the "success" field.</summary>
-    public const int SuccessFieldNumber = 1;
-    private bool success_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Success {
-      get { return success_; }
-      set {
-        success_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "error_message" field.</summary>
-    public const int ErrorMessageFieldNumber = 2;
-    private string errorMessage_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string ErrorMessage {
-      get { return errorMessage_; }
-      set {
-        errorMessage_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    /// <summary>Field number for the "face_detected" field.</summary>
-    public const int FaceDetectedFieldNumber = 3;
-    private bool faceDetected_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool FaceDetected {
-      get { return faceDetected_; }
-      set {
-        faceDetected_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "embedding" field.</summary>
-    public const int EmbeddingFieldNumber = 4;
-    private static readonly pb::FieldCodec<float> _repeated_embedding_codec
-        = pb::FieldCodec.ForFloat(34);
-    private readonly pbc::RepeatedField<float> embedding_ = new pbc::RepeatedField<float>();
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<float> Embedding {
-      get { return embedding_; }
-    }
-
-    /// <summary>Field number for the "bbox" field.</summary>
-    public const int BboxFieldNumber = 5;
-    private global::Sssp.Ai.Face.BoundingBox bbox_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Sssp.Ai.Face.BoundingBox Bbox {
-      get { return bbox_; }
-      set {
-        bbox_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "total_time_ms" field.</summary>
-    public const int TotalTimeMsFieldNumber = 6;
-    private float totalTimeMs_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float TotalTimeMs {
-      get { return totalTimeMs_; }
-      set {
-        totalTimeMs_ = value;
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override bool Equals(object other) {
-      return Equals(other as FaceEmbeddingResponse);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(FaceEmbeddingResponse other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (Success != other.Success) return false;
-      if (ErrorMessage != other.ErrorMessage) return false;
-      if (FaceDetected != other.FaceDetected) return false;
-      if(!embedding_.Equals(other.embedding_)) return false;
-      if (!object.Equals(Bbox, other.Bbox)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TotalTimeMs, other.TotalTimeMs)) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (Success != false) hash ^= Success.GetHashCode();
-      if (ErrorMessage.Length != 0) hash ^= ErrorMessage.GetHashCode();
-      if (FaceDetected != false) hash ^= FaceDetected.GetHashCode();
-      hash ^= embedding_.GetHashCode();
-      if (bbox_ != null) hash ^= Bbox.GetHashCode();
-      if (TotalTimeMs != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TotalTimeMs);
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (Success != false) {
-        output.WriteRawTag(8);
-        output.WriteBool(Success);
-      }
-      if (ErrorMessage.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(ErrorMessage);
-      }
-      if (FaceDetected != false) {
-        output.WriteRawTag(24);
-        output.WriteBool(FaceDetected);
-      }
-      embedding_.WriteTo(output, _repeated_embedding_codec);
-      if (bbox_ != null) {
-        output.WriteRawTag(42);
-        output.WriteMessage(Bbox);
-      }
-      if (TotalTimeMs != 0F) {
-        output.WriteRawTag(53);
-        output.WriteFloat(TotalTimeMs);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (Success != false) {
-        output.WriteRawTag(8);
-        output.WriteBool(Success);
-      }
-      if (ErrorMessage.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(ErrorMessage);
-      }
-      if (FaceDetected != false) {
-        output.WriteRawTag(24);
-        output.WriteBool(FaceDetected);
-      }
-      embedding_.WriteTo(ref output, _repeated_embedding_codec);
-      if (bbox_ != null) {
-        output.WriteRawTag(42);
-        output.WriteMessage(Bbox);
-      }
-      if (TotalTimeMs != 0F) {
-        output.WriteRawTag(53);
-        output.WriteFloat(TotalTimeMs);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int CalculateSize() {
-      int size = 0;
-      if (Success != false) {
-        size += 1 + 1;
-      }
-      if (ErrorMessage.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(ErrorMessage);
-      }
-      if (FaceDetected != false) {
-        size += 1 + 1;
-      }
-      size += embedding_.CalculateSize(_repeated_embedding_codec);
-      if (bbox_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Bbox);
-      }
-      if (TotalTimeMs != 0F) {
-        size += 1 + 4;
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(FaceEmbeddingResponse other) {
-      if (other == null) {
-        return;
-      }
-      if (other.Success != false) {
-        Success = other.Success;
-      }
-      if (other.ErrorMessage.Length != 0) {
-        ErrorMessage = other.ErrorMessage;
-      }
-      if (other.FaceDetected != false) {
-        FaceDetected = other.FaceDetected;
-      }
-      embedding_.Add(other.embedding_);
-      if (other.bbox_ != null) {
-        if (bbox_ == null) {
-          Bbox = new global::Sssp.Ai.Face.BoundingBox();
-        }
-        Bbox.MergeFrom(other.Bbox);
-      }
-      if (other.TotalTimeMs != 0F) {
-        TotalTimeMs = other.TotalTimeMs;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-      if ((tag & 7) == 4) {
-        // Abort on any end group tag.
-        return;
-      }
-      switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 8: {
-            Success = input.ReadBool();
-            break;
-          }
-          case 18: {
-            ErrorMessage = input.ReadString();
-            break;
-          }
-          case 24: {
-            FaceDetected = input.ReadBool();
-            break;
-          }
-          case 34:
-          case 37: {
-            embedding_.AddEntriesFrom(input, _repeated_embedding_codec);
-            break;
-          }
-          case 42: {
-            if (bbox_ == null) {
-              Bbox = new global::Sssp.Ai.Face.BoundingBox();
-            }
-            input.ReadMessage(Bbox);
-            break;
-          }
-          case 53: {
-            TotalTimeMs = input.ReadFloat();
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-      if ((tag & 7) == 4) {
-        // Abort on any end group tag.
-        return;
-      }
-      switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 8: {
-            Success = input.ReadBool();
-            break;
-          }
-          case 18: {
-            ErrorMessage = input.ReadString();
-            break;
-          }
-          case 24: {
-            FaceDetected = input.ReadBool();
-            break;
-          }
-          case 34:
-          case 37: {
-            embedding_.AddEntriesFrom(ref input, _repeated_embedding_codec);
-            break;
-          }
-          case 42: {
-            if (bbox_ == null) {
-              Bbox = new global::Sssp.Ai.Face.BoundingBox();
-            }
-            input.ReadMessage(Bbox);
-            break;
-          }
-          case 53: {
-            TotalTimeMs = input.ReadFloat();
+            input.ReadMessage(Metrics);
             break;
           }
         }
@@ -3273,7 +3315,7 @@ namespace Sssp.Ai.Face {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Sssp.Ai.Face.FaceReflection.Descriptor.MessageTypes[10]; }
+      get { return global::Sssp.Ai.Face.FaceReflection.Descriptor.MessageTypes[9]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3296,7 +3338,11 @@ namespace Sssp.Ai.Face {
       success_ = other.success_;
       errorMessage_ = other.errorMessage_;
       personId_ = other.personId_;
-      imagesEnrolled_ = other.imagesEnrolled_;
+      imagesProcessed_ = other.imagesProcessed_;
+      validEmbeddings_ = other.validEmbeddings_;
+      templateEmbedding_ = other.templateEmbedding_.Clone();
+      avgQualityScore_ = other.avgQualityScore_;
+      totalTimeMs_ = other.totalTimeMs_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -3342,15 +3388,65 @@ namespace Sssp.Ai.Face {
       }
     }
 
-    /// <summary>Field number for the "images_enrolled" field.</summary>
-    public const int ImagesEnrolledFieldNumber = 4;
-    private int imagesEnrolled_;
+    /// <summary>Field number for the "images_processed" field.</summary>
+    public const int ImagesProcessedFieldNumber = 4;
+    private int imagesProcessed_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int ImagesEnrolled {
-      get { return imagesEnrolled_; }
+    public int ImagesProcessed {
+      get { return imagesProcessed_; }
       set {
-        imagesEnrolled_ = value;
+        imagesProcessed_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "valid_embeddings" field.</summary>
+    public const int ValidEmbeddingsFieldNumber = 5;
+    private int validEmbeddings_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int ValidEmbeddings {
+      get { return validEmbeddings_; }
+      set {
+        validEmbeddings_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "template_embedding" field.</summary>
+    public const int TemplateEmbeddingFieldNumber = 6;
+    private static readonly pb::FieldCodec<float> _repeated_templateEmbedding_codec
+        = pb::FieldCodec.ForFloat(50);
+    private readonly pbc::RepeatedField<float> templateEmbedding_ = new pbc::RepeatedField<float>();
+    /// <summary>
+    /// averaged embedding if requested
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<float> TemplateEmbedding {
+      get { return templateEmbedding_; }
+    }
+
+    /// <summary>Field number for the "avg_quality_score" field.</summary>
+    public const int AvgQualityScoreFieldNumber = 7;
+    private float avgQualityScore_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float AvgQualityScore {
+      get { return avgQualityScore_; }
+      set {
+        avgQualityScore_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "total_time_ms" field.</summary>
+    public const int TotalTimeMsFieldNumber = 8;
+    private float totalTimeMs_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float TotalTimeMs {
+      get { return totalTimeMs_; }
+      set {
+        totalTimeMs_ = value;
       }
     }
 
@@ -3372,7 +3468,11 @@ namespace Sssp.Ai.Face {
       if (Success != other.Success) return false;
       if (ErrorMessage != other.ErrorMessage) return false;
       if (PersonId != other.PersonId) return false;
-      if (ImagesEnrolled != other.ImagesEnrolled) return false;
+      if (ImagesProcessed != other.ImagesProcessed) return false;
+      if (ValidEmbeddings != other.ValidEmbeddings) return false;
+      if(!templateEmbedding_.Equals(other.templateEmbedding_)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(AvgQualityScore, other.AvgQualityScore)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TotalTimeMs, other.TotalTimeMs)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3383,7 +3483,11 @@ namespace Sssp.Ai.Face {
       if (Success != false) hash ^= Success.GetHashCode();
       if (ErrorMessage.Length != 0) hash ^= ErrorMessage.GetHashCode();
       if (PersonId.Length != 0) hash ^= PersonId.GetHashCode();
-      if (ImagesEnrolled != 0) hash ^= ImagesEnrolled.GetHashCode();
+      if (ImagesProcessed != 0) hash ^= ImagesProcessed.GetHashCode();
+      if (ValidEmbeddings != 0) hash ^= ValidEmbeddings.GetHashCode();
+      hash ^= templateEmbedding_.GetHashCode();
+      if (AvgQualityScore != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(AvgQualityScore);
+      if (TotalTimeMs != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TotalTimeMs);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -3414,9 +3518,22 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(26);
         output.WriteString(PersonId);
       }
-      if (ImagesEnrolled != 0) {
+      if (ImagesProcessed != 0) {
         output.WriteRawTag(32);
-        output.WriteInt32(ImagesEnrolled);
+        output.WriteInt32(ImagesProcessed);
+      }
+      if (ValidEmbeddings != 0) {
+        output.WriteRawTag(40);
+        output.WriteInt32(ValidEmbeddings);
+      }
+      templateEmbedding_.WriteTo(output, _repeated_templateEmbedding_codec);
+      if (AvgQualityScore != 0F) {
+        output.WriteRawTag(61);
+        output.WriteFloat(AvgQualityScore);
+      }
+      if (TotalTimeMs != 0F) {
+        output.WriteRawTag(69);
+        output.WriteFloat(TotalTimeMs);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -3440,9 +3557,22 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(26);
         output.WriteString(PersonId);
       }
-      if (ImagesEnrolled != 0) {
+      if (ImagesProcessed != 0) {
         output.WriteRawTag(32);
-        output.WriteInt32(ImagesEnrolled);
+        output.WriteInt32(ImagesProcessed);
+      }
+      if (ValidEmbeddings != 0) {
+        output.WriteRawTag(40);
+        output.WriteInt32(ValidEmbeddings);
+      }
+      templateEmbedding_.WriteTo(ref output, _repeated_templateEmbedding_codec);
+      if (AvgQualityScore != 0F) {
+        output.WriteRawTag(61);
+        output.WriteFloat(AvgQualityScore);
+      }
+      if (TotalTimeMs != 0F) {
+        output.WriteRawTag(69);
+        output.WriteFloat(TotalTimeMs);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -3463,8 +3593,18 @@ namespace Sssp.Ai.Face {
       if (PersonId.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(PersonId);
       }
-      if (ImagesEnrolled != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ImagesEnrolled);
+      if (ImagesProcessed != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ImagesProcessed);
+      }
+      if (ValidEmbeddings != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ValidEmbeddings);
+      }
+      size += templateEmbedding_.CalculateSize(_repeated_templateEmbedding_codec);
+      if (AvgQualityScore != 0F) {
+        size += 1 + 4;
+      }
+      if (TotalTimeMs != 0F) {
+        size += 1 + 4;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -3487,8 +3627,18 @@ namespace Sssp.Ai.Face {
       if (other.PersonId.Length != 0) {
         PersonId = other.PersonId;
       }
-      if (other.ImagesEnrolled != 0) {
-        ImagesEnrolled = other.ImagesEnrolled;
+      if (other.ImagesProcessed != 0) {
+        ImagesProcessed = other.ImagesProcessed;
+      }
+      if (other.ValidEmbeddings != 0) {
+        ValidEmbeddings = other.ValidEmbeddings;
+      }
+      templateEmbedding_.Add(other.templateEmbedding_);
+      if (other.AvgQualityScore != 0F) {
+        AvgQualityScore = other.AvgQualityScore;
+      }
+      if (other.TotalTimeMs != 0F) {
+        TotalTimeMs = other.TotalTimeMs;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -3522,7 +3672,24 @@ namespace Sssp.Ai.Face {
             break;
           }
           case 32: {
-            ImagesEnrolled = input.ReadInt32();
+            ImagesProcessed = input.ReadInt32();
+            break;
+          }
+          case 40: {
+            ValidEmbeddings = input.ReadInt32();
+            break;
+          }
+          case 50:
+          case 53: {
+            templateEmbedding_.AddEntriesFrom(input, _repeated_templateEmbedding_codec);
+            break;
+          }
+          case 61: {
+            AvgQualityScore = input.ReadFloat();
+            break;
+          }
+          case 69: {
+            TotalTimeMs = input.ReadFloat();
             break;
           }
         }
@@ -3557,7 +3724,24 @@ namespace Sssp.Ai.Face {
             break;
           }
           case 32: {
-            ImagesEnrolled = input.ReadInt32();
+            ImagesProcessed = input.ReadInt32();
+            break;
+          }
+          case 40: {
+            ValidEmbeddings = input.ReadInt32();
+            break;
+          }
+          case 50:
+          case 53: {
+            templateEmbedding_.AddEntriesFrom(ref input, _repeated_templateEmbedding_codec);
+            break;
+          }
+          case 61: {
+            AvgQualityScore = input.ReadFloat();
+            break;
+          }
+          case 69: {
+            TotalTimeMs = input.ReadFloat();
             break;
           }
         }
@@ -3582,7 +3766,7 @@ namespace Sssp.Ai.Face {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Sssp.Ai.Face.FaceReflection.Descriptor.MessageTypes[11]; }
+      get { return global::Sssp.Ai.Face.FaceReflection.Descriptor.MessageTypes[10]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3609,6 +3793,9 @@ namespace Sssp.Ai.Face {
       inputSize_ = other.inputSize_;
       embeddingDim_ = other.embeddingDim_;
       totalFacesEnrolled_ = other.totalFacesEnrolled_;
+      isReady_ = other.isReady_;
+      detectorType_ = other.detectorType_;
+      detectorConfig_ = other.detectorConfig_ != null ? other.detectorConfig_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -3702,6 +3889,42 @@ namespace Sssp.Ai.Face {
       }
     }
 
+    /// <summary>Field number for the "is_ready" field.</summary>
+    public const int IsReadyFieldNumber = 8;
+    private bool isReady_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool IsReady {
+      get { return isReady_; }
+      set {
+        isReady_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "detector_type" field.</summary>
+    public const int DetectorTypeFieldNumber = 9;
+    private string detectorType_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string DetectorType {
+      get { return detectorType_; }
+      set {
+        detectorType_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "detector_config" field.</summary>
+    public const int DetectorConfigFieldNumber = 10;
+    private global::Sssp.Ai.Face.DetectorConfig detectorConfig_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Sssp.Ai.Face.DetectorConfig DetectorConfig {
+      get { return detectorConfig_; }
+      set {
+        detectorConfig_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -3724,6 +3947,9 @@ namespace Sssp.Ai.Face {
       if (InputSize != other.InputSize) return false;
       if (EmbeddingDim != other.EmbeddingDim) return false;
       if (TotalFacesEnrolled != other.TotalFacesEnrolled) return false;
+      if (IsReady != other.IsReady) return false;
+      if (DetectorType != other.DetectorType) return false;
+      if (!object.Equals(DetectorConfig, other.DetectorConfig)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3738,6 +3964,9 @@ namespace Sssp.Ai.Face {
       if (InputSize != 0) hash ^= InputSize.GetHashCode();
       if (EmbeddingDim != 0) hash ^= EmbeddingDim.GetHashCode();
       if (TotalFacesEnrolled != 0) hash ^= TotalFacesEnrolled.GetHashCode();
+      if (IsReady != false) hash ^= IsReady.GetHashCode();
+      if (DetectorType.Length != 0) hash ^= DetectorType.GetHashCode();
+      if (detectorConfig_ != null) hash ^= DetectorConfig.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -3784,6 +4013,18 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(56);
         output.WriteInt32(TotalFacesEnrolled);
       }
+      if (IsReady != false) {
+        output.WriteRawTag(64);
+        output.WriteBool(IsReady);
+      }
+      if (DetectorType.Length != 0) {
+        output.WriteRawTag(74);
+        output.WriteString(DetectorType);
+      }
+      if (detectorConfig_ != null) {
+        output.WriteRawTag(82);
+        output.WriteMessage(DetectorConfig);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -3822,6 +4063,18 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(56);
         output.WriteInt32(TotalFacesEnrolled);
       }
+      if (IsReady != false) {
+        output.WriteRawTag(64);
+        output.WriteBool(IsReady);
+      }
+      if (DetectorType.Length != 0) {
+        output.WriteRawTag(74);
+        output.WriteString(DetectorType);
+      }
+      if (detectorConfig_ != null) {
+        output.WriteRawTag(82);
+        output.WriteMessage(DetectorConfig);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -3852,6 +4105,15 @@ namespace Sssp.Ai.Face {
       }
       if (TotalFacesEnrolled != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(TotalFacesEnrolled);
+      }
+      if (IsReady != false) {
+        size += 1 + 1;
+      }
+      if (DetectorType.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(DetectorType);
+      }
+      if (detectorConfig_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(DetectorConfig);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -3885,6 +4147,18 @@ namespace Sssp.Ai.Face {
       }
       if (other.TotalFacesEnrolled != 0) {
         TotalFacesEnrolled = other.TotalFacesEnrolled;
+      }
+      if (other.IsReady != false) {
+        IsReady = other.IsReady;
+      }
+      if (other.DetectorType.Length != 0) {
+        DetectorType = other.DetectorType;
+      }
+      if (other.detectorConfig_ != null) {
+        if (detectorConfig_ == null) {
+          DetectorConfig = new global::Sssp.Ai.Face.DetectorConfig();
+        }
+        DetectorConfig.MergeFrom(other.DetectorConfig);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -3933,6 +4207,21 @@ namespace Sssp.Ai.Face {
             TotalFacesEnrolled = input.ReadInt32();
             break;
           }
+          case 64: {
+            IsReady = input.ReadBool();
+            break;
+          }
+          case 74: {
+            DetectorType = input.ReadString();
+            break;
+          }
+          case 82: {
+            if (detectorConfig_ == null) {
+              DetectorConfig = new global::Sssp.Ai.Face.DetectorConfig();
+            }
+            input.ReadMessage(DetectorConfig);
+            break;
+          }
         }
       }
     #endif
@@ -3978,6 +4267,439 @@ namespace Sssp.Ai.Face {
           }
           case 56: {
             TotalFacesEnrolled = input.ReadInt32();
+            break;
+          }
+          case 64: {
+            IsReady = input.ReadBool();
+            break;
+          }
+          case 74: {
+            DetectorType = input.ReadString();
+            break;
+          }
+          case 82: {
+            if (detectorConfig_ == null) {
+              DetectorConfig = new global::Sssp.Ai.Face.DetectorConfig();
+            }
+            input.ReadMessage(DetectorConfig);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class FrameProcessResponse : pb::IMessage<FrameProcessResponse>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<FrameProcessResponse> _parser = new pb::MessageParser<FrameProcessResponse>(() => new FrameProcessResponse());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<FrameProcessResponse> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Sssp.Ai.Face.FaceReflection.Descriptor.MessageTypes[11]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FrameProcessResponse() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FrameProcessResponse(FrameProcessResponse other) : this() {
+      success_ = other.success_;
+      errorMessage_ = other.errorMessage_;
+      faces_ = other.faces_.Clone();
+      frameId_ = other.frameId_;
+      cameraId_ = other.cameraId_;
+      totalTimeMs_ = other.totalTimeMs_;
+      metrics_ = other.metrics_ != null ? other.metrics_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FrameProcessResponse Clone() {
+      return new FrameProcessResponse(this);
+    }
+
+    /// <summary>Field number for the "success" field.</summary>
+    public const int SuccessFieldNumber = 1;
+    private bool success_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Success {
+      get { return success_; }
+      set {
+        success_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "error_message" field.</summary>
+    public const int ErrorMessageFieldNumber = 2;
+    private string errorMessage_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string ErrorMessage {
+      get { return errorMessage_; }
+      set {
+        errorMessage_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "faces" field.</summary>
+    public const int FacesFieldNumber = 3;
+    private static readonly pb::FieldCodec<global::Sssp.Ai.Face.Face> _repeated_faces_codec
+        = pb::FieldCodec.ForMessage(26, global::Sssp.Ai.Face.Face.Parser);
+    private readonly pbc::RepeatedField<global::Sssp.Ai.Face.Face> faces_ = new pbc::RepeatedField<global::Sssp.Ai.Face.Face>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<global::Sssp.Ai.Face.Face> Faces {
+      get { return faces_; }
+    }
+
+    /// <summary>Field number for the "frame_id" field.</summary>
+    public const int FrameIdFieldNumber = 4;
+    private int frameId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int FrameId {
+      get { return frameId_; }
+      set {
+        frameId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "camera_id" field.</summary>
+    public const int CameraIdFieldNumber = 5;
+    private string cameraId_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string CameraId {
+      get { return cameraId_; }
+      set {
+        cameraId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "total_time_ms" field.</summary>
+    public const int TotalTimeMsFieldNumber = 6;
+    private float totalTimeMs_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float TotalTimeMs {
+      get { return totalTimeMs_; }
+      set {
+        totalTimeMs_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "metrics" field.</summary>
+    public const int MetricsFieldNumber = 7;
+    private global::Sssp.Ai.Face.PerformanceMetrics metrics_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Sssp.Ai.Face.PerformanceMetrics Metrics {
+      get { return metrics_; }
+      set {
+        metrics_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as FrameProcessResponse);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(FrameProcessResponse other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Success != other.Success) return false;
+      if (ErrorMessage != other.ErrorMessage) return false;
+      if(!faces_.Equals(other.faces_)) return false;
+      if (FrameId != other.FrameId) return false;
+      if (CameraId != other.CameraId) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TotalTimeMs, other.TotalTimeMs)) return false;
+      if (!object.Equals(Metrics, other.Metrics)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Success != false) hash ^= Success.GetHashCode();
+      if (ErrorMessage.Length != 0) hash ^= ErrorMessage.GetHashCode();
+      hash ^= faces_.GetHashCode();
+      if (FrameId != 0) hash ^= FrameId.GetHashCode();
+      if (CameraId.Length != 0) hash ^= CameraId.GetHashCode();
+      if (TotalTimeMs != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TotalTimeMs);
+      if (metrics_ != null) hash ^= Metrics.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Success != false) {
+        output.WriteRawTag(8);
+        output.WriteBool(Success);
+      }
+      if (ErrorMessage.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(ErrorMessage);
+      }
+      faces_.WriteTo(output, _repeated_faces_codec);
+      if (FrameId != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(FrameId);
+      }
+      if (CameraId.Length != 0) {
+        output.WriteRawTag(42);
+        output.WriteString(CameraId);
+      }
+      if (TotalTimeMs != 0F) {
+        output.WriteRawTag(53);
+        output.WriteFloat(TotalTimeMs);
+      }
+      if (metrics_ != null) {
+        output.WriteRawTag(58);
+        output.WriteMessage(Metrics);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Success != false) {
+        output.WriteRawTag(8);
+        output.WriteBool(Success);
+      }
+      if (ErrorMessage.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(ErrorMessage);
+      }
+      faces_.WriteTo(ref output, _repeated_faces_codec);
+      if (FrameId != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(FrameId);
+      }
+      if (CameraId.Length != 0) {
+        output.WriteRawTag(42);
+        output.WriteString(CameraId);
+      }
+      if (TotalTimeMs != 0F) {
+        output.WriteRawTag(53);
+        output.WriteFloat(TotalTimeMs);
+      }
+      if (metrics_ != null) {
+        output.WriteRawTag(58);
+        output.WriteMessage(Metrics);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Success != false) {
+        size += 1 + 1;
+      }
+      if (ErrorMessage.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(ErrorMessage);
+      }
+      size += faces_.CalculateSize(_repeated_faces_codec);
+      if (FrameId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(FrameId);
+      }
+      if (CameraId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(CameraId);
+      }
+      if (TotalTimeMs != 0F) {
+        size += 1 + 4;
+      }
+      if (metrics_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Metrics);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(FrameProcessResponse other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Success != false) {
+        Success = other.Success;
+      }
+      if (other.ErrorMessage.Length != 0) {
+        ErrorMessage = other.ErrorMessage;
+      }
+      faces_.Add(other.faces_);
+      if (other.FrameId != 0) {
+        FrameId = other.FrameId;
+      }
+      if (other.CameraId.Length != 0) {
+        CameraId = other.CameraId;
+      }
+      if (other.TotalTimeMs != 0F) {
+        TotalTimeMs = other.TotalTimeMs;
+      }
+      if (other.metrics_ != null) {
+        if (metrics_ == null) {
+          Metrics = new global::Sssp.Ai.Face.PerformanceMetrics();
+        }
+        Metrics.MergeFrom(other.Metrics);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Success = input.ReadBool();
+            break;
+          }
+          case 18: {
+            ErrorMessage = input.ReadString();
+            break;
+          }
+          case 26: {
+            faces_.AddEntriesFrom(input, _repeated_faces_codec);
+            break;
+          }
+          case 32: {
+            FrameId = input.ReadInt32();
+            break;
+          }
+          case 42: {
+            CameraId = input.ReadString();
+            break;
+          }
+          case 53: {
+            TotalTimeMs = input.ReadFloat();
+            break;
+          }
+          case 58: {
+            if (metrics_ == null) {
+              Metrics = new global::Sssp.Ai.Face.PerformanceMetrics();
+            }
+            input.ReadMessage(Metrics);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            Success = input.ReadBool();
+            break;
+          }
+          case 18: {
+            ErrorMessage = input.ReadString();
+            break;
+          }
+          case 26: {
+            faces_.AddEntriesFrom(ref input, _repeated_faces_codec);
+            break;
+          }
+          case 32: {
+            FrameId = input.ReadInt32();
+            break;
+          }
+          case 42: {
+            CameraId = input.ReadString();
+            break;
+          }
+          case 53: {
+            TotalTimeMs = input.ReadFloat();
+            break;
+          }
+          case 58: {
+            if (metrics_ == null) {
+              Metrics = new global::Sssp.Ai.Face.PerformanceMetrics();
+            }
+            input.ReadMessage(Metrics);
             break;
           }
         }
@@ -4024,9 +4746,10 @@ namespace Sssp.Ai.Face {
     public Face(Face other) : this() {
       bbox_ = other.bbox_ != null ? other.bbox_.Clone() : null;
       confidence_ = other.confidence_;
-      embeddingBytes_ = other.embeddingBytes_;
-      croppedImage_ = other.croppedImage_;
       embeddingVector_ = other.embeddingVector_.Clone();
+      croppedImage_ = other.croppedImage_;
+      quality_ = other.quality_ != null ? other.quality_.Clone() : null;
+      faceId_ = other.faceId_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -4034,6 +4757,412 @@ namespace Sssp.Ai.Face {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public Face Clone() {
       return new Face(this);
+    }
+
+    /// <summary>Field number for the "bbox" field.</summary>
+    public const int BboxFieldNumber = 1;
+    private global::Sssp.Ai.Face.BoundingBox bbox_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Sssp.Ai.Face.BoundingBox Bbox {
+      get { return bbox_; }
+      set {
+        bbox_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "confidence" field.</summary>
+    public const int ConfidenceFieldNumber = 2;
+    private float confidence_;
+    /// <summary>
+    /// detection confidence
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float Confidence {
+      get { return confidence_; }
+      set {
+        confidence_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "embedding_vector" field.</summary>
+    public const int EmbeddingVectorFieldNumber = 3;
+    private static readonly pb::FieldCodec<float> _repeated_embeddingVector_codec
+        = pb::FieldCodec.ForFloat(26);
+    private readonly pbc::RepeatedField<float> embeddingVector_ = new pbc::RepeatedField<float>();
+    /// <summary>
+    /// 512-dim FaceNet embedding
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<float> EmbeddingVector {
+      get { return embeddingVector_; }
+    }
+
+    /// <summary>Field number for the "cropped_image" field.</summary>
+    public const int CroppedImageFieldNumber = 4;
+    private pb::ByteString croppedImage_ = pb::ByteString.Empty;
+    /// <summary>
+    /// optional JPEG crop
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pb::ByteString CroppedImage {
+      get { return croppedImage_; }
+      set {
+        croppedImage_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "quality" field.</summary>
+    public const int QualityFieldNumber = 5;
+    private global::Sssp.Ai.Face.FaceQuality quality_;
+    /// <summary>
+    /// quality metrics
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Sssp.Ai.Face.FaceQuality Quality {
+      get { return quality_; }
+      set {
+        quality_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "face_id" field.</summary>
+    public const int FaceIdFieldNumber = 6;
+    private int faceId_;
+    /// <summary>
+    /// unique ID in this frame
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int FaceId {
+      get { return faceId_; }
+      set {
+        faceId_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as Face);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(Face other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(Bbox, other.Bbox)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Confidence, other.Confidence)) return false;
+      if(!embeddingVector_.Equals(other.embeddingVector_)) return false;
+      if (CroppedImage != other.CroppedImage) return false;
+      if (!object.Equals(Quality, other.Quality)) return false;
+      if (FaceId != other.FaceId) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (bbox_ != null) hash ^= Bbox.GetHashCode();
+      if (Confidence != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Confidence);
+      hash ^= embeddingVector_.GetHashCode();
+      if (CroppedImage.Length != 0) hash ^= CroppedImage.GetHashCode();
+      if (quality_ != null) hash ^= Quality.GetHashCode();
+      if (FaceId != 0) hash ^= FaceId.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (bbox_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Bbox);
+      }
+      if (Confidence != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(Confidence);
+      }
+      embeddingVector_.WriteTo(output, _repeated_embeddingVector_codec);
+      if (CroppedImage.Length != 0) {
+        output.WriteRawTag(34);
+        output.WriteBytes(CroppedImage);
+      }
+      if (quality_ != null) {
+        output.WriteRawTag(42);
+        output.WriteMessage(Quality);
+      }
+      if (FaceId != 0) {
+        output.WriteRawTag(48);
+        output.WriteInt32(FaceId);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (bbox_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Bbox);
+      }
+      if (Confidence != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(Confidence);
+      }
+      embeddingVector_.WriteTo(ref output, _repeated_embeddingVector_codec);
+      if (CroppedImage.Length != 0) {
+        output.WriteRawTag(34);
+        output.WriteBytes(CroppedImage);
+      }
+      if (quality_ != null) {
+        output.WriteRawTag(42);
+        output.WriteMessage(Quality);
+      }
+      if (FaceId != 0) {
+        output.WriteRawTag(48);
+        output.WriteInt32(FaceId);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (bbox_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Bbox);
+      }
+      if (Confidence != 0F) {
+        size += 1 + 4;
+      }
+      size += embeddingVector_.CalculateSize(_repeated_embeddingVector_codec);
+      if (CroppedImage.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeBytesSize(CroppedImage);
+      }
+      if (quality_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Quality);
+      }
+      if (FaceId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(FaceId);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(Face other) {
+      if (other == null) {
+        return;
+      }
+      if (other.bbox_ != null) {
+        if (bbox_ == null) {
+          Bbox = new global::Sssp.Ai.Face.BoundingBox();
+        }
+        Bbox.MergeFrom(other.Bbox);
+      }
+      if (other.Confidence != 0F) {
+        Confidence = other.Confidence;
+      }
+      embeddingVector_.Add(other.embeddingVector_);
+      if (other.CroppedImage.Length != 0) {
+        CroppedImage = other.CroppedImage;
+      }
+      if (other.quality_ != null) {
+        if (quality_ == null) {
+          Quality = new global::Sssp.Ai.Face.FaceQuality();
+        }
+        Quality.MergeFrom(other.Quality);
+      }
+      if (other.FaceId != 0) {
+        FaceId = other.FaceId;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (bbox_ == null) {
+              Bbox = new global::Sssp.Ai.Face.BoundingBox();
+            }
+            input.ReadMessage(Bbox);
+            break;
+          }
+          case 21: {
+            Confidence = input.ReadFloat();
+            break;
+          }
+          case 26:
+          case 29: {
+            embeddingVector_.AddEntriesFrom(input, _repeated_embeddingVector_codec);
+            break;
+          }
+          case 34: {
+            CroppedImage = input.ReadBytes();
+            break;
+          }
+          case 42: {
+            if (quality_ == null) {
+              Quality = new global::Sssp.Ai.Face.FaceQuality();
+            }
+            input.ReadMessage(Quality);
+            break;
+          }
+          case 48: {
+            FaceId = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (bbox_ == null) {
+              Bbox = new global::Sssp.Ai.Face.BoundingBox();
+            }
+            input.ReadMessage(Bbox);
+            break;
+          }
+          case 21: {
+            Confidence = input.ReadFloat();
+            break;
+          }
+          case 26:
+          case 29: {
+            embeddingVector_.AddEntriesFrom(ref input, _repeated_embeddingVector_codec);
+            break;
+          }
+          case 34: {
+            CroppedImage = input.ReadBytes();
+            break;
+          }
+          case 42: {
+            if (quality_ == null) {
+              Quality = new global::Sssp.Ai.Face.FaceQuality();
+            }
+            input.ReadMessage(Quality);
+            break;
+          }
+          case 48: {
+            FaceId = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class DetectedFace : pb::IMessage<DetectedFace>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<DetectedFace> _parser = new pb::MessageParser<DetectedFace>(() => new DetectedFace());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<DetectedFace> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Sssp.Ai.Face.FaceReflection.Descriptor.MessageTypes[13]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DetectedFace() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DetectedFace(DetectedFace other) : this() {
+      bbox_ = other.bbox_ != null ? other.bbox_.Clone() : null;
+      confidence_ = other.confidence_;
+      croppedImage_ = other.croppedImage_;
+      quality_ = other.quality_ != null ? other.quality_.Clone() : null;
+      faceId_ = other.faceId_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DetectedFace Clone() {
+      return new DetectedFace(this);
     }
 
     /// <summary>Field number for the "bbox" field.</summary>
@@ -4060,21 +5189,12 @@ namespace Sssp.Ai.Face {
       }
     }
 
-    /// <summary>Field number for the "embedding_bytes" field.</summary>
-    public const int EmbeddingBytesFieldNumber = 3;
-    private pb::ByteString embeddingBytes_ = pb::ByteString.Empty;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pb::ByteString EmbeddingBytes {
-      get { return embeddingBytes_; }
-      set {
-        embeddingBytes_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
     /// <summary>Field number for the "cropped_image" field.</summary>
-    public const int CroppedImageFieldNumber = 4;
+    public const int CroppedImageFieldNumber = 3;
     private pb::ByteString croppedImage_ = pb::ByteString.Empty;
+    /// <summary>
+    /// optional
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public pb::ByteString CroppedImage {
@@ -4084,26 +5204,39 @@ namespace Sssp.Ai.Face {
       }
     }
 
-    /// <summary>Field number for the "embedding_vector" field.</summary>
-    public const int EmbeddingVectorFieldNumber = 5;
-    private static readonly pb::FieldCodec<float> _repeated_embeddingVector_codec
-        = pb::FieldCodec.ForFloat(42);
-    private readonly pbc::RepeatedField<float> embeddingVector_ = new pbc::RepeatedField<float>();
+    /// <summary>Field number for the "quality" field.</summary>
+    public const int QualityFieldNumber = 4;
+    private global::Sssp.Ai.Face.FaceQuality quality_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<float> EmbeddingVector {
-      get { return embeddingVector_; }
+    public global::Sssp.Ai.Face.FaceQuality Quality {
+      get { return quality_; }
+      set {
+        quality_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "face_id" field.</summary>
+    public const int FaceIdFieldNumber = 5;
+    private int faceId_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int FaceId {
+      get { return faceId_; }
+      set {
+        faceId_ = value;
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as Face);
+      return Equals(other as DetectedFace);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(Face other) {
+    public bool Equals(DetectedFace other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -4112,9 +5245,9 @@ namespace Sssp.Ai.Face {
       }
       if (!object.Equals(Bbox, other.Bbox)) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Confidence, other.Confidence)) return false;
-      if (EmbeddingBytes != other.EmbeddingBytes) return false;
       if (CroppedImage != other.CroppedImage) return false;
-      if(!embeddingVector_.Equals(other.embeddingVector_)) return false;
+      if (!object.Equals(Quality, other.Quality)) return false;
+      if (FaceId != other.FaceId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -4124,9 +5257,9 @@ namespace Sssp.Ai.Face {
       int hash = 1;
       if (bbox_ != null) hash ^= Bbox.GetHashCode();
       if (Confidence != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Confidence);
-      if (EmbeddingBytes.Length != 0) hash ^= EmbeddingBytes.GetHashCode();
       if (CroppedImage.Length != 0) hash ^= CroppedImage.GetHashCode();
-      hash ^= embeddingVector_.GetHashCode();
+      if (quality_ != null) hash ^= Quality.GetHashCode();
+      if (FaceId != 0) hash ^= FaceId.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -4153,15 +5286,18 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(21);
         output.WriteFloat(Confidence);
       }
-      if (EmbeddingBytes.Length != 0) {
-        output.WriteRawTag(26);
-        output.WriteBytes(EmbeddingBytes);
-      }
       if (CroppedImage.Length != 0) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(26);
         output.WriteBytes(CroppedImage);
       }
-      embeddingVector_.WriteTo(output, _repeated_embeddingVector_codec);
+      if (quality_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(Quality);
+      }
+      if (FaceId != 0) {
+        output.WriteRawTag(40);
+        output.WriteInt32(FaceId);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -4180,15 +5316,18 @@ namespace Sssp.Ai.Face {
         output.WriteRawTag(21);
         output.WriteFloat(Confidence);
       }
-      if (EmbeddingBytes.Length != 0) {
-        output.WriteRawTag(26);
-        output.WriteBytes(EmbeddingBytes);
-      }
       if (CroppedImage.Length != 0) {
-        output.WriteRawTag(34);
+        output.WriteRawTag(26);
         output.WriteBytes(CroppedImage);
       }
-      embeddingVector_.WriteTo(ref output, _repeated_embeddingVector_codec);
+      if (quality_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(Quality);
+      }
+      if (FaceId != 0) {
+        output.WriteRawTag(40);
+        output.WriteInt32(FaceId);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -4205,13 +5344,15 @@ namespace Sssp.Ai.Face {
       if (Confidence != 0F) {
         size += 1 + 4;
       }
-      if (EmbeddingBytes.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeBytesSize(EmbeddingBytes);
-      }
       if (CroppedImage.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeBytesSize(CroppedImage);
       }
-      size += embeddingVector_.CalculateSize(_repeated_embeddingVector_codec);
+      if (quality_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Quality);
+      }
+      if (FaceId != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(FaceId);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -4220,7 +5361,7 @@ namespace Sssp.Ai.Face {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(Face other) {
+    public void MergeFrom(DetectedFace other) {
       if (other == null) {
         return;
       }
@@ -4233,13 +5374,18 @@ namespace Sssp.Ai.Face {
       if (other.Confidence != 0F) {
         Confidence = other.Confidence;
       }
-      if (other.EmbeddingBytes.Length != 0) {
-        EmbeddingBytes = other.EmbeddingBytes;
-      }
       if (other.CroppedImage.Length != 0) {
         CroppedImage = other.CroppedImage;
       }
-      embeddingVector_.Add(other.embeddingVector_);
+      if (other.quality_ != null) {
+        if (quality_ == null) {
+          Quality = new global::Sssp.Ai.Face.FaceQuality();
+        }
+        Quality.MergeFrom(other.Quality);
+      }
+      if (other.FaceId != 0) {
+        FaceId = other.FaceId;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -4271,16 +5417,18 @@ namespace Sssp.Ai.Face {
             break;
           }
           case 26: {
-            EmbeddingBytes = input.ReadBytes();
-            break;
-          }
-          case 34: {
             CroppedImage = input.ReadBytes();
             break;
           }
-          case 42:
-          case 45: {
-            embeddingVector_.AddEntriesFrom(input, _repeated_embeddingVector_codec);
+          case 34: {
+            if (quality_ == null) {
+              Quality = new global::Sssp.Ai.Face.FaceQuality();
+            }
+            input.ReadMessage(Quality);
+            break;
+          }
+          case 40: {
+            FaceId = input.ReadInt32();
             break;
           }
         }
@@ -4314,371 +5462,18 @@ namespace Sssp.Ai.Face {
             break;
           }
           case 26: {
-            EmbeddingBytes = input.ReadBytes();
-            break;
-          }
-          case 34: {
             CroppedImage = input.ReadBytes();
             break;
           }
-          case 42:
-          case 45: {
-            embeddingVector_.AddEntriesFrom(ref input, _repeated_embeddingVector_codec);
-            break;
-          }
-        }
-      }
-    }
-    #endif
-
-  }
-
-  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class FaceMatch : pb::IMessage<FaceMatch>
-  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      , pb::IBufferMessage
-  #endif
-  {
-    private static readonly pb::MessageParser<FaceMatch> _parser = new pb::MessageParser<FaceMatch>(() => new FaceMatch());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<FaceMatch> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::Sssp.Ai.Face.FaceReflection.Descriptor.MessageTypes[13]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceMatch() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceMatch(FaceMatch other) : this() {
-      personId_ = other.personId_;
-      personName_ = other.personName_;
-      score_ = other.score_;
-      face_ = other.face_ != null ? other.face_.Clone() : null;
-      isBlacklisted_ = other.isBlacklisted_;
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public FaceMatch Clone() {
-      return new FaceMatch(this);
-    }
-
-    /// <summary>Field number for the "person_id" field.</summary>
-    public const int PersonIdFieldNumber = 1;
-    private string personId_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string PersonId {
-      get { return personId_; }
-      set {
-        personId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    /// <summary>Field number for the "person_name" field.</summary>
-    public const int PersonNameFieldNumber = 2;
-    private string personName_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string PersonName {
-      get { return personName_; }
-      set {
-        personName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
-    /// <summary>Field number for the "score" field.</summary>
-    public const int ScoreFieldNumber = 3;
-    private float score_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float Score {
-      get { return score_; }
-      set {
-        score_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "face" field.</summary>
-    public const int FaceFieldNumber = 4;
-    private global::Sssp.Ai.Face.Face face_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Sssp.Ai.Face.Face Face {
-      get { return face_; }
-      set {
-        face_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "is_blacklisted" field.</summary>
-    public const int IsBlacklistedFieldNumber = 5;
-    private bool isBlacklisted_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool IsBlacklisted {
-      get { return isBlacklisted_; }
-      set {
-        isBlacklisted_ = value;
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override bool Equals(object other) {
-      return Equals(other as FaceMatch);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(FaceMatch other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      if (PersonId != other.PersonId) return false;
-      if (PersonName != other.PersonName) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Score, other.Score)) return false;
-      if (!object.Equals(Face, other.Face)) return false;
-      if (IsBlacklisted != other.IsBlacklisted) return false;
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (PersonId.Length != 0) hash ^= PersonId.GetHashCode();
-      if (PersonName.Length != 0) hash ^= PersonName.GetHashCode();
-      if (Score != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Score);
-      if (face_ != null) hash ^= Face.GetHashCode();
-      if (IsBlacklisted != false) hash ^= IsBlacklisted.GetHashCode();
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void WriteTo(pb::CodedOutputStream output) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      output.WriteRawMessage(this);
-    #else
-      if (PersonId.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(PersonId);
-      }
-      if (PersonName.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(PersonName);
-      }
-      if (Score != 0F) {
-        output.WriteRawTag(29);
-        output.WriteFloat(Score);
-      }
-      if (face_ != null) {
-        output.WriteRawTag(34);
-        output.WriteMessage(Face);
-      }
-      if (IsBlacklisted != false) {
-        output.WriteRawTag(40);
-        output.WriteBool(IsBlacklisted);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (PersonId.Length != 0) {
-        output.WriteRawTag(10);
-        output.WriteString(PersonId);
-      }
-      if (PersonName.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(PersonName);
-      }
-      if (Score != 0F) {
-        output.WriteRawTag(29);
-        output.WriteFloat(Score);
-      }
-      if (face_ != null) {
-        output.WriteRawTag(34);
-        output.WriteMessage(Face);
-      }
-      if (IsBlacklisted != false) {
-        output.WriteRawTag(40);
-        output.WriteBool(IsBlacklisted);
-      }
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(ref output);
-      }
-    }
-    #endif
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int CalculateSize() {
-      int size = 0;
-      if (PersonId.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(PersonId);
-      }
-      if (PersonName.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(PersonName);
-      }
-      if (Score != 0F) {
-        size += 1 + 4;
-      }
-      if (face_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Face);
-      }
-      if (IsBlacklisted != false) {
-        size += 1 + 1;
-      }
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(FaceMatch other) {
-      if (other == null) {
-        return;
-      }
-      if (other.PersonId.Length != 0) {
-        PersonId = other.PersonId;
-      }
-      if (other.PersonName.Length != 0) {
-        PersonName = other.PersonName;
-      }
-      if (other.Score != 0F) {
-        Score = other.Score;
-      }
-      if (other.face_ != null) {
-        if (face_ == null) {
-          Face = new global::Sssp.Ai.Face.Face();
-        }
-        Face.MergeFrom(other.Face);
-      }
-      if (other.IsBlacklisted != false) {
-        IsBlacklisted = other.IsBlacklisted;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(pb::CodedInputStream input) {
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-      input.ReadRawMessage(this);
-    #else
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-      if ((tag & 7) == 4) {
-        // Abort on any end group tag.
-        return;
-      }
-      switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-          case 10: {
-            PersonId = input.ReadString();
-            break;
-          }
-          case 18: {
-            PersonName = input.ReadString();
-            break;
-          }
-          case 29: {
-            Score = input.ReadFloat();
-            break;
-          }
           case 34: {
-            if (face_ == null) {
-              Face = new global::Sssp.Ai.Face.Face();
+            if (quality_ == null) {
+              Quality = new global::Sssp.Ai.Face.FaceQuality();
             }
-            input.ReadMessage(Face);
+            input.ReadMessage(Quality);
             break;
           }
           case 40: {
-            IsBlacklisted = input.ReadBool();
-            break;
-          }
-        }
-      }
-    #endif
-    }
-
-    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-      if ((tag & 7) == 4) {
-        // Abort on any end group tag.
-        return;
-      }
-      switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
-            break;
-          case 10: {
-            PersonId = input.ReadString();
-            break;
-          }
-          case 18: {
-            PersonName = input.ReadString();
-            break;
-          }
-          case 29: {
-            Score = input.ReadFloat();
-            break;
-          }
-          case 34: {
-            if (face_ == null) {
-              Face = new global::Sssp.Ai.Face.Face();
-            }
-            input.ReadMessage(Face);
-            break;
-          }
-          case 40: {
-            IsBlacklisted = input.ReadBool();
+            FaceId = input.ReadInt32();
             break;
           }
         }
@@ -4723,10 +5518,10 @@ namespace Sssp.Ai.Face {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public BoundingBox(BoundingBox other) : this() {
-      x1_ = other.x1_;
-      y1_ = other.y1_;
-      x2_ = other.x2_;
-      y2_ = other.y2_;
+      x_ = other.x_;
+      y_ = other.y_;
+      w_ = other.w_;
+      h_ = other.h_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -4736,51 +5531,63 @@ namespace Sssp.Ai.Face {
       return new BoundingBox(this);
     }
 
-    /// <summary>Field number for the "x1" field.</summary>
-    public const int X1FieldNumber = 1;
-    private float x1_;
+    /// <summary>Field number for the "x" field.</summary>
+    public const int XFieldNumber = 1;
+    private float x_;
+    /// <summary>
+    /// top-left x
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float X1 {
-      get { return x1_; }
+    public float X {
+      get { return x_; }
       set {
-        x1_ = value;
+        x_ = value;
       }
     }
 
-    /// <summary>Field number for the "y1" field.</summary>
-    public const int Y1FieldNumber = 2;
-    private float y1_;
+    /// <summary>Field number for the "y" field.</summary>
+    public const int YFieldNumber = 2;
+    private float y_;
+    /// <summary>
+    /// top-left y
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float Y1 {
-      get { return y1_; }
+    public float Y {
+      get { return y_; }
       set {
-        y1_ = value;
+        y_ = value;
       }
     }
 
-    /// <summary>Field number for the "x2" field.</summary>
-    public const int X2FieldNumber = 3;
-    private float x2_;
+    /// <summary>Field number for the "w" field.</summary>
+    public const int WFieldNumber = 3;
+    private float w_;
+    /// <summary>
+    /// width
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float X2 {
-      get { return x2_; }
+    public float W {
+      get { return w_; }
       set {
-        x2_ = value;
+        w_ = value;
       }
     }
 
-    /// <summary>Field number for the "y2" field.</summary>
-    public const int Y2FieldNumber = 4;
-    private float y2_;
+    /// <summary>Field number for the "h" field.</summary>
+    public const int HFieldNumber = 4;
+    private float h_;
+    /// <summary>
+    /// height
+    /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float Y2 {
-      get { return y2_; }
+    public float H {
+      get { return h_; }
       set {
-        y2_ = value;
+        h_ = value;
       }
     }
 
@@ -4799,10 +5606,10 @@ namespace Sssp.Ai.Face {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(X1, other.X1)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Y1, other.Y1)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(X2, other.X2)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Y2, other.Y2)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(X, other.X)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Y, other.Y)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(W, other.W)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(H, other.H)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -4810,10 +5617,10 @@ namespace Sssp.Ai.Face {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (X1 != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(X1);
-      if (Y1 != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Y1);
-      if (X2 != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(X2);
-      if (Y2 != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Y2);
+      if (X != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(X);
+      if (Y != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Y);
+      if (W != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(W);
+      if (H != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(H);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -4832,21 +5639,21 @@ namespace Sssp.Ai.Face {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (X1 != 0F) {
+      if (X != 0F) {
         output.WriteRawTag(13);
-        output.WriteFloat(X1);
+        output.WriteFloat(X);
       }
-      if (Y1 != 0F) {
+      if (Y != 0F) {
         output.WriteRawTag(21);
-        output.WriteFloat(Y1);
+        output.WriteFloat(Y);
       }
-      if (X2 != 0F) {
+      if (W != 0F) {
         output.WriteRawTag(29);
-        output.WriteFloat(X2);
+        output.WriteFloat(W);
       }
-      if (Y2 != 0F) {
+      if (H != 0F) {
         output.WriteRawTag(37);
-        output.WriteFloat(Y2);
+        output.WriteFloat(H);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -4858,21 +5665,21 @@ namespace Sssp.Ai.Face {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (X1 != 0F) {
+      if (X != 0F) {
         output.WriteRawTag(13);
-        output.WriteFloat(X1);
+        output.WriteFloat(X);
       }
-      if (Y1 != 0F) {
+      if (Y != 0F) {
         output.WriteRawTag(21);
-        output.WriteFloat(Y1);
+        output.WriteFloat(Y);
       }
-      if (X2 != 0F) {
+      if (W != 0F) {
         output.WriteRawTag(29);
-        output.WriteFloat(X2);
+        output.WriteFloat(W);
       }
-      if (Y2 != 0F) {
+      if (H != 0F) {
         output.WriteRawTag(37);
-        output.WriteFloat(Y2);
+        output.WriteFloat(H);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -4884,16 +5691,16 @@ namespace Sssp.Ai.Face {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (X1 != 0F) {
+      if (X != 0F) {
         size += 1 + 4;
       }
-      if (Y1 != 0F) {
+      if (Y != 0F) {
         size += 1 + 4;
       }
-      if (X2 != 0F) {
+      if (W != 0F) {
         size += 1 + 4;
       }
-      if (Y2 != 0F) {
+      if (H != 0F) {
         size += 1 + 4;
       }
       if (_unknownFields != null) {
@@ -4908,17 +5715,17 @@ namespace Sssp.Ai.Face {
       if (other == null) {
         return;
       }
-      if (other.X1 != 0F) {
-        X1 = other.X1;
+      if (other.X != 0F) {
+        X = other.X;
       }
-      if (other.Y1 != 0F) {
-        Y1 = other.Y1;
+      if (other.Y != 0F) {
+        Y = other.Y;
       }
-      if (other.X2 != 0F) {
-        X2 = other.X2;
+      if (other.W != 0F) {
+        W = other.W;
       }
-      if (other.Y2 != 0F) {
-        Y2 = other.Y2;
+      if (other.H != 0F) {
+        H = other.H;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -4940,19 +5747,19 @@ namespace Sssp.Ai.Face {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 13: {
-            X1 = input.ReadFloat();
+            X = input.ReadFloat();
             break;
           }
           case 21: {
-            Y1 = input.ReadFloat();
+            Y = input.ReadFloat();
             break;
           }
           case 29: {
-            X2 = input.ReadFloat();
+            W = input.ReadFloat();
             break;
           }
           case 37: {
-            Y2 = input.ReadFloat();
+            H = input.ReadFloat();
             break;
           }
         }
@@ -4975,19 +5782,1183 @@ namespace Sssp.Ai.Face {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 13: {
-            X1 = input.ReadFloat();
+            X = input.ReadFloat();
             break;
           }
           case 21: {
-            Y1 = input.ReadFloat();
+            Y = input.ReadFloat();
             break;
           }
           case 29: {
-            X2 = input.ReadFloat();
+            W = input.ReadFloat();
             break;
           }
           case 37: {
-            Y2 = input.ReadFloat();
+            H = input.ReadFloat();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class FaceQuality : pb::IMessage<FaceQuality>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<FaceQuality> _parser = new pb::MessageParser<FaceQuality>(() => new FaceQuality());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<FaceQuality> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Sssp.Ai.Face.FaceReflection.Descriptor.MessageTypes[15]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FaceQuality() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FaceQuality(FaceQuality other) : this() {
+      overallScore_ = other.overallScore_;
+      sharpness_ = other.sharpness_;
+      brightness_ = other.brightness_;
+      faceSizePixels_ = other.faceSizePixels_;
+      pitch_ = other.pitch_;
+      yaw_ = other.yaw_;
+      roll_ = other.roll_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public FaceQuality Clone() {
+      return new FaceQuality(this);
+    }
+
+    /// <summary>Field number for the "overall_score" field.</summary>
+    public const int OverallScoreFieldNumber = 1;
+    private float overallScore_;
+    /// <summary>
+    /// 0.0 - 1.0
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float OverallScore {
+      get { return overallScore_; }
+      set {
+        overallScore_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "sharpness" field.</summary>
+    public const int SharpnessFieldNumber = 2;
+    private float sharpness_;
+    /// <summary>
+    /// variance of Laplacian
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float Sharpness {
+      get { return sharpness_; }
+      set {
+        sharpness_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "brightness" field.</summary>
+    public const int BrightnessFieldNumber = 3;
+    private float brightness_;
+    /// <summary>
+    /// mean luminance
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float Brightness {
+      get { return brightness_; }
+      set {
+        brightness_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "face_size_pixels" field.</summary>
+    public const int FaceSizePixelsFieldNumber = 4;
+    private int faceSizePixels_;
+    /// <summary>
+    /// width in pixels
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int FaceSizePixels {
+      get { return faceSizePixels_; }
+      set {
+        faceSizePixels_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "pitch" field.</summary>
+    public const int PitchFieldNumber = 5;
+    private float pitch_;
+    /// <summary>
+    /// head rotation (optional)
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float Pitch {
+      get { return pitch_; }
+      set {
+        pitch_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "yaw" field.</summary>
+    public const int YawFieldNumber = 6;
+    private float yaw_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float Yaw {
+      get { return yaw_; }
+      set {
+        yaw_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "roll" field.</summary>
+    public const int RollFieldNumber = 7;
+    private float roll_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float Roll {
+      get { return roll_; }
+      set {
+        roll_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as FaceQuality);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(FaceQuality other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(OverallScore, other.OverallScore)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Sharpness, other.Sharpness)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Brightness, other.Brightness)) return false;
+      if (FaceSizePixels != other.FaceSizePixels) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Pitch, other.Pitch)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Yaw, other.Yaw)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Roll, other.Roll)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (OverallScore != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(OverallScore);
+      if (Sharpness != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Sharpness);
+      if (Brightness != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Brightness);
+      if (FaceSizePixels != 0) hash ^= FaceSizePixels.GetHashCode();
+      if (Pitch != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Pitch);
+      if (Yaw != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Yaw);
+      if (Roll != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Roll);
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (OverallScore != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(OverallScore);
+      }
+      if (Sharpness != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(Sharpness);
+      }
+      if (Brightness != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(Brightness);
+      }
+      if (FaceSizePixels != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(FaceSizePixels);
+      }
+      if (Pitch != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(Pitch);
+      }
+      if (Yaw != 0F) {
+        output.WriteRawTag(53);
+        output.WriteFloat(Yaw);
+      }
+      if (Roll != 0F) {
+        output.WriteRawTag(61);
+        output.WriteFloat(Roll);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (OverallScore != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(OverallScore);
+      }
+      if (Sharpness != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(Sharpness);
+      }
+      if (Brightness != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(Brightness);
+      }
+      if (FaceSizePixels != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(FaceSizePixels);
+      }
+      if (Pitch != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(Pitch);
+      }
+      if (Yaw != 0F) {
+        output.WriteRawTag(53);
+        output.WriteFloat(Yaw);
+      }
+      if (Roll != 0F) {
+        output.WriteRawTag(61);
+        output.WriteFloat(Roll);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (OverallScore != 0F) {
+        size += 1 + 4;
+      }
+      if (Sharpness != 0F) {
+        size += 1 + 4;
+      }
+      if (Brightness != 0F) {
+        size += 1 + 4;
+      }
+      if (FaceSizePixels != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(FaceSizePixels);
+      }
+      if (Pitch != 0F) {
+        size += 1 + 4;
+      }
+      if (Yaw != 0F) {
+        size += 1 + 4;
+      }
+      if (Roll != 0F) {
+        size += 1 + 4;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(FaceQuality other) {
+      if (other == null) {
+        return;
+      }
+      if (other.OverallScore != 0F) {
+        OverallScore = other.OverallScore;
+      }
+      if (other.Sharpness != 0F) {
+        Sharpness = other.Sharpness;
+      }
+      if (other.Brightness != 0F) {
+        Brightness = other.Brightness;
+      }
+      if (other.FaceSizePixels != 0) {
+        FaceSizePixels = other.FaceSizePixels;
+      }
+      if (other.Pitch != 0F) {
+        Pitch = other.Pitch;
+      }
+      if (other.Yaw != 0F) {
+        Yaw = other.Yaw;
+      }
+      if (other.Roll != 0F) {
+        Roll = other.Roll;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 13: {
+            OverallScore = input.ReadFloat();
+            break;
+          }
+          case 21: {
+            Sharpness = input.ReadFloat();
+            break;
+          }
+          case 29: {
+            Brightness = input.ReadFloat();
+            break;
+          }
+          case 32: {
+            FaceSizePixels = input.ReadInt32();
+            break;
+          }
+          case 45: {
+            Pitch = input.ReadFloat();
+            break;
+          }
+          case 53: {
+            Yaw = input.ReadFloat();
+            break;
+          }
+          case 61: {
+            Roll = input.ReadFloat();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 13: {
+            OverallScore = input.ReadFloat();
+            break;
+          }
+          case 21: {
+            Sharpness = input.ReadFloat();
+            break;
+          }
+          case 29: {
+            Brightness = input.ReadFloat();
+            break;
+          }
+          case 32: {
+            FaceSizePixels = input.ReadInt32();
+            break;
+          }
+          case 45: {
+            Pitch = input.ReadFloat();
+            break;
+          }
+          case 53: {
+            Yaw = input.ReadFloat();
+            break;
+          }
+          case 61: {
+            Roll = input.ReadFloat();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class PerformanceMetrics : pb::IMessage<PerformanceMetrics>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<PerformanceMetrics> _parser = new pb::MessageParser<PerformanceMetrics>(() => new PerformanceMetrics());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<PerformanceMetrics> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Sssp.Ai.Face.FaceReflection.Descriptor.MessageTypes[16]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PerformanceMetrics() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PerformanceMetrics(PerformanceMetrics other) : this() {
+      detectionMs_ = other.detectionMs_;
+      embeddingMs_ = other.embeddingMs_;
+      preprocessingMs_ = other.preprocessingMs_;
+      totalMs_ = other.totalMs_;
+      imageWidth_ = other.imageWidth_;
+      imageHeight_ = other.imageHeight_;
+      facesDetected_ = other.facesDetected_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public PerformanceMetrics Clone() {
+      return new PerformanceMetrics(this);
+    }
+
+    /// <summary>Field number for the "detection_ms" field.</summary>
+    public const int DetectionMsFieldNumber = 1;
+    private float detectionMs_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float DetectionMs {
+      get { return detectionMs_; }
+      set {
+        detectionMs_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "embedding_ms" field.</summary>
+    public const int EmbeddingMsFieldNumber = 2;
+    private float embeddingMs_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float EmbeddingMs {
+      get { return embeddingMs_; }
+      set {
+        embeddingMs_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "preprocessing_ms" field.</summary>
+    public const int PreprocessingMsFieldNumber = 3;
+    private float preprocessingMs_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float PreprocessingMs {
+      get { return preprocessingMs_; }
+      set {
+        preprocessingMs_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "total_ms" field.</summary>
+    public const int TotalMsFieldNumber = 4;
+    private float totalMs_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float TotalMs {
+      get { return totalMs_; }
+      set {
+        totalMs_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "image_width" field.</summary>
+    public const int ImageWidthFieldNumber = 5;
+    private int imageWidth_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int ImageWidth {
+      get { return imageWidth_; }
+      set {
+        imageWidth_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "image_height" field.</summary>
+    public const int ImageHeightFieldNumber = 6;
+    private int imageHeight_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int ImageHeight {
+      get { return imageHeight_; }
+      set {
+        imageHeight_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "faces_detected" field.</summary>
+    public const int FacesDetectedFieldNumber = 7;
+    private int facesDetected_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int FacesDetected {
+      get { return facesDetected_; }
+      set {
+        facesDetected_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as PerformanceMetrics);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(PerformanceMetrics other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(DetectionMs, other.DetectionMs)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(EmbeddingMs, other.EmbeddingMs)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PreprocessingMs, other.PreprocessingMs)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(TotalMs, other.TotalMs)) return false;
+      if (ImageWidth != other.ImageWidth) return false;
+      if (ImageHeight != other.ImageHeight) return false;
+      if (FacesDetected != other.FacesDetected) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (DetectionMs != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(DetectionMs);
+      if (EmbeddingMs != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(EmbeddingMs);
+      if (PreprocessingMs != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PreprocessingMs);
+      if (TotalMs != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(TotalMs);
+      if (ImageWidth != 0) hash ^= ImageWidth.GetHashCode();
+      if (ImageHeight != 0) hash ^= ImageHeight.GetHashCode();
+      if (FacesDetected != 0) hash ^= FacesDetected.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (DetectionMs != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(DetectionMs);
+      }
+      if (EmbeddingMs != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(EmbeddingMs);
+      }
+      if (PreprocessingMs != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(PreprocessingMs);
+      }
+      if (TotalMs != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(TotalMs);
+      }
+      if (ImageWidth != 0) {
+        output.WriteRawTag(40);
+        output.WriteInt32(ImageWidth);
+      }
+      if (ImageHeight != 0) {
+        output.WriteRawTag(48);
+        output.WriteInt32(ImageHeight);
+      }
+      if (FacesDetected != 0) {
+        output.WriteRawTag(56);
+        output.WriteInt32(FacesDetected);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (DetectionMs != 0F) {
+        output.WriteRawTag(13);
+        output.WriteFloat(DetectionMs);
+      }
+      if (EmbeddingMs != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(EmbeddingMs);
+      }
+      if (PreprocessingMs != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(PreprocessingMs);
+      }
+      if (TotalMs != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(TotalMs);
+      }
+      if (ImageWidth != 0) {
+        output.WriteRawTag(40);
+        output.WriteInt32(ImageWidth);
+      }
+      if (ImageHeight != 0) {
+        output.WriteRawTag(48);
+        output.WriteInt32(ImageHeight);
+      }
+      if (FacesDetected != 0) {
+        output.WriteRawTag(56);
+        output.WriteInt32(FacesDetected);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (DetectionMs != 0F) {
+        size += 1 + 4;
+      }
+      if (EmbeddingMs != 0F) {
+        size += 1 + 4;
+      }
+      if (PreprocessingMs != 0F) {
+        size += 1 + 4;
+      }
+      if (TotalMs != 0F) {
+        size += 1 + 4;
+      }
+      if (ImageWidth != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ImageWidth);
+      }
+      if (ImageHeight != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(ImageHeight);
+      }
+      if (FacesDetected != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(FacesDetected);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(PerformanceMetrics other) {
+      if (other == null) {
+        return;
+      }
+      if (other.DetectionMs != 0F) {
+        DetectionMs = other.DetectionMs;
+      }
+      if (other.EmbeddingMs != 0F) {
+        EmbeddingMs = other.EmbeddingMs;
+      }
+      if (other.PreprocessingMs != 0F) {
+        PreprocessingMs = other.PreprocessingMs;
+      }
+      if (other.TotalMs != 0F) {
+        TotalMs = other.TotalMs;
+      }
+      if (other.ImageWidth != 0) {
+        ImageWidth = other.ImageWidth;
+      }
+      if (other.ImageHeight != 0) {
+        ImageHeight = other.ImageHeight;
+      }
+      if (other.FacesDetected != 0) {
+        FacesDetected = other.FacesDetected;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 13: {
+            DetectionMs = input.ReadFloat();
+            break;
+          }
+          case 21: {
+            EmbeddingMs = input.ReadFloat();
+            break;
+          }
+          case 29: {
+            PreprocessingMs = input.ReadFloat();
+            break;
+          }
+          case 37: {
+            TotalMs = input.ReadFloat();
+            break;
+          }
+          case 40: {
+            ImageWidth = input.ReadInt32();
+            break;
+          }
+          case 48: {
+            ImageHeight = input.ReadInt32();
+            break;
+          }
+          case 56: {
+            FacesDetected = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 13: {
+            DetectionMs = input.ReadFloat();
+            break;
+          }
+          case 21: {
+            EmbeddingMs = input.ReadFloat();
+            break;
+          }
+          case 29: {
+            PreprocessingMs = input.ReadFloat();
+            break;
+          }
+          case 37: {
+            TotalMs = input.ReadFloat();
+            break;
+          }
+          case 40: {
+            ImageWidth = input.ReadInt32();
+            break;
+          }
+          case 48: {
+            ImageHeight = input.ReadInt32();
+            break;
+          }
+          case 56: {
+            FacesDetected = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class DetectorConfig : pb::IMessage<DetectorConfig>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<DetectorConfig> _parser = new pb::MessageParser<DetectorConfig>(() => new DetectorConfig());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<DetectorConfig> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Sssp.Ai.Face.FaceReflection.Descriptor.MessageTypes[17]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DetectorConfig() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DetectorConfig(DetectorConfig other) : this() {
+      minFaceSize_ = other.minFaceSize_;
+      confidenceThreshold_ = other.confidenceThreshold_;
+      maxFaces_ = other.maxFaces_;
+      keepAll_ = other.keepAll_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DetectorConfig Clone() {
+      return new DetectorConfig(this);
+    }
+
+    /// <summary>Field number for the "min_face_size" field.</summary>
+    public const int MinFaceSizeFieldNumber = 1;
+    private int minFaceSize_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int MinFaceSize {
+      get { return minFaceSize_; }
+      set {
+        minFaceSize_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "confidence_threshold" field.</summary>
+    public const int ConfidenceThresholdFieldNumber = 2;
+    private float confidenceThreshold_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float ConfidenceThreshold {
+      get { return confidenceThreshold_; }
+      set {
+        confidenceThreshold_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "max_faces" field.</summary>
+    public const int MaxFacesFieldNumber = 3;
+    private int maxFaces_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int MaxFaces {
+      get { return maxFaces_; }
+      set {
+        maxFaces_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "keep_all" field.</summary>
+    public const int KeepAllFieldNumber = 4;
+    private bool keepAll_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool KeepAll {
+      get { return keepAll_; }
+      set {
+        keepAll_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as DetectorConfig);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(DetectorConfig other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (MinFaceSize != other.MinFaceSize) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ConfidenceThreshold, other.ConfidenceThreshold)) return false;
+      if (MaxFaces != other.MaxFaces) return false;
+      if (KeepAll != other.KeepAll) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (MinFaceSize != 0) hash ^= MinFaceSize.GetHashCode();
+      if (ConfidenceThreshold != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ConfidenceThreshold);
+      if (MaxFaces != 0) hash ^= MaxFaces.GetHashCode();
+      if (KeepAll != false) hash ^= KeepAll.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (MinFaceSize != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(MinFaceSize);
+      }
+      if (ConfidenceThreshold != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(ConfidenceThreshold);
+      }
+      if (MaxFaces != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(MaxFaces);
+      }
+      if (KeepAll != false) {
+        output.WriteRawTag(32);
+        output.WriteBool(KeepAll);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (MinFaceSize != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(MinFaceSize);
+      }
+      if (ConfidenceThreshold != 0F) {
+        output.WriteRawTag(21);
+        output.WriteFloat(ConfidenceThreshold);
+      }
+      if (MaxFaces != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(MaxFaces);
+      }
+      if (KeepAll != false) {
+        output.WriteRawTag(32);
+        output.WriteBool(KeepAll);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (MinFaceSize != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MinFaceSize);
+      }
+      if (ConfidenceThreshold != 0F) {
+        size += 1 + 4;
+      }
+      if (MaxFaces != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxFaces);
+      }
+      if (KeepAll != false) {
+        size += 1 + 1;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(DetectorConfig other) {
+      if (other == null) {
+        return;
+      }
+      if (other.MinFaceSize != 0) {
+        MinFaceSize = other.MinFaceSize;
+      }
+      if (other.ConfidenceThreshold != 0F) {
+        ConfidenceThreshold = other.ConfidenceThreshold;
+      }
+      if (other.MaxFaces != 0) {
+        MaxFaces = other.MaxFaces;
+      }
+      if (other.KeepAll != false) {
+        KeepAll = other.KeepAll;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            MinFaceSize = input.ReadInt32();
+            break;
+          }
+          case 21: {
+            ConfidenceThreshold = input.ReadFloat();
+            break;
+          }
+          case 24: {
+            MaxFaces = input.ReadInt32();
+            break;
+          }
+          case 32: {
+            KeepAll = input.ReadBool();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            MinFaceSize = input.ReadInt32();
+            break;
+          }
+          case 21: {
+            ConfidenceThreshold = input.ReadFloat();
+            break;
+          }
+          case 24: {
+            MaxFaces = input.ReadInt32();
+            break;
+          }
+          case 32: {
+            KeepAll = input.ReadBool();
             break;
           }
         }

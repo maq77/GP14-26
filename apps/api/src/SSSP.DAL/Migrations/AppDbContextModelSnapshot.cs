@@ -133,7 +133,10 @@ namespace SSSP.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<int>("Capabilities")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
@@ -142,14 +145,24 @@ namespace SSSP.DAL.Migrations
                     b.Property<DateTime?>("LastSeenAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<double?>("MatchThresholdOverride")
+                        .HasColumnType("float");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OperatorId")
+                    b.Property<int?>("OperatorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecognitionMode")
                         .HasColumnType("int");
 
                     b.Property<string>("RtspUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ZoneId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -158,6 +171,34 @@ namespace SSSP.DAL.Migrations
                     b.HasIndex("OperatorId");
 
                     b.ToTable("Cameras");
+                });
+
+            modelBuilder.Entity("SSSP.DAL.Models.FaceEmbedding", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FaceProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SourceCameraId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Vector")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FaceProfileId");
+
+                    b.ToTable("FaceEmbedding");
                 });
 
             modelBuilder.Entity("SSSP.DAL.Models.FaceProfile", b =>
@@ -173,10 +214,6 @@ namespace SSSP.DAL.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmbeddingJson")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<bool>("IsPrimary")
                         .ValueGeneratedOnAdd()
@@ -211,7 +248,7 @@ namespace SSSP.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OperatorId")
+                    b.Property<int?>("OperatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("PayloadJson")
@@ -485,8 +522,7 @@ namespace SSSP.DAL.Migrations
                     b.HasOne("SSSP.DAL.Models.Operator", "Operator")
                         .WithMany("Cameras")
                         .HasForeignKey("OperatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.OwnsOne("SSSP.DAL.ValueObjects.Location", "Location", b1 =>
                         {
@@ -496,10 +532,10 @@ namespace SSSP.DAL.Migrations
                             b1.Property<string>("Address")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<double>("Latitude")
+                            b1.Property<double?>("Latitude")
                                 .HasColumnType("float");
 
-                            b1.Property<double>("Longitude")
+                            b1.Property<double?>("Longitude")
                                 .HasColumnType("float");
 
                             b1.HasKey("CameraId");
@@ -510,10 +546,20 @@ namespace SSSP.DAL.Migrations
                                 .HasForeignKey("CameraId");
                         });
 
-                    b.Navigation("Location")
-                        .IsRequired();
+                    b.Navigation("Location");
 
                     b.Navigation("Operator");
+                });
+
+            modelBuilder.Entity("SSSP.DAL.Models.FaceEmbedding", b =>
+                {
+                    b.HasOne("SSSP.DAL.Models.FaceProfile", "FaceProfile")
+                        .WithMany("Embeddings")
+                        .HasForeignKey("FaceProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FaceProfile");
                 });
 
             modelBuilder.Entity("SSSP.DAL.Models.FaceProfile", b =>
@@ -537,8 +583,7 @@ namespace SSSP.DAL.Migrations
                     b.HasOne("SSSP.DAL.Models.Operator", "Operator")
                         .WithMany("Incidents")
                         .HasForeignKey("OperatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.OwnsOne("SSSP.DAL.ValueObjects.Location", "Location", b1 =>
                         {
@@ -548,10 +593,10 @@ namespace SSSP.DAL.Migrations
                             b1.Property<string>("Address")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<double>("Latitude")
+                            b1.Property<double?>("Latitude")
                                 .HasColumnType("float");
 
-                            b1.Property<double>("Longitude")
+                            b1.Property<double?>("Longitude")
                                 .HasColumnType("float");
 
                             b1.HasKey("IncidentId");
@@ -564,8 +609,7 @@ namespace SSSP.DAL.Migrations
 
                     b.Navigation("AssignedToUser");
 
-                    b.Navigation("Location")
-                        .IsRequired();
+                    b.Navigation("Location");
 
                     b.Navigation("Operator");
                 });
@@ -586,10 +630,10 @@ namespace SSSP.DAL.Migrations
                             b1.Property<string>("Address")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<double>("Latitude")
+                            b1.Property<double?>("Latitude")
                                 .HasColumnType("float");
 
-                            b1.Property<double>("Longitude")
+                            b1.Property<double?>("Longitude")
                                 .HasColumnType("float");
 
                             b1.HasKey("SensorId");
@@ -614,6 +658,11 @@ namespace SSSP.DAL.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Operator");
+                });
+
+            modelBuilder.Entity("SSSP.DAL.Models.FaceProfile", b =>
+                {
+                    b.Navigation("Embeddings");
                 });
 
             modelBuilder.Entity("SSSP.DAL.Models.Operator", b =>

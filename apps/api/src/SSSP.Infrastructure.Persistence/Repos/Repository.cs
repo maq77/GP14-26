@@ -18,6 +18,8 @@ namespace SSSP.Infrastructure.Persistence.Repos
             Set = Db.Set<T>();
         }
 
+        public IQueryable<T> Query => Set;
+
         public async Task<T?> GetByIdAsync(TKey id, CancellationToken ct = default)
         {
             return await Set.FindAsync(new object[] { id }, ct);

@@ -74,6 +74,8 @@ namespace SSSP.Infrastructure.AI.Grpc.Clients
             return channel;
         }
 
+        public int ChannelCount => _channels.Count;
+
         public void Dispose()
         {
             if (_disposed) return;
