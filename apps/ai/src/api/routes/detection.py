@@ -5,7 +5,7 @@ import time
 from typing import List
 import structlog
 
-from apps.ai.src.schemas.detection import DetectResponse, BoundingBox, Detection, DetectRequest
+from src.schemas.detection import DetectResponse, BoundingBox, Detection, DetectRequest
 from ...core.container import get_detection_app
 
 router = APIRouter(prefix="/api/v1", tags=["detection"])

@@ -31,3 +31,25 @@ server will work on http://localhost:8001/api/docs
 ...../................/.......................
 
 (venv) PS M:\SSSP\GP14-26> uvicorn apps.ai.src.api.main:app --reload --port 8001
+
+.....................................................................................................
+
+
+
+PS M:\SSSP\GP14-26> cd apps/ai
+PS M:\SSSP\GP14-26\apps\ai> venv/scripts/activate.ps1
+(venv) PS M:\SSSP\GP14-26\apps\ai> cd ..
+(venv) PS M:\SSSP\GP14-26\apps> cd ..
+(venv) PS M:\SSSP\GP14-26> uvicorn apps.ai.src.api.main:app --reload --port 8001
+INFO:     Will watch for changes in these directories: ['M:\\SSSP\\GP14-26']
+INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
+INFO:     Started reloader process [30232] using WatchFiles
+
+
+.............
+{
+  "username": "mohamed@maq.com",
+  "password": "Maqmohamed123@"
+}
+
+

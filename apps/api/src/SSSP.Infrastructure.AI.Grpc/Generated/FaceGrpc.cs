@@ -50,9 +50,9 @@ namespace Sssp.Ai.Face {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Sssp.Ai.Face.FaceDetectResponse> __Marshaller_sssp_ai_face_FaceDetectResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sssp.Ai.Face.FaceDetectResponse.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sssp.Ai.Face.FaceRecognizeRequest> __Marshaller_sssp_ai_face_FaceRecognizeRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sssp.Ai.Face.FaceRecognizeRequest.Parser));
+    static readonly grpc::Marshaller<global::Sssp.Ai.Face.FaceEmbeddingRequest> __Marshaller_sssp_ai_face_FaceEmbeddingRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sssp.Ai.Face.FaceEmbeddingRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sssp.Ai.Face.FaceRecognizeResponse> __Marshaller_sssp_ai_face_FaceRecognizeResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sssp.Ai.Face.FaceRecognizeResponse.Parser));
+    static readonly grpc::Marshaller<global::Sssp.Ai.Face.FaceEmbeddingResponse> __Marshaller_sssp_ai_face_FaceEmbeddingResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sssp.Ai.Face.FaceEmbeddingResponse.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Sssp.Ai.Face.FaceVerifyRequest> __Marshaller_sssp_ai_face_FaceVerifyRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sssp.Ai.Face.FaceVerifyRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
@@ -66,9 +66,9 @@ namespace Sssp.Ai.Face {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Sssp.Ai.Face.FaceModelInfoResponse> __Marshaller_sssp_ai_face_FaceModelInfoResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sssp.Ai.Face.FaceModelInfoResponse.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sssp.Ai.Face.FaceEmbeddingRequest> __Marshaller_sssp_ai_face_FaceEmbeddingRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sssp.Ai.Face.FaceEmbeddingRequest.Parser));
+    static readonly grpc::Marshaller<global::Sssp.Ai.Face.FrameProcessRequest> __Marshaller_sssp_ai_face_FrameProcessRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sssp.Ai.Face.FrameProcessRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sssp.Ai.Face.FaceEmbeddingResponse> __Marshaller_sssp_ai_face_FaceEmbeddingResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sssp.Ai.Face.FaceEmbeddingResponse.Parser));
+    static readonly grpc::Marshaller<global::Sssp.Ai.Face.FrameProcessResponse> __Marshaller_sssp_ai_face_FrameProcessResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sssp.Ai.Face.FrameProcessResponse.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Sssp.Ai.Face.FaceDetectRequest, global::Sssp.Ai.Face.FaceDetectResponse> __Method_DetectFaces = new grpc::Method<global::Sssp.Ai.Face.FaceDetectRequest, global::Sssp.Ai.Face.FaceDetectResponse>(
@@ -79,12 +79,20 @@ namespace Sssp.Ai.Face {
         __Marshaller_sssp_ai_face_FaceDetectResponse);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Sssp.Ai.Face.FaceRecognizeRequest, global::Sssp.Ai.Face.FaceRecognizeResponse> __Method_RecognizeFace = new grpc::Method<global::Sssp.Ai.Face.FaceRecognizeRequest, global::Sssp.Ai.Face.FaceRecognizeResponse>(
+    static readonly grpc::Method<global::Sssp.Ai.Face.FaceEmbeddingRequest, global::Sssp.Ai.Face.FaceEmbeddingResponse> __Method_ExtractEmbedding = new grpc::Method<global::Sssp.Ai.Face.FaceEmbeddingRequest, global::Sssp.Ai.Face.FaceEmbeddingResponse>(
         grpc::MethodType.Unary,
         __ServiceName,
-        "RecognizeFace",
-        __Marshaller_sssp_ai_face_FaceRecognizeRequest,
-        __Marshaller_sssp_ai_face_FaceRecognizeResponse);
+        "ExtractEmbedding",
+        __Marshaller_sssp_ai_face_FaceEmbeddingRequest,
+        __Marshaller_sssp_ai_face_FaceEmbeddingResponse);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Sssp.Ai.Face.FaceEmbeddingRequest, global::Sssp.Ai.Face.FaceEmbeddingResponse> __Method_ExtractEmbeddings = new grpc::Method<global::Sssp.Ai.Face.FaceEmbeddingRequest, global::Sssp.Ai.Face.FaceEmbeddingResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "ExtractEmbeddings",
+        __Marshaller_sssp_ai_face_FaceEmbeddingRequest,
+        __Marshaller_sssp_ai_face_FaceEmbeddingResponse);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Sssp.Ai.Face.FaceVerifyRequest, global::Sssp.Ai.Face.FaceVerifyResponse> __Method_VerifyFace = new grpc::Method<global::Sssp.Ai.Face.FaceVerifyRequest, global::Sssp.Ai.Face.FaceVerifyResponse>(
@@ -111,12 +119,12 @@ namespace Sssp.Ai.Face {
         __Marshaller_sssp_ai_face_FaceModelInfoResponse);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Sssp.Ai.Face.FaceEmbeddingRequest, global::Sssp.Ai.Face.FaceEmbeddingResponse> __Method_ExtractEmbedding = new grpc::Method<global::Sssp.Ai.Face.FaceEmbeddingRequest, global::Sssp.Ai.Face.FaceEmbeddingResponse>(
+    static readonly grpc::Method<global::Sssp.Ai.Face.FrameProcessRequest, global::Sssp.Ai.Face.FrameProcessResponse> __Method_ProcessFrame = new grpc::Method<global::Sssp.Ai.Face.FrameProcessRequest, global::Sssp.Ai.Face.FrameProcessResponse>(
         grpc::MethodType.Unary,
         __ServiceName,
-        "ExtractEmbedding",
-        __Marshaller_sssp_ai_face_FaceEmbeddingRequest,
-        __Marshaller_sssp_ai_face_FaceEmbeddingResponse);
+        "ProcessFrame",
+        __Marshaller_sssp_ai_face_FrameProcessRequest,
+        __Marshaller_sssp_ai_face_FrameProcessResponse);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -151,125 +159,341 @@ namespace Sssp.Ai.Face {
       {
       }
 
+      /// <summary>
+      /// Detect all faces in image (fast, detection only)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::Sssp.Ai.Face.FaceDetectResponse DetectFaces(global::Sssp.Ai.Face.FaceDetectRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return DetectFaces(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
+      /// <summary>
+      /// Detect all faces in image (fast, detection only)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::Sssp.Ai.Face.FaceDetectResponse DetectFaces(global::Sssp.Ai.Face.FaceDetectRequest request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_DetectFaces, null, options, request);
       }
+      /// <summary>
+      /// Detect all faces in image (fast, detection only)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceDetectResponse> DetectFacesAsync(global::Sssp.Ai.Face.FaceDetectRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return DetectFacesAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
+      /// <summary>
+      /// Detect all faces in image (fast, detection only)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceDetectResponse> DetectFacesAsync(global::Sssp.Ai.Face.FaceDetectRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_DetectFaces, null, options, request);
       }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sssp.Ai.Face.FaceRecognizeResponse RecognizeFace(global::Sssp.Ai.Face.FaceRecognizeRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-      {
-        return RecognizeFace(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sssp.Ai.Face.FaceRecognizeResponse RecognizeFace(global::Sssp.Ai.Face.FaceRecognizeRequest request, grpc::CallOptions options)
-      {
-        return CallInvoker.BlockingUnaryCall(__Method_RecognizeFace, null, options, request);
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceRecognizeResponse> RecognizeFaceAsync(global::Sssp.Ai.Face.FaceRecognizeRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-      {
-        return RecognizeFaceAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceRecognizeResponse> RecognizeFaceAsync(global::Sssp.Ai.Face.FaceRecognizeRequest request, grpc::CallOptions options)
-      {
-        return CallInvoker.AsyncUnaryCall(__Method_RecognizeFace, null, options, request);
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sssp.Ai.Face.FaceVerifyResponse VerifyFace(global::Sssp.Ai.Face.FaceVerifyRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-      {
-        return VerifyFace(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sssp.Ai.Face.FaceVerifyResponse VerifyFace(global::Sssp.Ai.Face.FaceVerifyRequest request, grpc::CallOptions options)
-      {
-        return CallInvoker.BlockingUnaryCall(__Method_VerifyFace, null, options, request);
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceVerifyResponse> VerifyFaceAsync(global::Sssp.Ai.Face.FaceVerifyRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-      {
-        return VerifyFaceAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceVerifyResponse> VerifyFaceAsync(global::Sssp.Ai.Face.FaceVerifyRequest request, grpc::CallOptions options)
-      {
-        return CallInvoker.AsyncUnaryCall(__Method_VerifyFace, null, options, request);
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sssp.Ai.Face.FaceEnrollResponse EnrollFace(global::Sssp.Ai.Face.FaceEnrollRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-      {
-        return EnrollFace(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sssp.Ai.Face.FaceEnrollResponse EnrollFace(global::Sssp.Ai.Face.FaceEnrollRequest request, grpc::CallOptions options)
-      {
-        return CallInvoker.BlockingUnaryCall(__Method_EnrollFace, null, options, request);
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceEnrollResponse> EnrollFaceAsync(global::Sssp.Ai.Face.FaceEnrollRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-      {
-        return EnrollFaceAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceEnrollResponse> EnrollFaceAsync(global::Sssp.Ai.Face.FaceEnrollRequest request, grpc::CallOptions options)
-      {
-        return CallInvoker.AsyncUnaryCall(__Method_EnrollFace, null, options, request);
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sssp.Ai.Face.FaceModelInfoResponse GetModelInfo(global::Sssp.Ai.Face.FaceModelInfoRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-      {
-        return GetModelInfo(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sssp.Ai.Face.FaceModelInfoResponse GetModelInfo(global::Sssp.Ai.Face.FaceModelInfoRequest request, grpc::CallOptions options)
-      {
-        return CallInvoker.BlockingUnaryCall(__Method_GetModelInfo, null, options, request);
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceModelInfoResponse> GetModelInfoAsync(global::Sssp.Ai.Face.FaceModelInfoRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-      {
-        return GetModelInfoAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceModelInfoResponse> GetModelInfoAsync(global::Sssp.Ai.Face.FaceModelInfoRequest request, grpc::CallOptions options)
-      {
-        return CallInvoker.AsyncUnaryCall(__Method_GetModelInfo, null, options, request);
-      }
+      /// <summary>
+      /// Extract embeddings for all faces (detection + embedding)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::Sssp.Ai.Face.FaceEmbeddingResponse ExtractEmbedding(global::Sssp.Ai.Face.FaceEmbeddingRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return ExtractEmbedding(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
+      /// <summary>
+      /// Extract embeddings for all faces (detection + embedding)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::Sssp.Ai.Face.FaceEmbeddingResponse ExtractEmbedding(global::Sssp.Ai.Face.FaceEmbeddingRequest request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_ExtractEmbedding, null, options, request);
       }
+      /// <summary>
+      /// Extract embeddings for all faces (detection + embedding)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceEmbeddingResponse> ExtractEmbeddingAsync(global::Sssp.Ai.Face.FaceEmbeddingRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return ExtractEmbeddingAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
+      /// <summary>
+      /// Extract embeddings for all faces (detection + embedding)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceEmbeddingResponse> ExtractEmbeddingAsync(global::Sssp.Ai.Face.FaceEmbeddingRequest request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_ExtractEmbedding, null, options, request);
+      }
+      /// <summary>
+      /// new name
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Sssp.Ai.Face.FaceEmbeddingResponse ExtractEmbeddings(global::Sssp.Ai.Face.FaceEmbeddingRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ExtractEmbeddings(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// new name
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Sssp.Ai.Face.FaceEmbeddingResponse ExtractEmbeddings(global::Sssp.Ai.Face.FaceEmbeddingRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ExtractEmbeddings, null, options, request);
+      }
+      /// <summary>
+      /// new name
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceEmbeddingResponse> ExtractEmbeddingsAsync(global::Sssp.Ai.Face.FaceEmbeddingRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ExtractEmbeddingsAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// new name
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceEmbeddingResponse> ExtractEmbeddingsAsync(global::Sssp.Ai.Face.FaceEmbeddingRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ExtractEmbeddings, null, options, request);
+      }
+      /// <summary>
+      /// Verify single face against known profiles (used by .NET matching)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Sssp.Ai.Face.FaceVerifyResponse VerifyFace(global::Sssp.Ai.Face.FaceVerifyRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return VerifyFace(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Verify single face against known profiles (used by .NET matching)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Sssp.Ai.Face.FaceVerifyResponse VerifyFace(global::Sssp.Ai.Face.FaceVerifyRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_VerifyFace, null, options, request);
+      }
+      /// <summary>
+      /// Verify single face against known profiles (used by .NET matching)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceVerifyResponse> VerifyFaceAsync(global::Sssp.Ai.Face.FaceVerifyRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return VerifyFaceAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Verify single face against known profiles (used by .NET matching)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceVerifyResponse> VerifyFaceAsync(global::Sssp.Ai.Face.FaceVerifyRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_VerifyFace, null, options, request);
+      }
+      /// <summary>
+      /// Enroll new person with multiple images
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Sssp.Ai.Face.FaceEnrollResponse EnrollFace(global::Sssp.Ai.Face.FaceEnrollRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return EnrollFace(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Enroll new person with multiple images
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Sssp.Ai.Face.FaceEnrollResponse EnrollFace(global::Sssp.Ai.Face.FaceEnrollRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_EnrollFace, null, options, request);
+      }
+      /// <summary>
+      /// Enroll new person with multiple images
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceEnrollResponse> EnrollFaceAsync(global::Sssp.Ai.Face.FaceEnrollRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return EnrollFaceAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Enroll new person with multiple images
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceEnrollResponse> EnrollFaceAsync(global::Sssp.Ai.Face.FaceEnrollRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_EnrollFace, null, options, request);
+      }
+      /// <summary>
+      /// Get model information and health
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Sssp.Ai.Face.FaceModelInfoResponse GetModelInfo(global::Sssp.Ai.Face.FaceModelInfoRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return GetModelInfo(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Get model information and health
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Sssp.Ai.Face.FaceModelInfoResponse GetModelInfo(global::Sssp.Ai.Face.FaceModelInfoRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_GetModelInfo, null, options, request);
+      }
+      /// <summary>
+      /// Get model information and health
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceModelInfoResponse> GetModelInfoAsync(global::Sssp.Ai.Face.FaceModelInfoRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return GetModelInfoAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Get model information and health
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FaceModelInfoResponse> GetModelInfoAsync(global::Sssp.Ai.Face.FaceModelInfoRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_GetModelInfo, null, options, request);
+      }
+      /// <summary>
+      /// Process video frame (optimized for streaming)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Sssp.Ai.Face.FrameProcessResponse ProcessFrame(global::Sssp.Ai.Face.FrameProcessRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ProcessFrame(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Process video frame (optimized for streaming)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Sssp.Ai.Face.FrameProcessResponse ProcessFrame(global::Sssp.Ai.Face.FrameProcessRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_ProcessFrame, null, options, request);
+      }
+      /// <summary>
+      /// Process video frame (optimized for streaming)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FrameProcessResponse> ProcessFrameAsync(global::Sssp.Ai.Face.FrameProcessRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return ProcessFrameAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Process video frame (optimized for streaming)
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Sssp.Ai.Face.FrameProcessResponse> ProcessFrameAsync(global::Sssp.Ai.Face.FrameProcessRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_ProcessFrame, null, options, request);
       }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]

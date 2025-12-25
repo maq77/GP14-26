@@ -1,86 +1,94 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SSSP.DAL.Context;
+using Microsoft.Extensions.Logging;
+using SSSP.Api.DTOs.Incidents;
+using SSSP.BL.Services.Interfaces;
 using SSSP.DAL.Models;
-using System.Threading.Tasks;
 
 namespace SSSP.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class IncidentController : ControllerBase
+    [Route("api/[controller]")]
+    public sealed class IncidentController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IIncidentService _service;
+        private readonly ILogger<IncidentController> _logger;
 
-        public IncidentController(AppDbContext context)
+        public IncidentController(
+            IIncidentService service,
+            ILogger<IncidentController> logger)
         {
-            _context = context;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var incidents = await _context.Incidents.ToListAsync();
-            return Ok(incidents);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var incident = await _context.Incidents.FindAsync(id);
-
-            if (incident == null)
-                return NotFound();
-
-            return Ok(incident);
+            _service = service;
+            _logger = logger;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Incident incident)
+        public async Task<ActionResult<IncidentResponse>> Create(
+            [FromBody] CreateIncidentRequest request,
+            CancellationToken ct)
         {
-            if (incident == null)
-                return BadRequest();
+            var incident = await _service.CreateAsync(
+                request.Title,
+                request.Description,
+                request.Type,
+                request.Source,
+                request.OperatorId,
+                request.Location,
+                request.PayloadJson,
+                ct);
 
+            _logger.LogInformation("Incident created via API. Id={Id}, Type={Type}, Severity={Severity}",
+                incident.Id, incident.Type, incident.Severity);
 
-            _context.Incidents.Add(incident);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetById), new { id = incident.Id }, incident);
+            return Ok(ToResponse(incident));
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Incident model)
+        [HttpPost("{id:int}/assign/{userId:guid}")]
+        public async Task<IActionResult> Assign(int id, Guid userId, CancellationToken ct)
         {
-            var incident = await _context.Incidents.FindAsync(id);
-
-            if (incident == null)
-                return NotFound();
-
-            incident.Type = model.Type;
-            incident.Status = model.Status;
-            incident.Severity = model.Severity;
-            incident.Source = model.Source;
-            incident.Description = model.Description;
-            incident.Timestamp = model.Timestamp;
-            incident.Location = model.Location;
-
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            await _service.AssignAsync(id, userId, ct);
+            return Ok();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpPost("{id:int}/resolve")]
+        public async Task<IActionResult> Resolve(int id, CancellationToken ct)
         {
-            var incident = await _context.Incidents.FindAsync(id);
+            await _service.ResolveAsync(id, ct);
+            return Ok();
+        }
 
-            if (incident == null)
-                return NotFound();
+        [HttpGet("open")]
+        public async Task<ActionResult<IEnumerable<IncidentResponse>>> GetOpen(CancellationToken ct)
+        {
+            var incidents = await _service.GetOpenAsync(ct);
+            return Ok(incidents.Select(ToResponse));
+        }
 
-            _context.Incidents.Remove(incident);
-            await _context.SaveChangesAsync();
+        [HttpGet("operator/{operatorId:int}")]
+        public async Task<ActionResult<IEnumerable<IncidentResponse>>> GetByOperator(
+            int operatorId,
+            CancellationToken ct)
+        {
+            var incidents = await _service.GetByOperatorAsync(operatorId, ct);
+            return Ok(incidents.Select(ToResponse));
+        }
 
-            return NoContent();
+        private static IncidentResponse ToResponse(Incident incident)
+        {
+            return new IncidentResponse
+            {
+                Id = incident.Id,
+                Title = incident.Title,
+                Description = incident.Description,
+                Type = incident.Type,
+                Severity = incident.Severity,
+                Status = incident.Status,
+                Source = incident.Source,
+                OperatorId = incident.OperatorId,
+                Location = incident.Location,
+                AssignedToUserId = incident.AssignedToUserId,
+                Timestamp = incident.Timestamp,
+                ResolvedAt = incident.ResolvedAt
+            };
         }
     }
 }
