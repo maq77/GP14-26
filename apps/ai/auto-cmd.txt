@@ -1,0 +1,23 @@
+......................................................
+Create Project Structure
+.................................................
+# Navigate to AI directory
+cd ../../ai
+
+# Create project structure
+mkdir -p src/{api,core,models,services,schemas}
+mkdir -p src/api/{routes,middleware}
+mkdir -p src/models/{yolo,face,behavior}
+mkdir -p tests
+mkdir -p notebooks
+mkdir -p scripts
+
+# Create __init__.py files
+touch src/__init__.py
+touch src/api/__init__.py
+touch src/api/routes/__init__.py
+touch src/core/__init__.py
+touch src/models/__init__.py
+touch src/services/__init__.py
+touch src/schemas/__init__.py
+touch tests/__init__.py

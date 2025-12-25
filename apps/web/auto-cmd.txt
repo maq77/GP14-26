@@ -1,0 +1,43 @@
+Create Proj Struct
+..............................................................
+# Navigate to web directory
+cd ../../web
+
+# Create Vite project
+npm create vite@latest . -- --template react-ts
+
+# Answer prompts:
+# ? Select a framework: › React
+# ? Select a variant: › TypeScript
+
+..................................................................
+
+install depend
+.......................................
+npm install
+
+# Install additional dependencies
+npm install react-router-dom
+npm install @tanstack/react-query
+npm install axios
+npm install zustand
+npm install @microsoft/signalr
+npm install recharts
+npm install lucide-react
+npm install react-hook-form
+npm install zod
+npm install @hookform/resolvers
+npm install date-fns
+npm install clsx tailwind-merge
+
+# Install Tailwind CSS
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+# Install dev dependencies
+npm install -D @types/node
+npm install -D vitest @vitest/ui
+npm install -D @testing-library/react @testing-library/jest-dom
+npm install -D @testing-library/user-event
+npm install -D eslint-config-prettier
+npm install -D prettier

@@ -1,0 +1,9 @@
+opencv-python
+numpy
+torch
+torchvision
+facenet-pytorch
+psycopg2-binary
+
+#download
+pip install -r requirements.txt

@@ -1,0 +1,26 @@
+# SSSP Code Owners
+# These owners will be requested for review when PRs modify matching files
+
+# Global owners
+* @team-lead
+
+# API (.NET)
+/apps/api/ @dotnet-team @team-lead
+
+# AI Service
+/apps/ai/ @ml-team @team-lead
+
+# Web Dashboard
+/apps/web/ @frontend-team @team-lead
+
+# Infrastructure
+/infrastructure/ @full-stack-team @team-lead
+/docker-compose.yml @full-stack-team
+/**/Dockerfile @full-stack-team
+
+# Documentation
+/docs/ @team-lead
+*.md @team-lead
+
+# CI/CD
+/.github/ @team-lead @full-stack-team

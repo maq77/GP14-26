@@ -1,0 +1,75 @@
+Folder PATH listing for volume Programming
+Volume serial number is 846C-9E0B
+M:.
+¦   structure.txt
+¦   __init__.py
+¦   
++---contracts
+¦   ¦   __init__.py
+¦   ¦   
+¦   +---events
+¦   ¦       detection.events.py
+¦   ¦       incident.events.ts
+¦   ¦       
+¦   +---openapi
+¦   ¦       api.yaml
+¦   ¦       
+¦   +---protos
+¦   ¦       aqi.proto
+¦   ¦       behavior.proto
+¦   ¦       detection.proto
+¦   ¦       face.proto
+¦   ¦       
+¦   +---python
+¦   ¦   ¦   aqi_pb2.py
+¦   ¦   ¦   aqi_pb2_grpc.py
+¦   ¦   ¦   behavior_pb2.py
+¦   ¦   ¦   behavior_pb2_grpc.py
+¦   ¦   ¦   detection_pb2.py
+¦   ¦   ¦   detection_pb2_grpc.py
+¦   ¦   ¦   face_pb2.py
+¦   ¦   ¦   face_pb2_grpc.py
+¦   ¦   ¦   pyproject.toml
+¦   ¦   ¦   __init__.py
+¦   ¦   ¦   
+¦   ¦   +---sssp
+¦   ¦   ¦   ¦   __init__.py
+¦   ¦   ¦   ¦   
+¦   ¦   ¦   +---ai
+¦   ¦   ¦   ¦   ¦   __init__.py
+¦   ¦   ¦   ¦   ¦   
+¦   ¦   ¦   ¦   +---detection
+¦   ¦   ¦   ¦   ¦   ¦   detection_pb2.py
+¦   ¦   ¦   ¦   ¦   ¦   detection_pb2_grpc.py
+¦   ¦   ¦   ¦   ¦   ¦   __init__.py
+¦   ¦   ¦   ¦   ¦   ¦   
+¦   ¦   ¦   ¦   ¦   +---__pycache__
+¦   ¦   ¦   ¦   ¦           detection_pb2_grpc.cpython-312.pyc
+¦   ¦   ¦   ¦   ¦           __init__.cpython-312.pyc
+¦   ¦   ¦   ¦   ¦           
+¦   ¦   ¦   ¦   +---__pycache__
+¦   ¦   ¦   ¦           __init__.cpython-312.pyc
+¦   ¦   ¦   ¦           
+¦   ¦   ¦   +---__pycache__
+¦   ¦   ¦           __init__.cpython-312.pyc
+¦   ¦   ¦           
+¦   ¦   +---sssp_contracts.egg-info
+¦   ¦   ¦       dependency_links.txt
+¦   ¦   ¦       PKG-INFO
+¦   ¦   ¦       SOURCES.txt
+¦   ¦   ¦       top_level.txt
+¦   ¦   ¦       
+¦   ¦   +---__pycache__
+¦   ¦           detection_pb2.cpython-312.pyc
+¦   ¦           detection_pb2_grpc.cpython-312.pyc
+¦   ¦           __init__.cpython-312.pyc
+¦   ¦           
+¦   +---__pycache__
+¦           __init__.cpython-312.pyc
+¦           
++---shared-types
+¦       index.ts
+¦       
++---__pycache__
+        __init__.cpython-312.pyc
+        

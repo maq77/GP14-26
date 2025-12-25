@@ -1,0 +1,55 @@
+tree /F > structure.txt
+..........................
+mkdir structure
+
+tree /F apps\ai     > structure\apps_ai.txt
+tree /F apps\api    > structure\apps_api.txt
+tree /F packages    > structure\packages.txt
+tree /F scripts     > structure\scripts.txt
+tree /F structures  > structure\structures.txt
+............................
+
+tree /F /A > structure.txt
+
+
+...........................
+
+tree /F /A | findstr /V /C:".venv" /C:"node_modules" /C:".git" /C:"__pycache__" > structure.txt
+
+..........................
+
+cd M:\SSSP\GP14-26
+.\apps\ai\venv\Scripts\Activate.ps1
+python -m apps.ai.src.api.main
+
+localhost:8001/api/docs
+.........................
+
+# 1) Build dev image once (or when Dockerfile/requirements change)
+scripts/ai/build-ai-dev.sh
+
+# 2) Start dev container (hot reload, ports 8001 & 50051)
+scripts/ai/start-ai-dev.sh
+
+# 3) Stop it
+scripts/ai/stop-ai-dev.sh
+
+
+.............................
+
+.\scripts\ai\build-ai-dev.ps1
+or .\scripts\ai\build-ai-dev.ps1 -Tag v1
+.\scripts\ai\start-ai-dev.ps1
+.\scripts\ai\stop-ai-dev.ps1
+.\build-ai-dev.ps1 -Tag v1
+
+
+Open FastAPI docs:
+👉 http://localhost:8001/api/docs
+
+gRPC endpoint:
+👉 localhost:50051
+......................................
+
+
+

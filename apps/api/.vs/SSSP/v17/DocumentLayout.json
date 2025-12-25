@@ -1,0 +1,609 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "M:\\SSSP\\GP14-26\\apps\\api\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.api\\controllers\\facecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|solutionrelative:src\\sssp.api\\controllers\\facecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\services\\interfaces\\ifacerecognitionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\services\\interfaces\\ifacerecognitionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\services\\cameramonitoringworker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\services\\cameramonitoringworker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\records\\telemetryevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\records\\telemetryevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\services\\facerecognitionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\services\\facerecognitionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\services\\cameraproccessingrouter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\services\\cameraproccessingrouter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|solutionrelative:src\\sssp.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|solutionrelative:src\\sssp.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\options\\facerecognitionoptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\options\\facerecognitionoptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.api\\controllers\\cameracontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|solutionrelative:src\\sssp.api\\controllers\\cameracontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\managers\\facetrackingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\managers\\facetrackingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\managers\\facematchingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\managers\\facematchingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\montitoring\\faceprofilecachemetrics.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\montitoring\\faceprofilecachemetrics.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\services\\hybridfaceprofilecache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\services\\hybridfaceprofilecache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\services\\faceprofilecache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\services\\faceprofilecache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\services\\distributedfaceprofilecache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\services\\distributedfaceprofilecache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\services\\cameraservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\services\\cameraservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5A859A20-3EF2-4F0F-8486-EB0E941F3A94}|src\\SSSP.DAL\\SSSP.DAL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.dal\\models\\faceprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5A859A20-3EF2-4F0F-8486-EB0E941F3A94}|src\\SSSP.DAL\\SSSP.DAL.csproj|solutionrelative:src\\sssp.dal\\models\\faceprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5A859A20-3EF2-4F0F-8486-EB0E941F3A94}|src\\SSSP.DAL\\SSSP.DAL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.dal\\models\\faceembedding.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5A859A20-3EF2-4F0F-8486-EB0E941F3A94}|src\\SSSP.DAL\\SSSP.DAL.csproj|solutionrelative:src\\sssp.dal\\models\\faceembedding.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5A859A20-3EF2-4F0F-8486-EB0E941F3A94}|src\\SSSP.DAL\\SSSP.DAL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.dal\\models\\camera.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5A859A20-3EF2-4F0F-8486-EB0E941F3A94}|src\\SSSP.DAL\\SSSP.DAL.csproj|solutionrelative:src\\sssp.dal\\models\\camera.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{711BEE00-31C8-4A47-810D-6CAB1A8A09F3}|src\\SSSP.Infrastructure.AI.Grpc\\SSSP.Infrastructure.AI.Grpc.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.infrastructure.ai.grpc\\clients\\aifaceclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{711BEE00-31C8-4A47-810D-6CAB1A8A09F3}|src\\SSSP.Infrastructure.AI.Grpc\\SSSP.Infrastructure.AI.Grpc.csproj|solutionrelative:src\\sssp.infrastructure.ai.grpc\\clients\\aifaceclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\services\\facemanagementservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\services\\facemanagementservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\startup\\cameratopologywarmupservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\startup\\cameratopologywarmupservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\services\\cameratopologyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\services\\cameratopologyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.api\\controllers\\topologycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|solutionrelative:src\\sssp.api\\controllers\\topologycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\services\\interfaces\\icameratopologyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\services\\interfaces\\icameratopologyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\options\\cameratopologyoptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\options\\cameratopologyoptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.api\\dtos\\camera\\createcamerarequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|solutionrelative:src\\sssp.api\\dtos\\camera\\createcamerarequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\dtos\\tracking\\usertrackingsession.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\dtos\\tracking\\usertrackingsession.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.api\\dtos\\camera\\cameratopologygraphdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|solutionrelative:src\\sssp.api\\dtos\\camera\\cameratopologygraphdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.api\\dtos\\camera\\cameraedgedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|solutionrelative:src\\sssp.api\\dtos\\camera\\cameraedgedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\dtos\\camera\\topologysnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\dtos\\camera\\topologysnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5A859A20-3EF2-4F0F-8486-EB0E941F3A94}|src\\SSSP.DAL\\SSSP.DAL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.dal\\context\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5A859A20-3EF2-4F0F-8486-EB0E941F3A94}|src\\SSSP.DAL\\SSSP.DAL.csproj|solutionrelative:src\\sssp.dal\\context\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.bl\\managers\\interfaces\\ifacetrackingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{10499AAF-3DDB-4EBD-990D-38084417AE6D}|src\\SSSP.BL\\SSSP.BL.csproj|solutionrelative:src\\sssp.bl\\managers\\interfaces\\ifacetrackingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5A859A20-3EF2-4F0F-8486-EB0E941F3A94}|src\\SSSP.DAL\\SSSP.DAL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.dal\\migrations\\20251205005242_added-zone-camera-tbl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5A859A20-3EF2-4F0F-8486-EB0E941F3A94}|src\\SSSP.DAL\\SSSP.DAL.csproj|solutionrelative:src\\sssp.dal\\migrations\\20251205005242_added-zone-camera-tbl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IFaceRecognitionService.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\Interfaces\\IFaceRecognitionService.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Services\\Interfaces\\IFaceRecognitionService.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\Interfaces\\IFaceRecognitionService.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Services\\Interfaces\\IFaceRecognitionService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAsAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T10:04:21.348Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "FaceRecognitionService.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\FaceRecognitionService.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Services\\FaceRecognitionService.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\FaceRecognitionService.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Services\\FaceRecognitionService.cs",
+              "ViewState": "AgIAAJYBAAAAAAAAAAAEwKcBAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T22:08:49.265Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CameraProccessingRouter.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\CameraProccessingRouter.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Services\\CameraProccessingRouter.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\CameraProccessingRouter.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Services\\CameraProccessingRouter.cs",
+              "ViewState": "AgIAAOsAAAAAAAAAAAAAAAEBAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-24T20:14:53.383Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "FaceRecognitionOptions.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Options\\FaceRecognitionOptions.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Options\\FaceRecognitionOptions.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Options\\FaceRecognitionOptions.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Options\\FaceRecognitionOptions.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAA9wBsAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-24T20:39:41.365Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "FaceController.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Controllers\\FaceController.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.Api\\Controllers\\FaceController.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Controllers\\FaceController.cs",
+              "RelativeToolTip": "src\\SSSP.Api\\Controllers\\FaceController.cs",
+              "ViewState": "AgIAANoAAAAAAAAAAAAgwO4AAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T22:10:10.806Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CameraMonitoringWorker.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\CameraMonitoringWorker.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Services\\CameraMonitoringWorker.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\CameraMonitoringWorker.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Services\\CameraMonitoringWorker.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAmwDMAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T10:04:33.562Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\appsettings.json",
+              "RelativeDocumentMoniker": "src\\SSSP.Api\\appsettings.json",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\appsettings.json",
+              "RelativeToolTip": "src\\SSSP.Api\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-04T23:23:26.133Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Program.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.Api\\Program.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Program.cs",
+              "RelativeToolTip": "src\\SSSP.Api\\Program.cs",
+              "ViewState": "AgIAAJsAAAAAAAAAAAAEwLAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-30T16:16:12.046Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "TelemetryEvent.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Records\\TelemetryEvent.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Records\\TelemetryEvent.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Records\\TelemetryEvent.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Records\\TelemetryEvent.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-24T20:58:39.181Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "FaceTrackingManager.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Managers\\FaceTrackingManager.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Managers\\FaceTrackingManager.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Managers\\FaceTrackingManager.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Managers\\FaceTrackingManager.cs",
+              "ViewState": "AgIAAB8BAAAAAAAAAADwvz0BAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-04T23:01:26.782Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "FaceMatchingManager.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Managers\\FaceMatchingManager.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Managers\\FaceMatchingManager.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Managers\\FaceMatchingManager.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Managers\\FaceMatchingManager.cs",
+              "ViewState": "AgIAAOoAAAAAAAAAAAAwwFkBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-24T20:35:50.634Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "FaceProfileCacheMetrics.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Montitoring\\FaceProfileCacheMetrics.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Montitoring\\FaceProfileCacheMetrics.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Montitoring\\FaceProfileCacheMetrics.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Montitoring\\FaceProfileCacheMetrics.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-24T20:35:36.431Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "HybridFaceProfileCache.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\HybridFaceProfileCache.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Services\\HybridFaceProfileCache.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\HybridFaceProfileCache.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Services\\HybridFaceProfileCache.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-24T20:35:26.849Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "CameraController.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Controllers\\CameraController.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.Api\\Controllers\\CameraController.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Controllers\\CameraController.cs",
+              "RelativeToolTip": "src\\SSSP.Api\\Controllers\\CameraController.cs",
+              "ViewState": "AgIAAEACAAAAAAAAAADwv+oCAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-05T01:01:53.227Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "FaceProfileCache.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\FaceProfileCache.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Services\\FaceProfileCache.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\FaceProfileCache.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Services\\FaceProfileCache.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-24T20:35:21.611Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "DistributedFaceProfileCache.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\DistributedFaceProfileCache.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Services\\DistributedFaceProfileCache.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\DistributedFaceProfileCache.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Services\\DistributedFaceProfileCache.cs",
+              "ViewState": "AgIAANIAAAAAAAAAAAAIwPEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-24T20:34:47.317Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "CameraService.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\CameraService.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Services\\CameraService.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\CameraService.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Services\\CameraService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFYAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-24T20:34:26.58Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "FaceProfile.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Models\\FaceProfile.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.DAL\\Models\\FaceProfile.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Models\\FaceProfile.cs",
+              "RelativeToolTip": "src\\SSSP.DAL\\Models\\FaceProfile.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-24T20:33:35.757Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "FaceEmbedding.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Models\\FaceEmbedding.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.DAL\\Models\\FaceEmbedding.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Models\\FaceEmbedding.cs",
+              "RelativeToolTip": "src\\SSSP.DAL\\Models\\FaceEmbedding.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-24T20:33:29.17Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "AIFaceClient.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Infrastructure.AI.Grpc\\Clients\\AIFaceClient.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.Infrastructure.AI.Grpc\\Clients\\AIFaceClient.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Infrastructure.AI.Grpc\\Clients\\AIFaceClient.cs",
+              "RelativeToolTip": "src\\SSSP.Infrastructure.AI.Grpc\\Clients\\AIFaceClient.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-24T20:16:17.628Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Camera.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Models\\Camera.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.DAL\\Models\\Camera.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Models\\Camera.cs",
+              "RelativeToolTip": "src\\SSSP.DAL\\Models\\Camera.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAmwBcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-04T23:02:51.969Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "FaceManagementService.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\FaceManagementService.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Services\\FaceManagementService.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\FaceManagementService.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Services\\FaceManagementService.cs",
+              "ViewState": "AgIAAFIAAAAAAAAAAAAkwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-15T22:08:32.879Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "CameraTopologyOptions.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Options\\CameraTopologyOptions.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Options\\CameraTopologyOptions.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Options\\CameraTopologyOptions.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Options\\CameraTopologyOptions.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAcAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-04T23:22:08.269Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "CreateCameraRequest.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\DTOs\\Camera\\CreateCameraRequest.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.Api\\DTOs\\Camera\\CreateCameraRequest.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\DTOs\\Camera\\CreateCameraRequest.cs",
+              "RelativeToolTip": "src\\SSSP.Api\\DTOs\\Camera\\CreateCameraRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-05T01:02:23.871Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "CameraTopologyService.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\CameraTopologyService.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Services\\CameraTopologyService.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\CameraTopologyService.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Services\\CameraTopologyService.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAQwFsAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-04T23:24:51.238Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "CameraTopologyWarmupService.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Startup\\CameraTopologyWarmupService.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Startup\\CameraTopologyWarmupService.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Startup\\CameraTopologyWarmupService.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Startup\\CameraTopologyWarmupService.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAUwBgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-04T23:47:24.479Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "ICameraTopologyService.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\Interfaces\\ICameraTopologyService.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Services\\Interfaces\\ICameraTopologyService.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\Interfaces\\ICameraTopologyService.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Services\\Interfaces\\ICameraTopologyService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAsAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-04T23:20:39.007Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "TopologyController.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Controllers\\TopologyController.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.Api\\Controllers\\TopologyController.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Controllers\\TopologyController.cs",
+              "RelativeToolTip": "src\\SSSP.Api\\Controllers\\TopologyController.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAwBkAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-05T00:08:40.743Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "20251205005242_added-zone-camera-tbl.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Migrations\\20251205005242_added-zone-camera-tbl.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.DAL\\Migrations\\20251205005242_added-zone-camera-tbl.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Migrations\\20251205005242_added-zone-camera-tbl.cs",
+              "RelativeToolTip": "src\\SSSP.DAL\\Migrations\\20251205005242_added-zone-camera-tbl.cs",
+              "ViewState": "AgIAADQAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-05T00:52:42.758Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "CameraTopologyGraphDTO.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\DTOs\\Camera\\CameraTopologyGraphDTO.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.Api\\DTOs\\Camera\\CameraTopologyGraphDTO.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\DTOs\\Camera\\CameraTopologyGraphDTO.cs",
+              "RelativeToolTip": "src\\SSSP.Api\\DTOs\\Camera\\CameraTopologyGraphDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-05T00:09:22.042Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "CameraEdgeDTO.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\DTOs\\Camera\\CameraEdgeDTO.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.Api\\DTOs\\Camera\\CameraEdgeDTO.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\DTOs\\Camera\\CameraEdgeDTO.cs",
+              "RelativeToolTip": "src\\SSSP.Api\\DTOs\\Camera\\CameraEdgeDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-05T00:36:39.201Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "UserTrackingSession.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\DTOs\\Tracking\\UserTrackingSession.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\DTOs\\Tracking\\UserTrackingSession.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\DTOs\\Tracking\\UserTrackingSession.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\DTOs\\Tracking\\UserTrackingSession.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAswA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-05T00:39:08.44Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "TopologySnapshot.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\DTOs\\Camera\\TopologySnapshot.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\DTOs\\Camera\\TopologySnapshot.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\DTOs\\Camera\\TopologySnapshot.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\DTOs\\Camera\\TopologySnapshot.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAA0wBsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-05T00:31:02.382Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Context\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.DAL\\Context\\AppDbContext.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Context\\AppDbContext.cs",
+              "RelativeToolTip": "src\\SSSP.DAL\\Context\\AppDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-04T23:34:49.18Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "IFaceTrackingManager.cs",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Managers\\Interfaces\\IFaceTrackingManager.cs",
+              "RelativeDocumentMoniker": "src\\SSSP.BL\\Managers\\Interfaces\\IFaceTrackingManager.cs",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Managers\\Interfaces\\IFaceTrackingManager.cs",
+              "RelativeToolTip": "src\\SSSP.BL\\Managers\\Interfaces\\IFaceTrackingManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-04T23:02:28.965Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

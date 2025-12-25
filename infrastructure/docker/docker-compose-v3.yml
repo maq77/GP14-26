@@ -1,0 +1,97 @@
+# ============================================================================
+# SSSP Development Environment
+# Optimized with build cache & hot-reload
+# ============================================================================
+
+#version: '3.9'
+
+services:
+  # ========================================================================
+  # AI Service (Python FastAPI)
+  # ========================================================================
+  ai:
+    container_name: sssp-ai-dev
+    build:
+      context: ../..
+      dockerfile: apps/ai/Dockerfile
+      target: development
+      cache_from:
+        - sssp-ai-dev:cache  # Use build cache
+    image: sssp-ai-dev:latest
+    env_file:
+      - ../../apps/ai/.env
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - GRPC_PORT=50051
+      - API_PORT=8001
+    ports:
+      - "8001:8001"   # REST API
+      - "50051:50051" # gRPC
+    volumes:
+      # Hot-reload (only source code)
+      - ../../apps/ai/src:/app/src:delegated
+      - ../../packages/contracts/python:/app/packages/contracts/python:ro
+      # Persistent data (named volumes)
+      - ai-data:/app/data
+      - ai-cache:/app/cache
+    networks:
+      - sssp-dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ========================================================================
+  # .NET API
+  # ========================================================================
+  api:
+    container_name: sssp-api-dev
+    build:
+      context: ../..
+      dockerfile: apps/api/Dockerfile
+      target: development
+      cache_from:
+        - sssp-api-dev:cache
+    image: sssp-api-dev:latest
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - AiService__RestUrl=http://ai:8001
+      - AiService__GrpcUrl=http://ai:50051
+    ports:
+      - "8080:8080"
+    depends_on:
+      ai:
+        condition: service_healthy
+    volumes:
+      # Hot-reload
+      - ../../apps/api/src:/src/src:delegated
+      - ../../packages/contracts/csharp:/packages/contracts/csharp:ro
+    networks:
+      - sssp-dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# ============================================================================
+# Networks
+# ============================================================================
+networks:
+  sssp-dev:
+    driver: bridge
+    name: sssp-dev-network
+
+# ============================================================================
+# Volumes (Persistent data)
+# ============================================================================
+volumes:
+  ai-data:
+    name: sssp-ai-data
+  ai-cache:
+    name: sssp-ai-cache

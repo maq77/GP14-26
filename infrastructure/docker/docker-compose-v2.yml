@@ -1,0 +1,56 @@
+################################
+# Docker Compose v2 file for  #
+# development of the SSSP project #
+################################
+
+#version: "3.9"
+
+services:
+  ai:
+    container_name: sssp-ai-dev
+    build:
+      context: ../..
+      dockerfile: apps/ai/Dockerfile
+      target: development   # uses the "development" stage (uvicorn --reload on 8001)
+    image: sssp-ai-dev:dev
+    env_file:
+      - ../../apps/ai/.env        # your existing AI env file
+    ports:
+      - "8001:8001"         # REST (FastAPI dev)
+      - "50051:50051"       # gRPC
+    volumes:
+      - ../../apps/ai/src:/app/src              # hot-reload AI code
+      - ../../packages/contracts:/app/contracts
+    networks:
+      - sssp-dev
+
+  api:
+    container_name: sssp-api-dev
+    build:
+      context: ../..
+      dockerfile: apps/api/Dockerfile
+      target: development   # assumes you also have a "development" stage in .NET Dockerfile
+    image: sssp-api-dev:dev
+    environment:
+      # REST endpoint for AI (inside the Docker network)
+      AI__RestUrl: "http://ai:8001"
+
+      # gRPC endpoint for AI (inside the Docker network)
+      AI__GrpcUrl: "http://ai:50051"
+
+      # (optional) other API settings...
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:7127"
+    ports:
+      - "7127:7127"         # change this if your .NET app uses another port
+    depends_on:
+      - ai                  # wait for AI container
+    volumes:
+      - ../../apps/api/src:/app/src              # hot-reload API code
+      #- ../../packages/contracts:/app/contracts
+    networks:
+      - sssp-dev
+
+networks:
+  sssp-dev:
+    driver: bridge

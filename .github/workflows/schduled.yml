@@ -1,0 +1,74 @@
+name: Scheduled Tasks
+
+on:
+  schedule:
+    # Run dependency updates weekly (Monday 9 AM)
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  # ==================================================
+  # Update Dependencies
+  # ==================================================
+  update-dependencies:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Update .NET dependencies
+        run: |
+          cd apps/api
+          dotnet list package --outdated
+          # dotnet outdated -u  # Uncomment to auto-update
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Update Python dependencies
+        run: |
+          pip install pip-upgrader
+          pip-upgrade apps/ai/requirements.txt
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Update Node dependencies
+        run: |
+          cd apps/web
+          npx npm-check-updates -u
+          npm install
+
+      - name: Create PR for updates
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: 'chore: update dependencies'
+          title: 'chore: Weekly dependency updates'
+          body: 'Automated dependency updates'
+          branch: 'dependency-updates'
+          labels: dependencies
+
+  # ==================================================
+  # Security Audit
+  # ==================================================
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run security audit
+        run: |
+          echo "Running security audit..."
+          # Add security scanning tools
