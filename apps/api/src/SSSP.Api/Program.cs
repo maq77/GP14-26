@@ -180,7 +180,7 @@ try
     // =======================================
     // Database
     // =======================================
-    var connectionString = builder.Configuration.GetConnectionString("MyCon")
+    var connectionString = builder.Configuration.GetConnectionString("MyConOnline")  // changed my con to my con online
         ?? throw new InvalidOperationException("Connection string 'MyCon' not found");
 
     builder.Services.AddDbContext<AppDbContext>(options =>
@@ -415,8 +415,11 @@ try
         {
             options.SetEvaluationTimeInSeconds(30);
             options.MaximumHistoryEntriesPerEndpoint(100);
-            options.AddHealthCheckEndpoint("SSSP API - Ready", "/health/ready");
-            options.AddHealthCheckEndpoint("SSSP API - Live", "/health/live");
+            options.AddHealthCheckEndpoint("SSSP API - Ready", "http://api:8080/health/ready");
+            options.AddHealthCheckEndpoint("SSSP API - Live", "http://api:8080/health/live");
+
+            // options.AddHealthCheckEndpoint("SSSP API - Ready", "/health/ready"); //local
+            // options.AddHealthCheckEndpoint("SSSP API - Live", "/health/live");  //local
         })
         .AddInMemoryStorage();
 

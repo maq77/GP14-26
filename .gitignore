@@ -42,10 +42,10 @@ vite.config.timestamp-*.mjs
 # --------------------
 # Python / Backend (apps/ai, etc.)
 # --------------------
-# venv/
-# .venv/
-# **/venv/
-# **/.venv/
+venv/
+.venv/
+**/venv/
+**/.venv/
 __pycache__/
 *.py[cod]
 *.pyo

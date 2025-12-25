@@ -548,7 +548,7 @@ class FaceRecognitionService:
         x, y, w, h = face.bbox
         
         face_dict = {
-            "face_id": 0,  # Will be set by caller
+            # "face_id": 0,  # Will be set by caller
             "bbox": (float(x), float(y), float(w), float(h)),
             "confidence": float(face.confidence),
             "embedding": [float(v) for v in embedding.tolist()],

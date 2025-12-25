@@ -2,16 +2,15 @@
 import grpc
 import structlog
 from typing import Iterator
-from pathlib import Path
-import sys
+# from pathlib import Path
+# import sys
 
 # Import proto definitions
-contracts_path = Path(__file__).resolve().parents[6] / "packages" / "contracts" / "python"
-if str(contracts_path) not in sys.path:
-    sys.path.insert(0, str(contracts_path))
+# contracts_path = Path(__file__).resolve().parents[6] / "packages" / "contracts" / "python"
+# if str(contracts_path) not in sys.path:
+#     sys.path.insert(0, str(contracts_path))
 
-import detection_pb2
-import detection_pb2_grpc
+from packages.contracts.python import detection_pb2, detection_pb2_grpc
 
 # Import business logic
 from ....services.ml.object_detection import ObjectDetectionService

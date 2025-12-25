@@ -1,22 +1,24 @@
 # ==================================================
-# SSSP AI Service - Optimized Multi-Stage
-# Supports: development + production
+# SSSP AI Service - Multi-Stage (Dev / Prod / GPU)
 # ==================================================
 
 ARG PYTHON_VERSION=3.11
 
-# ==================================================
-# Stage 1: Base (System dependencies)
-# ==================================================
+# ---------------------------
+# Stage 1: base OS deps
+# ---------------------------
 FROM python:${PYTHON_VERSION}-slim AS base
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive \
+    # Make imports stable for "src.*" and "packages.*"
+    PYTHONPATH="/app:/app/src:/app/packages/contracts/python"
 
-# Install minimal system dependencies
+WORKDIR /app
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     libgomp1 \
@@ -26,66 +28,61 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxrender1 \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
-# ==================================================
-# Stage 2: Dependencies Builder (Cached layer)
-# ==================================================
+# ---------------------------
+# Stage 2: dependencies (venv cached)
+# ---------------------------
 FROM base AS dependencies
 
-# Install build tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only requirements (for Docker cache)
-COPY apps/ai/requirements.txt .
+COPY apps/ai/requirements.txt /app/requirements.txt
 
-# Install dependencies in virtual environment
 RUN python -m venv /opt/venv && \
     /opt/venv/bin/pip install --upgrade pip wheel && \
-    /opt/venv/bin/pip install -r requirements.txt
+    /opt/venv/bin/pip install \
+    --index-url https://download.pytorch.org/whl/cpu \ 
+    -r /app/requirements.txt
 
-# ==================================================
-# Stage 3: Development (Hot-reload)
-# ==================================================
+# ---------------------------
+# Stage 3: development (hot reload)
+# - Optional libgl1 if you still use opencv-python (non-headless)
+# ---------------------------
 FROM dependencies AS development
 
-ENV PATH="/opt/venv/bin:$PATH"
+ENV PATH="/opt/venv/bin:$PATH" \
+    ENVIRONMENT=development
 
-# Install dev tools
-COPY apps/ai/requirements-dev.txt .
-RUN /opt/venv/bin/pip install -r requirements-dev.txt
-
-WORKDIR /app
-
+# (OPTIONAL) Only if you still use opencv-python (NOT headless)
+# If you switched to opencv-python-headless, you can comment this block.
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    && rm -rf /var/lib/apt/lists/*
 # Create non-root user
 RUN useradd -m -u 1000 sssp && \
     mkdir -p /app/data /app/cache && \
     chown -R sssp:sssp /app
-
 USER sssp
 
 EXPOSE 8001 50051
-
-# Development command (hot-reload)
 CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
 
-# ==================================================
-# Stage 4: Production (Minimal runtime)
-# ==================================================
+# ---------------------------
+# Stage 4: production (minimal)
+# ---------------------------
 FROM base AS production
 
-# Copy only virtual environment (no build tools)
 COPY --from=dependencies /opt/venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+ENV PATH="/opt/venv/bin:$PATH" \
+    ENVIRONMENT=production
 
-# Copy application code
+# Copy code + contracts
 COPY apps/ai/src /app/src
 COPY packages/contracts/python /app/packages/contracts/python
 
-# Create non-root user
 RUN useradd -m -u 1000 sssp && \
     mkdir -p /app/data /app/cache && \
     chown -R sssp:sssp /app
@@ -95,42 +92,38 @@ USER sssp
 EXPOSE 8001 50051
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8001/health || exit 1
+  CMD curl -fsS http://localhost:8001/api/v1/health/startup || exit 1
 
-# Production command (gunicorn)
-CMD ["gunicorn", "src.api.main:app", \
-     "--workers", "4", \
-     "--worker-class", "uvicorn.workers.UvicornWorker", \
-     "--bind", "0.0.0.0:8001", \
-     "--timeout", "120", \
-     "--access-logfile", "-"]
+CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8001"]
 
-# ==================================================
-# Stage 5: GPU Production (NVIDIA CUDA)
-# ==================================================
+# ---------------------------
+# Stage 5: production-gpu (CUDA runtime)
+# ---------------------------
 FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04 AS production-gpu
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
-    PATH="/opt/venv/bin:$PATH"
+    DEBIAN_FRONTEND=noninteractive \
+    PYTHONPATH="/app:/app/src:/app/packages/contracts/python" \
+    PATH="/opt/venv/bin:$PATH" \
+    ENVIRONMENT=production
 
 WORKDIR /app
 
-# Install Python + minimal deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.11 \
     python3-pip \
     curl \
     libgomp1 \
     libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
     && rm -rf /var/lib/apt/lists/* && \
-    ln -s /usr/bin/python3.11 /usr/bin/python
+    ln -sf /usr/bin/python3.11 /usr/bin/python
 
-# Copy virtual environment from builder
 COPY --from=dependencies /opt/venv /opt/venv
-
-# Copy application
 COPY apps/ai/src /app/src
 COPY packages/contracts/python /app/packages/contracts/python
 
@@ -143,12 +136,6 @@ USER sssp
 EXPOSE 8001 50051
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8001/health || exit 1
+  CMD curl -fsS http://localhost:8001/api/v1/health/startup || exit 1
 
-ENV PYTHONPATH=/app
-
-CMD ["uvicorn", "apps.ai.src.api.main:app", \
-     "--workers", "2", \
-     "--worker-class", "uvicorn.workers.UvicornWorker", \
-     "--bind", "0.0.0.0:8001", \
-     "--timeout", "180"]
+CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8001"]
