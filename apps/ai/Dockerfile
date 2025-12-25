@@ -99,7 +99,7 @@ CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8001"]
 # ---------------------------
 # Stage 5: production-gpu (CUDA runtime)
 # ---------------------------
-FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04 AS production-gpu
+FROM nvidia/cuda:13.1.0-runtime-ubuntu22.04 AS production-gpu
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
