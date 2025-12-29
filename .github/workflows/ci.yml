@@ -137,7 +137,7 @@ jobs:
 
       - name: Upload .NET test results
         if: matrix.component == 'api' && always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: dotnet-test-results
           path: coverage/
@@ -176,7 +176,7 @@ jobs:
 
       - name: Upload Python test results
         if: matrix.component == 'ai' && always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: python-test-results
           path: |
@@ -212,7 +212,7 @@ jobs:
 
       - name: Upload Web test results
         if: matrix.component == 'web' && always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: web-test-results
           path: apps/web/coverage/

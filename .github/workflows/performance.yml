@@ -38,7 +38,7 @@ jobs:
           k6 run --vus 50 --duration 3m tests/performance/ai-load-test.js
 
       - name: Upload results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: performance-results
           path: tests/performance/results/
@@ -71,7 +71,7 @@ jobs:
           temporaryPublicStorage: true
 
       - name: Upload Lighthouse results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: lighthouse-results
           path: .lighthouseci/
