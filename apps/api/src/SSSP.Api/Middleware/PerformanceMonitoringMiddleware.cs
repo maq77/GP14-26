@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using static SSSP.Api.Middleware.CorrelationIdMiddleware;
 
 namespace SSSP.Api.Middleware
 {
@@ -20,30 +18,14 @@ namespace SSSP.Api.Middleware
             ILogger<PerformanceMonitoringMiddleware> logger,
             TelemetryClient telemetry)
         {
-            _next = next ?? throw new ArgumentNullException(nameof(next));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _telemetry = telemetry ?? throw new ArgumentNullException(nameof(telemetry));
+            _next = next;
+            _logger = logger;
+            _telemetry = telemetry;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             var sw = Stopwatch.StartNew();
-            var path = context.Request.Path.Value ?? string.Empty;
-            var method = context.Request.Method;
-            long elapsedMs = 0;
-
-            context.Response.OnStarting(() =>
-            {
-                if (!context.Response.HasStarted)
-                {
-                    if (!context.Response.Headers.ContainsKey("X-Response-Time-Ms"))
-                    {
-                        context.Response.Headers.Append("X-Response-Time-Ms", elapsedMs.ToString());
-                    }
-                }
-
-                return Task.CompletedTask;
-            });
 
             try
             {
@@ -52,10 +34,21 @@ namespace SSSP.Api.Middleware
             finally
             {
                 sw.Stop();
-                elapsedMs = sw.ElapsedMilliseconds;
+                var elapsedMs = sw.ElapsedMilliseconds;
 
+                // response header after calculation
+                if (!context.Response.HasStarted)
+                    context.Response.Headers["X-Response-Time-Ms"] = elapsedMs.ToString();
+
+                var path = context.Request.Path.Value ?? string.Empty;
+                var method = context.Request.Method;
                 var statusCode = context.Response.StatusCode;
-                var success = statusCode < 500; 
+                var success = statusCode < 500;
+
+                var correlationId =
+                    context.Items.TryGetValue(ItemName, out var cidObj) && cidObj is string cid && !string.IsNullOrWhiteSpace(cid)
+                        ? cid
+                        : "N/A";
 
                 _telemetry.TrackMetric(
                     "RequestDurationMs",
@@ -65,7 +58,8 @@ namespace SSSP.Api.Middleware
                         ["Method"] = method,
                         ["Path"] = path,
                         ["StatusCode"] = statusCode.ToString(),
-                        ["Success"] = success.ToString()
+                        ["Success"] = success.ToString(),
+                        ["CorrelationId"] = correlationId
                     });
 
                 if (elapsedMs > SLOW_REQUEST_THRESHOLD_MS)
@@ -75,21 +69,19 @@ namespace SSSP.Api.Middleware
                         ["Method"] = method,
                         ["Path"] = path,
                         ["StatusCode"] = statusCode.ToString(),
-                        ["ElapsedMs"] = elapsedMs.ToString()
+                        ["ElapsedMs"] = elapsedMs.ToString(),
+                        ["CorrelationId"] = correlationId
                     });
-                }
 
-                if (elapsedMs > SLOW_REQUEST_THRESHOLD_MS)
-                {
                     _logger.LogWarning(
-                        "SLOW REQUEST. Method={Method}, Path={Path}, StatusCode={StatusCode}, ElapsedMs={ElapsedMs}",
-                        method, path, statusCode, elapsedMs);
+                        "SLOW REQUEST. Method={Method}, Path={Path}, StatusCode={StatusCode}, ElapsedMs={ElapsedMs}, CorrelationId={CorrelationId}",
+                        method, path, statusCode, elapsedMs, correlationId);
                 }
                 else
                 {
                     _logger.LogDebug(
-                        "Request completed. Method={Method}, Path={Path}, StatusCode={StatusCode}, ElapsedMs={ElapsedMs}",
-                        method, path, statusCode, elapsedMs);
+                        "Request completed. Method={Method}, Path={Path}, StatusCode={StatusCode}, ElapsedMs={ElapsedMs}, CorrelationId={CorrelationId}",
+                        method, path, statusCode, elapsedMs, correlationId);
                 }
             }
         }

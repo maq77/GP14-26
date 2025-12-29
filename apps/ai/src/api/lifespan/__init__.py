@@ -2,10 +2,10 @@
 Enterprise-grade lifecycle management system for SSSP AI Service.
 Manages component startup, health monitoring, dependencies, and graceful shutdown.
 """
-from .manager import lifespan
-from .base import BaseLifecycleComponent, ComponentState, ComponentPriority
-from .registry import ComponentRegistry, register_component
-from .health_registry import HealthRegistry, ComponentHealth, HealthStatus
+from api.lifespan.manager import lifespan
+from api.lifespan.base import BaseLifecycleComponent, ComponentState, ComponentPriority
+from api.lifespan.registry import ComponentRegistry, register_component
+from api.lifespan.health_registry import HealthRegistry, ComponentHealth, HealthStatus
 
 __all__ = [
     'LifespanManager',

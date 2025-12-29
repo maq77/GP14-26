@@ -1,4 +1,5 @@
-﻿using SSSP.DAL.Abstractions;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using SSSP.DAL.Abstractions;
 
 namespace SSSP.Infrastructure.Persistence.Interfaces
 {
@@ -12,5 +13,6 @@ namespace SSSP.Infrastructure.Persistence.Interfaces
         Task BeginTransactionAsync(CancellationToken cancellationToken = default);
         Task CommitTransactionAsync(CancellationToken cancellationToken = default);
         Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
+
     }
 }

@@ -7,10 +7,11 @@ Actual gRPC server logic is in api/grpc/server.py
 import structlog
 from typing import Optional
 
-from ..base import BaseLifecycleComponent, ComponentPriority, ComponentState
-from ..registry import register_component
-from ...grpc.server import GRPCServer  # Import the actual server
-from ....core.config import settings
+from src.api.lifespan.base import BaseLifecycleComponent, ComponentPriority, ComponentState
+from src.api.lifespan.registry import register_component
+from src.api.grpc.server import GRPCServer
+from src.core.config import settings
+
 
 logger = structlog.get_logger(__name__)
 

@@ -4,6 +4,7 @@ using SSSP.DAL.Abstractions;
 using SSSP.Infrastructure.Persistence.Interfaces;
 using SSSP.Infrastructure.Persistence.Repos;
 using System.Collections.Concurrent;
+using Microsoft.Extensions.Logging;
 
 namespace SSSP.Infrastructure.Persistence.UnitOfWork
 {
@@ -19,6 +20,7 @@ namespace SSSP.Infrastructure.Persistence.UnitOfWork
         public UnitOfWork(AppDbContext db)
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
+
         }
 
         public IRepository<TEntity, TKey> GetRepository<TEntity, TKey>()

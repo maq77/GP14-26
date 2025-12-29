@@ -3,10 +3,11 @@ from typing import Optional, List
 import numpy as np
 import cv2
 
-from ..schemas.detection import (
-    DetectRequest, DetectResponse
+from src.schemas.detection import (
+    DetectRequest,
+    DetectResponse,
 )
-from ..services.ml.object_detection import ObjectDetectionService
+from src.services.ml.object_detection import ObjectDetectionService
 
 
 class DetectionApp:

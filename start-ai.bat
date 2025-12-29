@@ -25,6 +25,6 @@ echo ================================
 echo.
 
 REM Run Uvicorn
-uvicorn apps.ai.src.api.main:app --reload --port 8001
+uvicorn src.api.main:app --reload --port 8001
 
 pause

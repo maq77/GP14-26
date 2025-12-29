@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using SSSP.BL.Managers;
 using SSSP.BL.Services;
 using SSSP.BL.Services.Interfaces;
@@ -30,9 +32,17 @@ using SSSP.BL.Startup;
 using System.Threading.RateLimiting;
 using SSSP.Api.Middleware;
 using SSSP.Api.Hubs;
-using SSSP.Api.Services;
 using SSSP.BL.Monitoring;
 using Prometheus;
+using Microsoft.AspNetCore.SignalR;
+using SSSP.BL.Realtime.Incidents;
+using SSSP.Api.Realtime;
+using SSSP.Api.Realtime.Outbox;
+using SSSP.Api.Outbox;
+using SSSP.BL.Outbox;
+using SSSP.Api.Services;
+using SSSP.BL.Helpers.Interfaces;
+using SSSP.BL.Telemetry.Incidents;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,6 +91,13 @@ try
     // =======================================
     builder.Services.AddCors(options =>
     {
+        /*options.AddPolicy("AllowFrontend", policy =>
+        {
+            policy.WithOrigins("http://localhost:3000", "http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });*/
         options.AddPolicy("AllowAll", policy =>
         {
             policy.AllowAnyOrigin()
@@ -100,6 +117,8 @@ try
             options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         });
 
+    builder.Services.AddFluentValidationAutoValidation();
+    builder.Services.AddValidatorsFromAssemblyContaining<Program>();
     builder.Services.AddEndpointsApiExplorer();
 
     // =======================================
@@ -257,7 +276,20 @@ try
                 {
                     Log.Debug("JWT token validated for user {User}", context.Principal?.Identity?.Name);
                     return Task.CompletedTask;
-                }
+                },
+                /*OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+                    var path = context.HttpContext.Request.Path;
+
+                    if (!string.IsNullOrEmpty(accessToken) &&
+                        path.StartsWithSegments(SSSP.Api.Hubs.NotificationsHub.HubUrl))
+                    {
+                        context.Token = accessToken;
+                    }
+
+                    return Task.CompletedTask;
+                }*/
             };
         });
 
@@ -312,6 +344,9 @@ try
     // =======================================
     // Repository Pattern
     // =======================================
+    builder.Services.AddHostedService<OutboxDispatcherWorker>();
+    builder.Services.AddScoped<IOutboxWriter, EfOutboxWriter>();
+    builder.Services.AddScoped<IOutboxReader, EfOutboxReader>();
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
     builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
@@ -325,6 +360,8 @@ try
     builder.Services.AddSingleton<IIncidentManager, IncidentManager>();
     builder.Services.AddScoped<IIncidentService, IncidentService>();
     builder.Services.AddSingleton<ICameraTopologyService, CameraTopologyService>();
+    builder.Services.AddSingleton<SSSP.DAL.ValueObjects.IClock, SSSP.DAL.ValueObjects.SystemClock>();
+
 
 
 
@@ -361,7 +398,11 @@ try
     });
 
     // DI of SignalR - Notifiaction System - Realtime
-    builder.Services.AddSingleton<ITrackingNotificationService, TrackingNotificationService>();
+    builder.Services.AddScoped<ITrackingNotificationService, TrackingNotificationService>();
+    builder.Services.AddSingleton<INotificationPublisher, SignalRNotificationPublisher>();
+    builder.Services.AddScoped<IIncidentRealtime, IncidentRealtime>();
+    builder.Services.AddSingleton<IIncidentTelemetry, IncidentTelemetry>();
+
 
     builder.Services.AddScoped<IFaceTrackingManager, FaceTrackingManager>();
     builder.Services.AddScoped<IFaceAutoEnrollmentService, FaceAutoEnrollmentService>();
@@ -387,12 +428,26 @@ try
     // =======================================
     // SignalR
     // =======================================
-    builder.Services.AddSignalR(options =>
+    var signalr = builder.Services.AddSignalR(options =>
     {
         options.EnableDetailedErrors = builder.Environment.IsDevelopment();
         options.KeepAliveInterval = TimeSpan.FromSeconds(15);
         options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+    })
+    .AddJsonProtocol(o =>
+    {
+        o.PayloadSerializerOptions.PropertyNamingPolicy = null;
     });
+
+    //var redisBackplane = builder.Configuration.GetConnectionString("SignalRRedis");
+    //if (!string.IsNullOrWhiteSpace(redisBackplane))
+    //{
+    //    signalr.AddStackExchangeRedis(redisBackplane, opt =>
+    //    {
+    //        opt.Configuration.ChannelPrefix = "SSSP:signalr";
+    //    });
+    //}
+
 
     // =======================================
     // Health Checks
@@ -410,18 +465,28 @@ try
         .AddCheck<CameraMonitoringHealthCheck>("camera_monitoring", tags: new[] { "ready", "cameras" })
         .AddCheck<FaceProfileCacheHealthCheck>("face_cache", tags: new[] { "ready", "cache" });
 
+    var useDockerEndpoints = builder.Configuration
+    .GetValue<bool>("HealthChecks:UseDockerEndpoints", false);
+
     builder.Services
         .AddHealthChecksUI(options =>
         {
             options.SetEvaluationTimeInSeconds(30);
             options.MaximumHistoryEntriesPerEndpoint(100);
-            options.AddHealthCheckEndpoint("SSSP API - Ready", "http://api:8080/health/ready");
-            options.AddHealthCheckEndpoint("SSSP API - Live", "http://api:8080/health/live");
 
-            // options.AddHealthCheckEndpoint("SSSP API - Ready", "/health/ready"); //local
-            // options.AddHealthCheckEndpoint("SSSP API - Live", "/health/live");  //local
+            if (useDockerEndpoints)
+            {
+                options.AddHealthCheckEndpoint("SSSP API - Ready", "http://api:8080/health/ready");
+                options.AddHealthCheckEndpoint("SSSP API - Live", "http://api:8080/health/live");
+            }
+            else
+            {
+                options.AddHealthCheckEndpoint("SSSP API - Ready", "/health/ready");
+                options.AddHealthCheckEndpoint("SSSP API - Live", "/health/live");
+            }
         })
         .AddInMemoryStorage();
+
 
     // =======================================
     // Response Compression
@@ -595,12 +660,13 @@ try
     }
 
     app.UseMiddleware<CorrelationIdMiddleware>();
-    app.UseResponseCompression();
 
-    app.UseRateLimiter();
 
     app.UsePerformanceMonitoring();
     app.UseGlobalExceptionHandler();
+
+    app.UseRateLimiter();
+    app.UseResponseCompression();
 
     app.UseSerilogRequestLogging(options =>
     {
@@ -624,12 +690,14 @@ try
     }
 
     app.UseHttpsRedirection();
+    //app.UseCors("AllowFrontend");
     app.UseCors("AllowAll");
     app.UseAuthentication();
     app.UseAuthorization();
     
     app.MapControllers();
-    app.MapHub<TrackingHub>(TrackingHub.HubUrl);
+    app.MapHub<NotificationsHub>(NotificationsHub.HubUrl);
+    //app.MapHub<TrackingHub>(TrackingHub.HubUrl);
     // Prometheus metrics endpoint (for scraping)
     app.MapMetrics("/metrics");
 
@@ -681,9 +749,9 @@ try
     Log.Information("Listening on: {Urls}", string.Join(", ", app.Urls));
     if (app.Environment.IsDevelopment())
     {
-        Log.Information("Swagger UI: {Url}/swagger", app.Urls.FirstOrDefault() ?? "http://localhost:5000");
+        Log.Information("Swagger UI: {Url}/swagger", app.Urls.FirstOrDefault() ?? "http://localhost:8080");
     }
-    Log.Information("Health UI: {Url}/health-ui", app.Urls.FirstOrDefault() ?? "http://localhost:5000");
+    Log.Information("Health UI: {Url}/health-ui", app.Urls.FirstOrDefault() ?? "http://localhost:8080");
     Log.Information("========================================");
 
     app.Run();

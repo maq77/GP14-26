@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Optional
 import structlog
 from structlog.stdlib import BoundLogger
-from .config import settings
+from core.config import settings
 
 
 def setup_logging() -> BoundLogger:

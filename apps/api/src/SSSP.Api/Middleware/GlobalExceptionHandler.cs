@@ -1,10 +1,10 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.ApplicationInsights;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using static SSSP.Api.Middleware.CorrelationIdMiddleware;
 
 namespace SSSP.Api.Middleware
 {
@@ -32,83 +32,90 @@ namespace SSSP.Api.Middleware
             }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(context, ex);
+                await HandleAsync(context, ex);
             }
         }
 
-        private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private async Task HandleAsync(HttpContext context, Exception ex)
         {
-            var correlationId = Guid.NewGuid().ToString();
+            var correlationId =
+                context.Items.TryGetValue(ItemName, out var cidObj) && cidObj is string cid && !string.IsNullOrWhiteSpace(cid)
+                    ? cid
+                    : (context.TraceIdentifier ?? Guid.NewGuid().ToString("N"));
 
-            _logger.LogError(
-                exception,
-                "Unhandled exception. CorrelationId={CorrelationId}, Path={Path}, Method={Method}, ExceptionType={ExceptionType}",
-                correlationId,
-                context.Request.Path,
-                context.Request.Method,
-                exception.GetType().Name);
+            var traceId = context.TraceIdentifier;
 
-            // Track in Application Insights
-            _telemetry.TrackException(exception, new Dictionary<string, string>
+            var (status, errorCode, title) = Map(ex);
+
+            _logger.LogError(ex,
+                "Unhandled exception. CorrelationId={CorrelationId}, TraceId={TraceId}, Status={Status}, ErrorCode={ErrorCode}, Path={Path}, Method={Method}, ExceptionType={ExceptionType}",
+                correlationId, traceId, (int)status, errorCode, context.Request.Path, context.Request.Method, ex.GetType().Name);
+
+            _telemetry.TrackException(ex, new Dictionary<string, string>
             {
                 ["CorrelationId"] = correlationId,
+                ["TraceId"] = traceId ?? "N/A",
                 ["Path"] = context.Request.Path,
                 ["Method"] = context.Request.Method,
-                ["StatusCode"] = GetStatusCode(exception).ToString()
+                ["StatusCode"] = ((int)status).ToString(),
+                ["ErrorCode"] = errorCode
             });
 
-            var response = new ErrorResponse
+            var problem = new ProblemDetails
             {
-                CorrelationId = correlationId,
-                Message = GetUserFriendlyMessage(exception),
-                Type = exception.GetType().Name,
-                Timestamp = DateTimeOffset.UtcNow
+                Status = (int)status,
+                Title = title,
+                Detail = SafeDetail(ex, status),
+                Instance = context.Request.Path
             };
 
-            var statusCode = GetStatusCode(exception);
+            problem.Extensions["errorCode"] = errorCode;
+            problem.Extensions["correlationId"] = correlationId;
+            problem.Extensions["traceId"] = traceId;
 
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)statusCode;
+            context.Response.StatusCode = (int)status;
+            context.Response.ContentType = "application/problem+json";
 
-            var json = JsonSerializer.Serialize(response, new JsonSerializerOptions
+            await context.Response.WriteAsync(JsonSerializer.Serialize(problem, new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = false
-            });
-
-            await context.Response.WriteAsync(json);
+            }));
         }
 
-        private static string GetUserFriendlyMessage(Exception exception)
+        private static string SafeDetail(Exception ex, HttpStatusCode status)
         {
-            return exception switch
+            // big-company default: hide internal detail for 500 in prod
+            if (status == HttpStatusCode.InternalServerError)
+                return "An unexpected error occurred.";
+
+            return ex.Message;
+        }
+
+        private static (HttpStatusCode Status, string ErrorCode, string Title) Map(Exception ex)
+        {
+            return ex switch
             {
-                ArgumentNullException => "Required parameter is missing",
-                ArgumentException => "Invalid parameter value",
-                InvalidOperationException => "The operation cannot be completed at this time",
-                UnauthorizedAccessException => "You are not authorized to perform this action",
-                _ => "An unexpected error occurred. Please contact support if the problem persists."
-            };
-        }
+                // 404
+                KeyNotFoundException => (HttpStatusCode.NotFound, "not_found", "Resource not found"),
 
-        private static HttpStatusCode GetStatusCode(Exception exception)
-        {
-            return exception switch
-            {
-                ArgumentNullException => HttpStatusCode.BadRequest,
-                ArgumentException => HttpStatusCode.BadRequest,
-                InvalidOperationException => HttpStatusCode.BadRequest,
-                UnauthorizedAccessException => HttpStatusCode.Unauthorized,
-                _ => HttpStatusCode.InternalServerError
-            };
-        }
+                // 400
+                ArgumentNullException => (HttpStatusCode.BadRequest, "argument_null", "Missing required parameter"),
+                ArgumentException => (HttpStatusCode.BadRequest, "invalid_argument", "Invalid parameter value"),
 
-        private sealed record ErrorResponse
-        {
-            public string CorrelationId { get; init; } = string.Empty;
-            public string Message { get; init; } = string.Empty;
-            public string Type { get; init; } = string.Empty;
-            public DateTimeOffset Timestamp { get; init; }
+                // 401/403
+                UnauthorizedAccessException => (HttpStatusCode.Forbidden, "forbidden", "Forbidden"),
+
+                // 409 (state machine / concurrency)
+                InvalidOperationException => (HttpStatusCode.Conflict, "conflict", "Operation not allowed in current state"),
+                DbUpdateConcurrencyException => (HttpStatusCode.Conflict, "concurrency_conflict", "Concurrency conflict"),
+
+                // 503 (optional: timeouts)
+                TimeoutException => (HttpStatusCode.ServiceUnavailable, "timeout", "Service temporarily unavailable"),
+
+                // 500
+                _ => (HttpStatusCode.InternalServerError, "internal_error", "Unexpected error")
+            };
         }
     }
 }

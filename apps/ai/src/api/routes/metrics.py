@@ -5,7 +5,8 @@ Exposes Prometheus-compatible metrics endpoint.
 
 from fastapi import APIRouter, Response
 from prometheus_client import CONTENT_TYPE_LATEST
-from ..metrics.registry import render_prometheus_metrics
+
+from src.api.metrics.registry import render_prometheus_metrics
 
 router = APIRouter(tags=["Metrics"])
 

@@ -8,17 +8,18 @@ from typing import List, Optional
 import numpy as np
 import cv2
 
-from ...core.logging import get_logger, LogContext
-from ...core.exceptions import InvalidImageException, InferenceException
-from ...schemas.detection import (
+from src.core.logging import get_logger, LogContext
+from src.core.exceptions import InvalidImageException, InferenceException
+from src.schemas.detection import (
     DetectRequest,
     DetectResponse,
     DetectBatchRequest,
     DetectBatchResponse,
     Detection,
-    ImageMetadata
+    ImageMetadata,
 )
-from ...models.object.model_loader import get_detector
+from src.models.object.model_loader import get_detector
+
 
 logger = get_logger("object_detection_service")
 
@@ -172,7 +173,7 @@ class ObjectDetectionService:
             Detection response with waste objects only
         """
         # Override target_classes with waste classes
-        from ...core.config import settings
+        from .core.config import settings
         request.target_classes = settings.WASTE_CLASSES
         
         # Lower confidence threshold for waste

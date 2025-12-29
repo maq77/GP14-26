@@ -2,9 +2,9 @@
 import time
 import structlog
 
-from ...core.container import get_detection_app
-from ...schemas.detection import DetectRequest
-from ..metrics.registry import track_inference  
+from src.core.container import get_detection_app
+from src.schemas.detection import DetectRequest
+from src.api.metrics.registry import track_inference
 
 
 router = APIRouter(prefix="/api/v1", tags=["detection"])

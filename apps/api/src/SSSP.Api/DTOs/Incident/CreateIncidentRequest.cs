@@ -1,22 +1,27 @@
-﻿using SSSP.DAL.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using SSSP.DAL.Enums;
 using SSSP.DAL.ValueObjects;
 
-namespace SSSP.Api.DTOs.Incidents
+namespace SSSP.Api.DTOs.Incidents;
+
+public sealed record CreateIncidentRequest
 {
-    public sealed class CreateIncidentRequest
-    {
-        public string Title { get; set; } = string.Empty;
+    [Required]
+    [MaxLength(200)]
+    public string Title { get; init; } = string.Empty;
 
-        public string Description { get; set; } = string.Empty;
+    [MaxLength(2000)]
+    public string? Description { get; init; }
 
-        public IncidentType Type { get; set; } = IncidentType.Other;
+    [Required]
+    public IncidentType Type { get; init; } = IncidentType.Other;
 
-        public IncidentSource Source { get; set; } = IncidentSource.Manual;
+    [Required]
+    public IncidentSource Source { get; init; } = IncidentSource.Manual;
 
-        public int? OperatorId { get; set; }
+    public int? OperatorId { get; init; }
+    public Location? Location { get; init; }
 
-        public Location? Location { get; set; } = new Location();
-
-        public string? PayloadJson { get; set; }
-    }
+    [MaxLength(100_000)]
+    public string? PayloadJson { get; init; }
 }

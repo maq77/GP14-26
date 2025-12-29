@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from typing import Dict, Any
 import structlog
 
-from ..lifespan.health_registry import get_health_registry, HealthStatus
+from src.api.lifespan.health_registry import get_health_registry, HealthStatus
 
 router = APIRouter(prefix="/api/v1/health", tags=["health"])
 logger = structlog.get_logger(__name__)

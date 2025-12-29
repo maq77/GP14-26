@@ -26,6 +26,10 @@ namespace SSSP.Api.Controllers
             [FromBody] CreateIncidentRequest request,
             CancellationToken ct)
         {
+            var idempotencyKey = Request.Headers.TryGetValue("Idempotency-Key", out var v)
+                ? v.ToString()
+                : null;
+
             var incident = await _service.CreateAsync(
                 request.Title,
                 request.Description,
@@ -34,25 +38,37 @@ namespace SSSP.Api.Controllers
                 request.OperatorId,
                 request.Location,
                 request.PayloadJson,
+                idempotencyKey,
                 ct);
 
-            _logger.LogInformation("Incident created via API. Id={Id}, Type={Type}, Severity={Severity}",
-                incident.Id, incident.Type, incident.Severity);
-
             return Ok(ToResponse(incident));
+        }
+
+        [HttpPost("{id:int}/start/{userId:guid}")]
+        public async Task<IActionResult> StartWork(int id, Guid userId, CancellationToken ct)
+        {
+            await _service.StartWorkAsync(id, userId, ct);
+            return Ok();
+        }
+
+        [HttpPost("{id:int}/resolve/{userId:guid}")]
+        public async Task<IActionResult> Resolve(int id, Guid userId, CancellationToken ct)
+        {
+            await _service.ResolveAsync(id, userId, ct);
+            return Ok();
+        }
+
+        [HttpPost("{id:int}/close")]
+        public async Task<IActionResult> Close(int id, CancellationToken ct)
+        {
+            await _service.CloseAsync(id, ct);
+            return Ok();
         }
 
         [HttpPost("{id:int}/assign/{userId:guid}")]
         public async Task<IActionResult> Assign(int id, Guid userId, CancellationToken ct)
         {
             await _service.AssignAsync(id, userId, ct);
-            return Ok();
-        }
-
-        [HttpPost("{id:int}/resolve")]
-        public async Task<IActionResult> Resolve(int id, CancellationToken ct)
-        {
-            await _service.ResolveAsync(id, ct);
             return Ok();
         }
 

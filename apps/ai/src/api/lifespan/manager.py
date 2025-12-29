@@ -14,10 +14,10 @@ Clean and simple - no over-engineering.
 from contextlib import asynccontextmanager
 import structlog
 
-from ...core.config import settings
-from ...models.object.model_loader import get_model_loader
-from ...services.ml.Face_Recognition_Service import FaceRecognitionService
-from ..grpc.server import GRPCServer
+from src.core.config import settings
+from src.models.object.model_loader import get_model_loader
+from src.services.ml.Face_Recognition_Service import FaceRecognitionService
+from src.api.grpc.server import GRPCServer
 
 logger = structlog.get_logger("lifespan")
 

@@ -1,10 +1,9 @@
 from functools import lru_cache
 import inspect
 
-from ..core.config import settings
-from ..application.detction_app import DetectionApp
-
-from ..services.ml.object_detection import ObjectDetectionService
+from src.core.config import settings
+from src.application.detction_app import DetectionApp
+from src.services.ml.object_detection import ObjectDetectionService
 
 
 def _build_detection_service() -> ObjectDetectionService:

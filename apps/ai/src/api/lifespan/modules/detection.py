@@ -27,11 +27,11 @@ from detection_pb2 import (
 )
 from detection_pb2_grpc import DetectionServiceServicer
 
-from ....core.logging import get_logger
-from ....services.ml.object_detection import ObjectDetectionService
-from ....schemas.detection import DetectRequest, DetectBatchRequest
-from ....models.object.model_loader import get_model_loader
-from ....core.config import settings
+from .core.logging import get_logger
+from .services.ml.object_detection import ObjectDetectionService
+from .schemas.detection import DetectRequest, DetectBatchRequest
+from .models.object.model_loader import get_model_loader
+from .core.config import settings
 
 logger = get_logger("detection_servicer")
 

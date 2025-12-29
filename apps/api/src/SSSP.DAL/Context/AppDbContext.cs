@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using SSSP.DAL.Context.Configurations;
 using SSSP.DAL.Enums;
 using SSSP.DAL.Models;
 using System;
+using System.Reflection.Emit;
 
 namespace SSSP.DAL.Context
 {
@@ -26,6 +28,8 @@ namespace SSSP.DAL.Context
 
         // Face Recognition
         public DbSet<FaceProfile> FaceProfiles => Set<FaceProfile>();
+        public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+
 
 
         // ==========================
@@ -43,6 +47,9 @@ namespace SSSP.DAL.Context
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.ApplyConfiguration(new OutboxMessageConfig());
+            builder.ApplyConfiguration(new IncidentConfig());
+
 
             ConfigureEnums(builder);
             ConfigureOwnedTypes(builder);

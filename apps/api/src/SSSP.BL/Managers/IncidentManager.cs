@@ -1,7 +1,6 @@
-﻿using System.Security.Cryptography;
+﻿using SSSP.DAL.Enums;
+using System.Security.Cryptography;
 using System.Text;
-using SSSP.DAL.Enums;
-using SSSP.DAL.Models;
 
 public sealed class IncidentManager : IIncidentManager
 {
@@ -16,22 +15,13 @@ public sealed class IncidentManager : IIncidentManager
         _ => IncidentSeverity.Low
     };
 
-    public IncidentStatus InitialStatus(IncidentSource source) => source switch
-    {
-        IncidentSource.AIDetection => IncidentStatus.Open,
-        IncidentSource.Sensor => IncidentStatus.Open,
-        IncidentSource.Manual => IncidentStatus.Assigned,
-        IncidentSource.CitizenReport => IncidentStatus.Open,
-        _ => IncidentStatus.Open
-    };
+    public IncidentStatus InitialStatus(IncidentSource source)
+        => IncidentStatus.Open;
 
-    public string BuildDedupeKey(Incident incident)
+    public string BuildDedupeKey(IncidentType type, IncidentSource source, int? operatorId, DateTime timestampUtc)
     {
-        var raw =
-            $"{incident.Type}|{incident.Source}|{incident.OperatorId}|{incident.Timestamp:yyyyMMddHH}";
-
+        var raw = $"{type}|{source}|{operatorId}|{timestampUtc:yyyyMMddHHmm}";
         using var sha = SHA256.Create();
-        return Convert.ToHexString(
-            sha.ComputeHash(Encoding.UTF8.GetBytes(raw)));
+        return Convert.ToHexString(sha.ComputeHash(Encoding.UTF8.GetBytes(raw)));
     }
 }

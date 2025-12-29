@@ -1,7 +1,7 @@
 """Component registry for automatic discovery and registration."""
 from typing import List, Type, Dict, Set, Optional
 import structlog
-from .base import BaseLifecycleComponent
+from src.api.lifespan.base import BaseLifecycleComponent
 
 logger = structlog.get_logger(__name__)
 

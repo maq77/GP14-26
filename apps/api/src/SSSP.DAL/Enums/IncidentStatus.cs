@@ -8,9 +8,9 @@ namespace SSSP.DAL.Enums;
 
 public enum IncidentStatus
 {
-    Open = 1,
-    Assigned = 2,
-    InProgress = 3,
-    Resolved = 4,
-    Closed = 5
+    Open = 0,
+    Assigned = 1,
+    InProgress = 2,
+    Resolved = 3,
+    Closed = 4
 }

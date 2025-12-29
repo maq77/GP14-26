@@ -96,6 +96,7 @@ obj/
 *.dll
 *.exe
 *.pdb
+.vs/
 
 # --------------------
 # Misc / Archives

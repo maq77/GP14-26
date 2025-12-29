@@ -16,16 +16,16 @@ All higher-level business logic (recognize, verify, enroll, etc.)
 is implemented in .NET and NOT in this AI service.
 """
 
-# import sys
-# from pathlib import Path
 import grpc
 from concurrent import futures
 import structlog
 from typing import Optional
-
-import grpc
-import structlog
-from ..lifespan.health_registry import get_health_registry, HealthStatus
+from src.api.lifespan.health_registry import get_health_registry, HealthStatus
+from src.api.grpc.servicers.detection_servicer import DetectionServicer
+from src.api.grpc.servicers.face_servicer import FaceServicer
+from src.api.grpc.servicers.video_stream_servicer import VideoStreamService
+from src.services.ml.Face_Recognition_Service import FaceRecognitionService
+from src.core.config import settings
 
 # ---------------------------------------------------------------------------
 # Sys.path setup so generated protobufs & packages are importable
@@ -45,25 +45,14 @@ from ..lifespan.health_registry import get_health_registry, HealthStatus
 # ---------------------------------------------------------------------------
 
 # Detection service (compiled with python_package = "sssp.ai.detection" most likely)
-from packages.contracts.python.detection_pb2_grpc import add_DetectionServiceServicer_to_server
+from detection_pb2_grpc import add_DetectionServiceServicer_to_server
 
 # Face service (no BL here – only low-level ML endpoints are implemented)
-from packages.contracts.python.face_pb2_grpc import add_FaceServiceServicer_to_server
+from face_pb2_grpc import add_FaceServiceServicer_to_server
 
 
 # Video stream service for live frames + embeddings
-from packages.contracts.python.video_stream_pb2_grpc import add_VideoStreamServiceServicer_to_server
-
-
-# ---------------------------------------------------------------------------
-# Servicers & ML service
-# ---------------------------------------------------------------------------
-
-from .servicers.detection_servicer import DetectionServicer
-from .servicers.face_servicer import FaceServicer
-from .servicers.video_stream_servicer import VideoStreamService
-from ...services.ml.Face_Recognition_Service import FaceRecognitionService
-from ...core.config import settings
+from video_stream_pb2_grpc import add_VideoStreamServiceServicer_to_server
 
 logger = structlog.get_logger("grpc_server")
 

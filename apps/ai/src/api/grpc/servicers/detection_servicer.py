@@ -13,8 +13,8 @@ from typing import Iterator
 from packages.contracts.python import detection_pb2, detection_pb2_grpc
 
 # Import business logic
-from ....services.ml.object_detection import ObjectDetectionService
-from ....core.exceptions import ModelNotLoadedException, InferenceException
+from src.services.ml.object_detection import ObjectDetectionService
+from src.core.exceptions import ModelNotLoadedException, InferenceException
 
 logger = structlog.get_logger("grpc.detection_servicer")
 

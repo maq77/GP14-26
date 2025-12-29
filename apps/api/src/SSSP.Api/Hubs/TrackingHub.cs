@@ -1,23 +1,37 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 
+namespace SSSP.Api.Hubs;
 
-namespace SSSP.Api.Hubs
+//[Authorize] 
+public sealed class TrackingHub : Hub
 {
-    public class TrackingHub : Hub
+    public const string HubUrl = "/hubs/tracking";
+
+    public override async Task OnConnectedAsync()
     {
-        public const string HubUrl = "/hubs/tracking";
+        var userIdStr = Context.User?.FindFirstValue(ClaimTypes.NameIdentifier);
 
-
-        public async Task Subscribe(string cameraId)
+        if (Guid.TryParse(userIdStr, out var userId))
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, cameraId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"user:{userId}");
         }
 
+        await base.OnConnectedAsync();
+    }
 
-        public async Task Unsubscribe(string cameraId)
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        var userIdStr = Context.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (Guid.TryParse(userIdStr, out var userId))
         {
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, cameraId);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"user:{userId}");
         }
+
+        await base.OnDisconnectedAsync(exception);
     }
 }
