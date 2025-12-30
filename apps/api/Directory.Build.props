@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  Directory.Build.props
+  Applied to ALL projects in this directory and subdirectories
+  Place at: apps/api/Directory.Build.props (same level as SSSP.sln)
+-->
+<Project>
+  <!-- =================================================================== -->
+  <!-- Common Properties for All Projects -->
+  <!-- =================================================================== -->
+  <PropertyGroup>
+    <!-- Disable implicit NuGet fallback folders (Windows-specific paths) -->
+    <RestoreFallbackFolders></RestoreFallbackFolders>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    
+    <!-- Disable default items that might cause issues -->
+    <EnableDefaultItems>true</EnableDefaultItems>
+    
+    <!-- Improve build performance -->
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+    <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
+    
+    <!-- Code Analysis -->
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    
+    <!-- Deterministic builds for better caching -->
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <!-- =================================================================== -->
+  <!-- NuGet Package Settings -->
+  <!-- =================================================================== -->
+  <PropertyGroup>
+    <!-- Authors and Company Info -->
+    <Authors>SSSP Team</Authors>
+    <Company>SSSP</Company>
+    <Product>SSSP</Product>
+    
+    <!-- Versioning -->
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix Condition="'$(Configuration)' == 'Debug'">dev</VersionSuffix>
+    
+    <!-- Package Settings -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <!-- =================================================================== -->
+  <!-- Build Output Settings -->
+  <!-- =================================================================== -->
+  <PropertyGroup>
+    <!-- Centralize build outputs (optional) -->
+    <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">$(MSBuildProjectDirectory)/obj</BaseIntermediateOutputPath>
+    <BaseOutputPath Condition="'$(BaseOutputPath)' == ''">$(MSBuildProjectDirectory)/bin</BaseOutputPath>
+  </PropertyGroup>
+
+  <!-- =================================================================== -->
+  <!-- Development Environment Settings -->
+  <!-- =================================================================== -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <!-- Enable detailed build logs in development -->
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <!-- =================================================================== -->
+  <!-- Production Environment Settings -->
+  <!-- =================================================================== -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <!-- Optimize for production -->
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- =================================================================== -->
+  <!-- Warning Suppressions -->
+  <!-- =================================================================== -->
+  <PropertyGroup>
+    <!-- Suppress specific warnings if needed -->
+    <!-- <NoWarn>$(NoWarn);CS1591</NoWarn> --> <!-- Missing XML comment -->
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,152 @@
+version: "3.9"
+
+services:
+  # ===========================================================================
+  # AI Service
+  # ===========================================================================
+  ai:
+    container_name: sssp-ai-dev
+    build:
+      context: ../..
+      dockerfile: apps/ai/Dockerfile
+      target: development
+      cache_from:
+        - sssp-ai-dev:latest
+    image: sssp-ai-dev:latest
+    env_file:
+      - ../../apps/ai/.env
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+      - DEBUG=true
+      - GRPC_HOST=0.0.0.0
+      - GRPC_PORT=50051
+      - API_PORT=8001
+      - PYTHONPATH=/app:/app/src:/app/packages/contracts/python
+      - WATCHFILES_FORCE_POLLING=true
+    ports:
+      - "8001:8001"
+      - "50051:50051"
+    volumes:
+      # Source code with delegated consistency for better performance
+      - ../../apps/ai/src:/app/src:delegated
+      - ../../packages/contracts/python:/app/packages/contracts/python:ro
+      
+      # Persistent data volumes
+      - ai-data:/app/data
+      - ai-cache:/app/cache
+      
+      # Exclude Python cache directories
+      - /app/src/__pycache__
+      - /app/.pytest_cache
+    networks:
+      - sssp-dev
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8001/api/v1/health/startup"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================================================
+  # API Service (.NET)
+  # ===========================================================================
+  api:
+    container_name: sssp-api-dev
+    build:
+      context: ../..
+      dockerfile: apps/api/Dockerfile
+      target: development
+      cache_from:
+        - sssp-api-dev:latest
+    image: sssp-api-dev:latest
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      
+      # Service URLs
+      - AI__RestUrl=http://ai:8001
+      - AI__GrpcUrl=http://ai:50051
+      
+      # Disable file watcher browser refresh in container
+      - DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=true
+    ports:
+      - "8080:8080"
+    depends_on:
+      ai:
+        condition: service_healthy
+    volumes:
+      # Source code with delegated consistency
+      - ../../apps/api/src:/src/src:delegated
+      - ../../packages/contracts/csharp:/packages/contracts/csharp:ro
+      
+      # NuGet configuration
+      - ../../apps/api/NuGet.Docker.Config:/root/.nuget/NuGet/NuGet.Config:ro
+      
+      # Persistent NuGet packages (shared across rebuilds)
+      - nuget-packages:/root/.nuget/packages
+      - nuget-http-cache:/root/.local/share/NuGet/v3-cache
+      
+      # CRITICAL: Exclude obj/bin directories to prevent Windows/Linux conflicts
+      # These anonymous volumes override the source mount for these directories
+      - /src/src/SSSP.Api/obj
+      - /src/src/SSSP.Api/bin
+      - /src/src/SSSP.BL/obj
+      - /src/src/SSSP.BL/bin
+      - /src/src/SSSP.DAL/obj
+      - /src/src/SSSP.DAL/bin
+      - /src/src/SSSP.Infrastructure.AI.Grpc/obj
+      - /src/src/SSSP.Infrastructure.AI.Grpc/bin
+      - /src/src/SSSP.Infrastructure.Persistence/obj
+      - /src/src/SSSP.Infrastructure.Persistence/bin
+    networks:
+      - sssp-dev
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  sssp-dev:
+    driver: bridge
+    name: sssp-dev-network
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  # AI Service volumes
+  ai-data:
+    name: sssp-ai-data
+    driver: local
+  ai-cache:
+    name: sssp-ai-cache
+    driver: local
+
+  # .NET API volumes
+  nuget-packages:
+    name: sssp-nuget-packages
+    driver: local
+  nuget-http-cache:
+    name: sssp-nuget-http-cache
+    driver: local

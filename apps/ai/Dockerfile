@@ -1,12 +1,7 @@
-# ==================================================
-# SSSP AI Service - CPU, Full OpenCV (libGL)
-# ==================================================
-ARG PYTHON_VERSION=3.11
-
 # ---------------------------
-# Stage 1: base OS deps
+# Stage 1: base OS deps for AI Service
 # ---------------------------
-FROM python:${PYTHON_VERSION}-slim AS base
+FROM python:3.11-slim AS base
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -17,7 +12,7 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
-# System deps including libGL & X libs for full OpenCV
+# Install system dependencies including libGL & X libs for full OpenCV
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     build-essential \
@@ -41,8 +36,7 @@ COPY apps/ai/requirements.txt /app/requirements.txt
 RUN python -m venv /opt/venv && \
     /opt/venv/bin/pip install --upgrade pip wheel
 
-# Optional: install torch/torchvision explicitly from CPU index
-# (If this fails, build continues and pip will use PyPI for them)
+# Install PyTorch and other dependencies
 RUN /opt/venv/bin/pip install \
     --index-url https://download.pytorch.org/whl/cpu \
     torch==2.9.1+cpu \

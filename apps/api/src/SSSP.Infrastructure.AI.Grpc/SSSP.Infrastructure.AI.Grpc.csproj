@@ -4,6 +4,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <RestoreFallbackFolders></RestoreFallbackFolders>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
 	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.33.1" />

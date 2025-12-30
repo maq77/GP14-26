@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "M:\\SSSP\\GP14-26\\apps\\api\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.api\\sssp.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|solutionrelative:src\\sssp.api\\sssp.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|solutionrelative:src\\sssp.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -199,10 +203,6 @@
       "RelativeMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|solutionrelative:src\\sssp.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.api\\sssp.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{3883C13A-2292-4885-AC4C-1578AA90D4EB}|src\\SSSP.Api\\SSSP.Api.csproj|solutionrelative:src\\sssp.api\\sssp.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5A859A20-3EF2-4F0F-8486-EB0E941F3A94}|src\\SSSP.DAL\\SSSP.DAL.csproj|m:\\sssp\\gp14-26\\apps\\api\\src\\sssp.dal\\valueobjects\\location.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5A859A20-3EF2-4F0F-8486-EB0E941F3A94}|src\\SSSP.DAL\\SSSP.DAL.csproj|solutionrelative:src\\sssp.dal\\valueobjects\\location.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -394,7 +394,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -406,7 +406,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "sssp-20251227.log",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\logs\\sssp-20251227.log",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\logs\\sssp-20251227.log",
@@ -414,12 +414,11 @@
               "RelativeToolTip": "src\\SSSP.Api\\logs\\sssp-20251227.log",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-12-29T01:13:23.892Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-29T01:13:23.892Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "SignalRNotificationPublisher.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Realtime\\SignalRNotificationPublisher.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Realtime\\SignalRNotificationPublisher.cs",
@@ -427,12 +426,11 @@
               "RelativeToolTip": "src\\SSSP.Api\\Realtime\\SignalRNotificationPublisher.cs",
               "ViewState": "AgIAAFoAAAAAAAAAAAAAAGwAAABXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-26T14:14:28.482Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-26T14:14:28.482Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "INotificationsClient.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Realtime\\INotificationsClient.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Realtime\\INotificationsClient.cs",
@@ -444,7 +442,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "INotificationPublisher.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Realtime\\INotificationPublisher.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Realtime\\INotificationPublisher.cs",
@@ -456,7 +454,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "appsettings.json",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\appsettings.json",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\appsettings.json",
@@ -464,25 +462,37 @@
               "RelativeToolTip": "src\\SSSP.Api\\appsettings.json",
               "ViewState": "AgIAACoAAAAAAAAAAAAAADoAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-12-04T23:23:26.133Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-04T23:23:26.133Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Program.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Program.cs",
-              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Program.cs*",
-              "RelativeToolTip": "src\\SSSP.Api\\Program.cs*",
-              "ViewState": "AgIAAMcBAAAAAAAAAAAQwOQBAABIAAAAAAAAAA==",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Program.cs",
+              "RelativeToolTip": "src\\SSSP.Api\\Program.cs",
+              "ViewState": "AgIAAM0BAAAAAAAAAAAQwNwBAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-30T16:16:12.046Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
+              "Title": "SSSP.Api.csproj",
+              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\SSSP.Api.csproj",
+              "RelativeDocumentMoniker": "src\\SSSP.Api\\SSSP.Api.csproj",
+              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\SSSP.Api.csproj",
+              "RelativeToolTip": "src\\SSSP.Api\\SSSP.Api.csproj",
+              "ViewState": "AgIAABgAAAAAAAAAAAAqwDcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-12-26T14:23:32.449Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "IncidentResponse.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\DTOs\\Incident\\IncidentResponse.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\DTOs\\Incident\\IncidentResponse.cs",
@@ -494,7 +504,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "IncidentRealtime.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Realtime\\Incidents\\IncidentRealtime.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Realtime\\Incidents\\IncidentRealtime.cs",
@@ -506,7 +516,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "OutboxDispatcherWorker.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Outbox\\OutboxDispatcherWorker.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Outbox\\OutboxDispatcherWorker.cs",
@@ -518,7 +528,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "RealtimeEnvelope.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Realtime\\Contracts\\RealtimeEnvelope.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Realtime\\Contracts\\RealtimeEnvelope.cs",
@@ -530,7 +540,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "CameraEvents.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Realtime\\Cameras\\CameraEvents.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Realtime\\Cameras\\CameraEvents.cs",
@@ -542,7 +552,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "FaceEvents.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Realtime\\Faces\\FaceEvents.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Realtime\\Faces\\FaceEvents.cs",
@@ -554,7 +564,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "SystemEvents.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Realtime\\System\\SystemEvents.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Realtime\\System\\SystemEvents.cs",
@@ -566,7 +576,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "SensorEvents.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Realtime\\Sensors\\SensorEvents.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Realtime\\Sensors\\SensorEvents.cs",
@@ -578,7 +588,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "IncidentTopics.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Realtime\\Incidents\\IncidentTopics.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Realtime\\Incidents\\IncidentTopics.cs",
@@ -590,7 +600,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "NotificationsHub.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Hubs\\NotificationsHub.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Hubs\\NotificationsHub.cs",
@@ -602,7 +612,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "JsonPayload.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Realtime\\JsonPayload.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Realtime\\JsonPayload.cs",
@@ -614,7 +624,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "Groups.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Realtime\\Groups\\Groups.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Realtime\\Groups\\Groups.cs",
@@ -626,7 +636,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 20,
               "Title": "OutboxMessage.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Models\\OutboxMessage.cs",
               "RelativeDocumentMoniker": "src\\SSSP.DAL\\Models\\OutboxMessage.cs",
@@ -638,7 +648,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 21,
               "Title": "Incident.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Models\\Incident.cs",
               "RelativeDocumentMoniker": "src\\SSSP.DAL\\Models\\Incident.cs",
@@ -650,7 +660,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "IncidentStatus.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Enums\\IncidentStatus.cs",
               "RelativeDocumentMoniker": "src\\SSSP.DAL\\Enums\\IncidentStatus.cs",
@@ -662,7 +672,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "TrackingNotificationService.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Services\\TrackingNotificationService.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Services\\TrackingNotificationService.cs",
@@ -674,7 +684,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 23,
               "Title": "TrackingHub.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Hubs\\TrackingHub.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Hubs\\TrackingHub.cs",
@@ -698,7 +708,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 24,
               "Title": "SSSP.Infrastructure.AI.Grpc.csproj",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Infrastructure.AI.Grpc\\SSSP.Infrastructure.AI.Grpc.csproj",
               "RelativeDocumentMoniker": "src\\SSSP.Infrastructure.AI.Grpc\\SSSP.Infrastructure.AI.Grpc.csproj",
@@ -706,11 +716,12 @@
               "RelativeToolTip": "src\\SSSP.Infrastructure.AI.Grpc\\SSSP.Infrastructure.AI.Grpc.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-12-26T20:57:57.703Z"
+              "WhenOpened": "2025-12-26T20:57:57.703Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 25,
               "Title": "AppDbContextFactory.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Context\\AppDbContextFactory.cs",
               "RelativeDocumentMoniker": "src\\SSSP.DAL\\Context\\AppDbContextFactory.cs",
@@ -722,7 +733,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 26,
               "Title": "SSSP.DAL.csproj",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\SSSP.DAL.csproj",
               "RelativeDocumentMoniker": "src\\SSSP.DAL\\SSSP.DAL.csproj",
@@ -730,11 +741,12 @@
               "RelativeToolTip": "src\\SSSP.DAL\\SSSP.DAL.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-12-26T20:53:46.107Z"
+              "WhenOpened": "2025-12-26T20:53:46.107Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 28,
               "Title": "UserTrackedNotification.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\DTOs\\Tracking\\UserTrackedNotification.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\DTOs\\Tracking\\UserTrackedNotification.cs",
@@ -746,7 +758,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 27,
               "Title": "UserTrackingSession.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\DTOs\\Tracking\\UserTrackingSession.cs",
               "RelativeDocumentMoniker": "src\\SSSP.BL\\DTOs\\Tracking\\UserTrackingSession.cs",
@@ -758,7 +770,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 31,
               "Title": "IncidentService.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Services\\IncidentService.cs",
               "RelativeDocumentMoniker": "src\\SSSP.BL\\Services\\IncidentService.cs",
@@ -770,7 +782,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 29,
               "Title": "UnitOfWork.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Infrastructure.Persistence\\UnitIfWork\\UnitOfWork.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Infrastructure.Persistence\\UnitIfWork\\UnitOfWork.cs",
@@ -782,7 +794,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 30,
               "Title": "IUnitOfWork.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Infrastructure.Persistence\\Interfaces\\IUnitOfWork.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Infrastructure.Persistence\\Interfaces\\IUnitOfWork.cs",
@@ -794,7 +806,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 32,
               "Title": "EfOutboxReader.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Outbox\\EfOutboxReader.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Outbox\\EfOutboxReader.cs",
@@ -806,7 +818,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 33,
               "Title": "EfOutboxWriter.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Outbox\\EfOutboxWriter.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Outbox\\EfOutboxWriter.cs",
@@ -818,7 +830,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 34,
               "Title": "IOutboxReader.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Outbox\\IOutboxReader.cs",
               "RelativeDocumentMoniker": "src\\SSSP.BL\\Outbox\\IOutboxReader.cs",
@@ -830,7 +842,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 35,
               "Title": "IncidentConfig.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Context\\Configurations\\IncidentConfig.cs",
               "RelativeDocumentMoniker": "src\\SSSP.DAL\\Context\\Configurations\\IncidentConfig.cs",
@@ -842,7 +854,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 37,
               "Title": "Role.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Models\\Role.cs",
               "RelativeDocumentMoniker": "src\\SSSP.DAL\\Models\\Role.cs",
@@ -854,7 +866,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 36,
               "Title": "OutboxMessageConfig.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Context\\Configurations\\OutboxMessageConfig.cs",
               "RelativeDocumentMoniker": "src\\SSSP.DAL\\Context\\Configurations\\OutboxMessageConfig.cs",
@@ -866,7 +878,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 38,
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Context\\AppDbContext.cs",
               "RelativeDocumentMoniker": "src\\SSSP.DAL\\Context\\AppDbContext.cs",
@@ -878,7 +890,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 40,
               "Title": "IRepository.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Infrastructure.Persistence\\Interfaces\\IRepository.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Infrastructure.Persistence\\Interfaces\\IRepository.cs",
@@ -890,7 +902,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 39,
               "Title": "20251226133524_updated-tbls-incident.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.DAL\\Migrations\\20251226133524_updated-tbls-incident.cs",
               "RelativeDocumentMoniker": "src\\SSSP.DAL\\Migrations\\20251226133524_updated-tbls-incident.cs",
@@ -902,7 +914,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 41,
               "Title": "OutboxPublisher.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Outbox\\OutboxPublisher.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Outbox\\OutboxPublisher.cs",
@@ -914,7 +926,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 42,
               "Title": "IOutboxWriter.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Outbox\\IOutboxWriter.cs",
               "RelativeDocumentMoniker": "src\\SSSP.BL\\Outbox\\IOutboxWriter.cs",
@@ -926,7 +938,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 43,
               "Title": "IncidentTelemetry.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Telemetry\\Incidents\\IncidentTelemetry.cs",
               "RelativeDocumentMoniker": "src\\SSSP.BL\\Telemetry\\Incidents\\IncidentTelemetry.cs",
@@ -938,7 +950,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 44,
               "Title": "IIncidentTelemetry.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Telemetry\\Incidents\\IIncidentTelemetry.cs",
               "RelativeDocumentMoniker": "src\\SSSP.BL\\Telemetry\\Incidents\\IIncidentTelemetry.cs",
@@ -950,7 +962,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 45,
               "Title": "IIncidentRealtime.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.BL\\Realtime\\Incidents\\IIncidentRealtime.cs",
               "RelativeDocumentMoniker": "src\\SSSP.BL\\Realtime\\Incidents\\IIncidentRealtime.cs",
@@ -962,7 +974,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 46,
               "Title": "CreateIncidentRequest.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\DTOs\\Incident\\CreateIncidentRequest.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\DTOs\\Incident\\CreateIncidentRequest.cs",
@@ -974,7 +986,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 47,
               "Title": "UserController.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Controllers\\UserController.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Controllers\\UserController.cs",
@@ -986,7 +998,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 48,
               "Title": "AdminController.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Controllers\\AdminController.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Controllers\\AdminController.cs",
@@ -998,7 +1010,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 49,
               "Title": "AuthController.cs",
               "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "src\\SSSP.Api\\Controllers\\AuthController.cs",
@@ -1007,18 +1019,6 @@
               "ViewState": "AgIAAC8AAAAAAAAAAAAwwFMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-26T17:47:51.642Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 49,
-              "Title": "SSSP.Api.csproj",
-              "DocumentMoniker": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\SSSP.Api.csproj",
-              "RelativeDocumentMoniker": "src\\SSSP.Api\\SSSP.Api.csproj",
-              "ToolTip": "M:\\SSSP\\GP14-26\\apps\\api\\src\\SSSP.Api\\SSSP.Api.csproj",
-              "RelativeToolTip": "src\\SSSP.Api\\SSSP.Api.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-12-26T14:23:32.449Z"
             },
             {
               "$type": "Document",

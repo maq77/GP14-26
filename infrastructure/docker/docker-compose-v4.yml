@@ -1,0 +1,87 @@
+services:
+  # ===========================================================================
+  # AI Service
+  # ===========================================================================
+  ai:
+    container_name: sssp-ai-dev
+    build:
+      context: ../..
+      dockerfile: apps/ai/Dockerfile
+      target: development
+    image: sssp-ai-dev:latest
+    env_file:
+      - ../../apps/ai/.env
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+      - DEBUG=true
+      - GRPC_HOST=0.0.0.0
+      - GRPC_PORT=50051
+      - API_PORT=8001
+      - PYTHONPATH=/app:/app/src:/app/packages/contracts/python
+      - WATCHFILES_FORCE_POLLING=true
+    ports:
+      - "8001:8001"
+      - "50051:50051"
+    volumes:
+      - ../../apps/ai/src:/app/src
+      - ../../packages/contracts/python:/app/packages/contracts/python:ro
+      - ai-data:/app/data
+      - ai-cache:/app/cache
+    networks:
+      - sssp-dev
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8001/api/v1/health/startup"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    restart: unless-stopped
+
+  # ===========================================================================
+  # API Service (.NET)
+  # ===========================================================================
+  api:
+    container_name: sssp-api-dev
+    build:
+      context: ../..
+      dockerfile: apps/api/Dockerfile
+      target: development
+    image: sssp-api-dev:latest
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - AI__RestUrl=http://ai:8001
+      - AI__GrpcUrl=http://ai:50051
+      - DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH=true
+    ports:
+      - "8080:8080"
+    depends_on:
+      ai:
+        condition: service_healthy
+    volumes:
+      - ../../apps/api/src:/src/src
+      - ../../packages/contracts/csharp:/packages/contracts/csharp:ro
+    networks:
+      - sssp-dev
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  sssp-dev:
+    driver: bridge
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  ai-data:
+  ai-cache:
