@@ -1,0 +1,142 @@
+You are a research assistant helping me select datasets for an AI system that predicts air quality 6h/12h/24h ahead and generates (1) health recommendations and (2) policy recommendations (government).
+
+Goal:
+- Primary target locations: Cairo (Egypt) and Zagazig (Egypt) — prioritize any dataset that contains these cities or nearby stations.
+- Also require global coverage to train a generalized model.
+- Pollutants needed (hourly preferred): PM2.5, PM10, NO2, O3, SO2, CO (plus any extra like temperature, humidity, wind if available).
+- Need historical data long enough for ML (ideally years), and preferably near-real-time updates for deployment.
+- I can combine multiple sources (ground stations + reanalysis/satellite + weather).
+
+Tasks:
+1) Find and list the best candidate datasets/APIs that provide the pollutants above globally (station-level or gridded), and explicitly confirm whether Cairo and Zagazig appear (or the nearest available stations/coverage).
+2) For each candidate, extract:
+   - Provider + dataset name
+   - Coverage (global/region), spatial resolution (station vs grid + grid size), temporal resolution (hourly/daily), historical span (start–end)
+   - Pollutants included (PM2.5/PM10/NO2/O3/SO2/CO)
+   - Access method (API/bulk download), rate limits, cost (free/paid), and license/terms (commercial allowed?)
+   - Data quality notes (official monitors vs low-cost sensors, QA flags, missingness)
+   - Direct citation/links to official documentation pages
+3) Build a recommended “data stack” for my use case:
+   - A) Global training baseline dataset(s)
+   - B) Egypt-specific / Cairo+Zagazig enhancement dataset(s)
+   - C) Deployment-time data sources (real-time / near-real-time)
+4) Provide a final ranked recommendation with rationale and risks (e.g., Zagazig data scarcity, licensing restrictions, station coverage gaps).
+
+Output format:
+- Start with a ranked table (top 8–12 sources).
+- Then a short “recommended architecture” section (how to fuse sources for 6/12/24h forecasting).
+- Include citations for every non-trivial claim.
+Use web browsing. Prefer official documentation and reputable sources over blogs.
+
+
+
+
+
+
+
+
+..........................................................................................
+You are a senior environmental data scientist and research analyst.
+
+I am building an AI system for:
+* Air Quality Index (AQI) prediction at 6h, 12h, and 24h horizons and  Dataset for past 3 years to train on that with timestamps.
+* Health recommendations (population-level + sensitive groups)
+* Policy recommendations (government / urban planning / alerts)
+
+This is a NON-COMMERCIAL research project.
+I allow BOTH free and paid datasets.
+My priority is data quality, coverage, and scientific credibility.
+
+========================
+PRIMARY REQUIREMENTS
+========================
+Target locations (highest priority):
+* Cairo, Egypt
+* Zagazig, Egypt (very important — explicitly verify availability or nearest alternatives)
+
+Global requirement:
+* I also need worldwide data to train a generalized model (transfer learning / pretraining).
+
+Pollutants (hourly preferred):
+* PM2.5
+* PM10
+* NO2
+* O3
+* SO2
+* CO
+
+Helpful auxiliary variables (if available):
+* Temperature, humidity, wind speed/direction, pressure
+* Boundary layer height, radiation, precipitation
+* Timestamps, station metadata (lat/lon, elevation)
+
+Historical depth:
+* Multi-year historical data suitable for ML time-series modeling
+* Near-real-time or forecast access is a strong plus
+
+========================
+YOUR TASKS
+========================
+
+1️⃣ DATASET DISCOVERY  
+Search and identify the BEST datasets/APIs that provide the pollutants above:
+* Global station-level data
+* Global gridded/reanalysis data
+* Satellite-derived products (if useful)
+* Weather-linked air quality products
+
+Explicitly confirm:
+* Whether Cairo appears directly
+* Whether Zagazig appears directly
+* If Zagazig is missing, identify the closest stations AND/OR gridded coverage that can reasonably represent it
+
+2️⃣ DATASET EVALUATION (FOR EACH SOURCE)
+For every candidate dataset, extract and present:
+* Provider + dataset name
+* Coverage (global / regional)
+* Spatial resolution (station vs grid + grid size)
+* Temporal resolution (hourly / daily)
+* Historical span (start → end year)
+* Pollutants included (PM2.5, PM10, NO2, O3, SO2, CO)
+* Access method (API / bulk download)
+* Cost (free / paid) and licensing (explicitly note non-commercial allowance)
+* Data quality notes (official monitors vs low-cost sensors, QA/QC flags)
+* Direct links to official documentation (NOT blogs)
+
+3️⃣ RANKING & SHORTLIST
+Produce:
+* A ranked table of the top 8–12 datasets best suited for my goals
+* Clearly explain WHY each dataset ranks where it does
+
+4️⃣ RECOMMENDED “DATA STACK”
+Design a **practical data fusion strategy**:
+* A) Global baseline dataset(s) for model training
+* B) Egypt-specific enhancement for Cairo & Zagazig
+* C) Real-time / near-real-time sources for deployment
+* D) Weather data integration for forecasting (lags + exogenous variables)
+
+5️⃣ ZAGAZIG FALLBACK STRATEGY (VERY IMPORTANT)
+If direct station data for Zagazig is unavailable:
+* Propose a scientifically sound workaround using:
+  - Reanalysis or satellite products
+  - Nearby cities/stations
+  - Spatial interpolation or downscaling
+* Explain limitations and uncertainty
+
+6️⃣ FINAL RECOMMENDATION
+Conclude with:
+* The BEST overall dataset combination for my use case
+* Risks, gaps, and mitigation strategies
+* What I should download FIRST and why
+
+========================
+OUTPUT FORMAT
+========================
+* Start with a ranked comparison table
+* Follow with clear sections (Dataset Stack, Zagazig Strategy, Final Recommendation)
+* Be concise but technically rigorous
+* Cite official sources for every non-trivial claim
+* Prefer authoritative providers (e.g., Copernicus, OpenAQ, ECMWF, NOAA, etc.)
+
+Use web browsing and deep search.
+Assume I am technically skilled and want research-grade results.

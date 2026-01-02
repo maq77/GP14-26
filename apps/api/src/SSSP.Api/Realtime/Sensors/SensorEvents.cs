@@ -1,4 +1,4 @@
-﻿namespace SSSP.Api.Realtime.Contracts.Sensors;
+﻿/*namespace SSSP.Api.Realtime.Contracts.Sensors;
 
 public static class SensorTopics
 {
@@ -14,3 +14,4 @@ public sealed record SensorAlertPayload(
     string Message,
     DateTimeOffset TsUtc
 );
+*/

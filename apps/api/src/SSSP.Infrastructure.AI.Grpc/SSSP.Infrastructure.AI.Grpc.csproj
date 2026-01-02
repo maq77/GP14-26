@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SSSP.DAL\SSSP.DAL.csproj" />
+    <ProjectReference Include="..\SSSP.Telemetry.Abstractions\SSSP.Telemetry.Abstractions.csproj" />
   </ItemGroup>
 
 	<ItemGroup>

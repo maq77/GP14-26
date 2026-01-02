@@ -31,6 +31,7 @@ COPY apps/api/src/SSSP.BL/SSSP.BL.csproj src/SSSP.BL/
 COPY apps/api/src/SSSP.DAL/SSSP.DAL.csproj src/SSSP.DAL/
 COPY apps/api/src/SSSP.Infrastructure.AI.Grpc/SSSP.Infrastructure.AI.Grpc.csproj src/SSSP.Infrastructure.AI.Grpc/
 COPY apps/api/src/SSSP.Infrastructure.Persistence/SSSP.Infrastructure.Persistence.csproj src/SSSP.Infrastructure.Persistence/
+COPY apps/api/src/SSSP.Telemetry.Abstractions/SSSP.Telemetry.Abstractions.csproj src/SSSP.Telemetry.Abstractions/
 
 # Restore packages
 RUN dotnet restore
@@ -51,6 +52,7 @@ COPY apps/api/src/SSSP.BL/SSSP.BL.csproj src/SSSP.BL/
 COPY apps/api/src/SSSP.DAL/SSSP.DAL.csproj src/SSSP.DAL/
 COPY apps/api/src/SSSP.Infrastructure.AI.Grpc/SSSP.Infrastructure.AI.Grpc.csproj src/SSSP.Infrastructure.AI.Grpc/
 COPY apps/api/src/SSSP.Infrastructure.Persistence/SSSP.Infrastructure.Persistence.csproj src/SSSP.Infrastructure.Persistence/
+COPY apps/api/src/SSSP.Telemetry.Abstractions/SSSP.Telemetry.Abstractions.csproj src/SSSP.Telemetry.Abstractions/
 
 # Restore to generate project.assets.json
 RUN dotnet restore

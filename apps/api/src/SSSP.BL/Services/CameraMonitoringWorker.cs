@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 using Sssp.Ai.Stream;
+using SSSP.BL.Outbox;
 using SSSP.BL.Records;
 using SSSP.BL.Services.Interfaces;
 using SSSP.Infrastructure.AI.Grpc.Interfaces;
@@ -266,6 +267,13 @@ namespace SSSP.BL.Services
                             _logger.LogInformation(
                                 "FACE MATCH. CameraId={CameraId}, FrameId={FrameId}, UserId={UserId}, FaceProfileId={FaceProfileId}, Similarity={Similarity:F4}, MatchNumber={MatchNumber}",
                                 cameraId, response.FrameId, match.UserId, match.FaceProfileId, match.Similarity, matchCount);
+
+                            await PublishFaceRecognizedAsync(
+                                                             cameraId,
+                                                             response.FrameId,
+                                                             match,
+                                                             face,
+                                                             cancellationToken);
                         }
                         else
                         {
@@ -293,6 +301,55 @@ namespace SSSP.BL.Services
                 cameraId, sessionDuration.TotalSeconds, frameCount, faceCount, matchCount, avgAiProcessingMs);
         }
 
+
+        private async Task PublishFaceRecognizedAsync(
+    int cameraId,
+    long frameId,
+    FaceMatchResult match,
+    FaceResult face,
+    CancellationToken ct)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var outbox = scope.ServiceProvider.GetRequiredService<IOutboxWriter>();
+
+            var payload = new
+            {
+                CameraId = cameraId.ToString(),
+                FrameId = $"frame_{frameId}",
+                UserId = match.UserId,
+                FaceProfileId = match.FaceProfileId,
+                DisplayName = "User", // TODO: Load from FaceProfile
+                Similarity = match.Similarity,
+                Confidence = face.Confidence,
+                BBox = new
+                {
+                    X = face.Box?.X ?? 0,
+                    Y = face.Box?.Y ?? 0,
+                    Width = face.Box?.W ?? 0,
+                    Height = face.Box?.H ?? 0
+                },
+                Quality = new
+                {
+                    OverallScore = face.Quality?.OverallScore ?? 0f,
+                    Sharpness = face.Quality?.Sharpness ?? 0f,
+                    Brightness = face.Quality?.Brightness ?? 0f,
+                    Contrast = 0f // Not available in current model
+                },
+                TrackingId = (string?)null, // TODO: Get from FaceTrackingManager
+                TsUtc = DateTimeOffset.UtcNow
+            };
+
+            await outbox.EnqueueAsync(
+                aggregateType: "face",
+                aggregateId: match.UserId?.ToString() ?? Guid.NewGuid().ToString(),
+                topic: "faces",
+                @event: "recognized",
+                scope: "camera",
+                scopeKey: cameraId.ToString(),
+                payload: payload,
+                idempotencyKey: $"face.recognized:{cameraId}:{frameId}",
+                ct: ct);
+        }
         private void LogFaceQualityMetrics(
             int cameraId,
             IReadOnlyList<FaceResult> faces,

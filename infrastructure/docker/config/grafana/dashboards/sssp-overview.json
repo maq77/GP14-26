@@ -1,0 +1,229 @@
+{
+    "title":  "SSSP - System Overview",
+    "tags":  [
+                 "sssp",
+                 "overview",
+                 "face-recognition"
+             ],
+    "timezone":  "browser",
+    "schemaVersion":  16,
+    "version":  1,
+    "refresh":  "10s",
+    "panels":  [
+                   {
+                       "id":  1,
+                       "title":  "Face Recognition - Requests/sec",
+                       "type":  "graph",
+                       "gridPos":  {
+                                       "x":  0,
+                                       "y":  0,
+                                       "w":  12,
+                                       "h":  8
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "rate(sssp_verify_requests_total[1m])",
+                                           "legendFormat":  "{{endpoint}} - {{result}}"
+                                       }
+                                   ],
+                       "yaxes":  [
+                                     {
+                                         "format":  "reqps"
+                                     },
+                                     {
+                                         "format":  "short"
+                                     }
+                                 ]
+                   },
+                   {
+                       "id":  2,
+                       "title":  "Face Matching Latency (P95)",
+                       "type":  "graph",
+                       "gridPos":  {
+                                       "x":  12,
+                                       "y":  0,
+                                       "w":  12,
+                                       "h":  8
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "histogram_quantile(0.95, rate(sssp_match_duration_ms_bucket[5m]))",
+                                           "legendFormat":  "P95 Match Duration"
+                                       },
+                                       {
+                                           "expr":  "histogram_quantile(0.50, rate(sssp_match_duration_ms_bucket[5m]))",
+                                           "legendFormat":  "P50 Match Duration"
+                                       }
+                                   ],
+                       "yaxes":  [
+                                     {
+                                         "format":  "ms"
+                                     },
+                                     {
+                                         "format":  "short"
+                                     }
+                                 ]
+                   },
+                   {
+                       "id":  3,
+                       "title":  "Face Cache - Profiles \u0026 Embeddings",
+                       "type":  "graph",
+                       "gridPos":  {
+                                       "x":  0,
+                                       "y":  8,
+                                       "w":  12,
+                                       "h":  8
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "sssp_facecache_profiles",
+                                           "legendFormat":  "Profiles Loaded"
+                                       },
+                                       {
+                                           "expr":  "sssp_facecache_embeddings",
+                                           "legendFormat":  "Total Embeddings"
+                                       }
+                                   ],
+                       "yaxes":  [
+                                     {
+                                         "format":  "short"
+                                     },
+                                     {
+                                         "format":  "short"
+                                     }
+                                 ]
+                   },
+                   {
+                       "id":  4,
+                       "title":  "Face Cache - Age \u0026 Refresh Status",
+                       "type":  "graph",
+                       "gridPos":  {
+                                       "x":  12,
+                                       "y":  8,
+                                       "w":  12,
+                                       "h":  8
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "sssp_facecache_age_seconds",
+                                           "legendFormat":  "Cache Age (seconds)"
+                                       },
+                                       {
+                                           "expr":  "sssp_facecache_is_refreshing",
+                                           "legendFormat":  "Is Refreshing (1=yes)"
+                                       }
+                                   ],
+                       "yaxes":  [
+                                     {
+                                         "format":  "s"
+                                     },
+                                     {
+                                         "format":  "short"
+                                     }
+                                 ]
+                   },
+                   {
+                       "id":  5,
+                       "title":  "Cache Refresh Success Rate",
+                       "type":  "stat",
+                       "gridPos":  {
+                                       "x":  0,
+                                       "y":  16,
+                                       "w":  6,
+                                       "h":  4
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "rate(sssp_facecache_refresh_total{result=\"success\"}[5m]) / rate(sssp_facecache_refresh_total[5m]) * 100",
+                                           "legendFormat":  "Success Rate"
+                                       }
+                                   ],
+                       "options":  {
+                                       "graphMode":  "none",
+                                       "textMode":  "value_and_name",
+                                       "colorMode":  "value",
+                                       "unit":  "percent"
+                                   }
+                   },
+                   {
+                       "id":  6,
+                       "title":  "AI Extract Duration (P95)",
+                       "type":  "stat",
+                       "gridPos":  {
+                                       "x":  6,
+                                       "y":  16,
+                                       "w":  6,
+                                       "h":  4
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "histogram_quantile(0.95, rate(sssp_ai_extract_duration_ms_bucket[5m]))",
+                                           "legendFormat":  "P95 AI Extract"
+                                       }
+                                   ],
+                       "options":  {
+                                       "graphMode":  "area",
+                                       "textMode":  "value_and_name",
+                                       "unit":  "ms"
+                                   }
+                   },
+                   {
+                       "id":  7,
+                       "title":  "Auto Enrollment Events",
+                       "type":  "graph",
+                       "gridPos":  {
+                                       "x":  12,
+                                       "y":  16,
+                                       "w":  12,
+                                       "h":  8
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "rate(sssp_face_auto_enroll_total[5m])",
+                                           "legendFormat":  "{{result}} - {{reason}}"
+                                       }
+                                   ],
+                       "yaxes":  [
+                                     {
+                                         "format":  "ops"
+                                     },
+                                     {
+                                         "format":  "short"
+                                     }
+                                 ]
+                   },
+                   {
+                       "id":  8,
+                       "title":  "API Request Duration (P50, P95, P99)",
+                       "type":  "graph",
+                       "gridPos":  {
+                                       "x":  0,
+                                       "y":  24,
+                                       "w":  24,
+                                       "h":  8
+                                   },
+                       "targets":  [
+                                       {
+                                           "expr":  "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket[5m]))",
+                                           "legendFormat":  "P50"
+                                       },
+                                       {
+                                           "expr":  "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+                                           "legendFormat":  "P95"
+                                       },
+                                       {
+                                           "expr":  "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))",
+                                           "legendFormat":  "P99"
+                                       }
+                                   ],
+                       "yaxes":  [
+                                     {
+                                         "format":  "s"
+                                     },
+                                     {
+                                         "format":  "short"
+                                     }
+                                 ]
+                   }
+               ]
+}

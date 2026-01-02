@@ -4,12 +4,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SSSP.BL.Helpers.Interfaces;
 using SSSP.BL.Outbox;
 using SSSP.BL.Realtime.Incidents;
 using SSSP.DAL.Enums;
 using SSSP.DAL.ValueObjects;
 using SSSP.Infrastructure.Persistence.Interfaces;
+using SSSP.Telemetry.Abstractions.Incidents;
 
 public sealed class IncidentService : IIncidentService
 {

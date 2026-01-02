@@ -1,4 +1,4 @@
-﻿namespace SSSP.Api.Realtime.Contracts.Cameras;
+﻿/*namespace SSSP.Api.Realtime.Contracts.Cameras;
 
 public static class CameraTopics
 {
@@ -23,3 +23,4 @@ public sealed record CameraTrackingPayload(
     double Confidence,
     object? Box // keep flexible for now (x,y,w,h) or typed later
 );
+*/

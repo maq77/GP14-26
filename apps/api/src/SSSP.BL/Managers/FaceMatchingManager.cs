@@ -9,6 +9,7 @@ using SSSP.BL.Managers.Interfaces;
 using SSSP.BL.Records;
 using SSSP.DAL.Models;
 using System.Threading;
+using SSSP.Telemetry.Abstractions.Faces;
 
 
 namespace SSSP.BL.Managers
@@ -17,11 +18,14 @@ namespace SSSP.BL.Managers
     {
         private readonly double _defaultThreshold;
         private readonly ILogger<FaceMatchingManager> _logger;
+        private readonly IFaceMetrics _metrics;
+
 
         public double DefaultThreshold => _defaultThreshold;
 
         public FaceMatchingManager(
             double defaultThreshold,
+            IFaceMetrics metrics,
             ILogger<FaceMatchingManager> logger)
         {
             if (defaultThreshold <= 0 || defaultThreshold > 1)
@@ -32,6 +36,7 @@ namespace SSSP.BL.Managers
 
             _defaultThreshold = defaultThreshold;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
         }
 
         public FaceMatchResult Match(
@@ -40,215 +45,229 @@ namespace SSSP.BL.Managers
             double? thresholdOverride = null)
         {
             var sw = Stopwatch.StartNew();
-
-            if (probeEmbedding == null || probeEmbedding.Count == 0)
+            try
             {
-                _logger.LogWarning(
-                    "Face matching requested with empty probe embedding. Profiles={ProfilesCount}",
-                    knownProfiles?.Count ?? 0);
 
-                return new FaceMatchResult(false, null, null, 0.0);
-            }
-
-            var profiles = knownProfiles ?? Array.Empty<FaceProfileSnapshot>();
-
-            if (profiles.Count == 0)
-            {
-                _logger.LogInformation(
-                    "Face matching skipped. No FaceProfiles available. EmbeddingDim={EmbeddingDim}",
-                    probeEmbedding.Count);
-
-                return new FaceMatchResult(false, null, null, 0.0);
-            }
-
-            var threshold = thresholdOverride ?? _defaultThreshold;
-            if (threshold <= 0 || threshold > 1)
-            {
-                _logger.LogWarning(
-                    "Invalid thresholdOverride={OverrideThreshold}. Falling back to DefaultThreshold={DefaultThreshold}.",
-                    thresholdOverride,
-                    _defaultThreshold);
-
-                threshold = _defaultThreshold;
-            }
-
-            using var scope = _logger.BeginScope(new Dictionary<string, object>
-            {
-                ["EmbeddingDim"] = probeEmbedding.Count,
-                ["ProfilesCount"] = profiles.Count,
-                ["Threshold"] = threshold
-            });
-
-            _logger.LogDebug(
-                "Starting face matching. EmbeddingDim={EmbeddingDim}, Profiles={ProfilesCount}, Threshold={Threshold:F4}",
-                probeEmbedding.Count,
-                profiles.Count,
-                threshold);
-
-            // Convert probe to array + precompute norm for span-based math
-            var probeArray = probeEmbedding.ToArray();
-            var probeNorm = ComputeNorm(probeArray);
-
-            if (probeNorm == 0)
-            {
-                _logger.LogWarning("Face matching aborted. Probe embedding norm is zero.");
-                return new FaceMatchResult(false, null, null, 0.0);
-            }
-
-            // Diagnostics counters
-            var totalEmbeddings = 0;
-            var validEmbeddings = 0;
-            var emptyEmbeddings = 0;
-            var profilesWithEmbeddings = 0;
-            var profilesWithoutEmbeddings = 0;
-
-            FaceProfileSnapshot? bestProfile = null;
-            double bestSimilarity = double.NegativeInfinity;
-
-            foreach (var profile in profiles)
-            {
-                if (profile == null)
-                    continue;
-
-                if (profile.Embeddings == null || profile.Embeddings.Count == 0)
+                if (probeEmbedding == null || probeEmbedding.Count == 0)
                 {
-                    profilesWithoutEmbeddings++;
+                    _logger.LogWarning(
+                        "Face matching requested with empty probe embedding. Profiles={ProfilesCount}",
+                        knownProfiles?.Count ?? 0);
 
-                    _logger.LogDebug(
-                        "Profile has NO embeddings. ProfileId={ProfileId}, UserId={UserId}, UserName={UserName}",
-                        profile.Id,
-                        profile.UserId,
-                        profile.UserName ?? "N/A");
-
-                    continue;
+                    return new FaceMatchResult(false, null, null, 0.0);
                 }
 
-                profilesWithEmbeddings++;
+                var profiles = knownProfiles ?? Array.Empty<FaceProfileSnapshot>();
 
-                var profileEmbeddingCount = 0;
-                var profileValidEmbeddings = 0;
-                var profileBestSimilarity = double.NegativeInfinity;
-
-                foreach (var emb in profile.Embeddings)
+                if (profiles.Count == 0)
                 {
-                    totalEmbeddings++;
-                    profileEmbeddingCount++;
+                    _logger.LogInformation(
+                        "Face matching skipped. No FaceProfiles available. EmbeddingDim={EmbeddingDim}",
+                        probeEmbedding.Count);
 
-                    if (emb?.Vector == null || emb.Vector.Length == 0)
-                    {
-                        emptyEmbeddings++;
-
-                        _logger.LogWarning(
-                            "Empty embedding vector. ProfileId={ProfileId}, EmbeddingId={EmbeddingId}, UserId={UserId}",
-                            profile.Id,
-                            emb?.Id,
-                            profile.UserId);
-
-                        continue;
-                    }
-
-                    var storedSpan = emb.Vector.AsSpan();
-
-                    if (storedSpan.Length != probeArray.Length)
-                    {
-                        _logger.LogError(
-                            "Embedding dimension mismatch. ProfileId={ProfileId}, EmbeddingId={EmbeddingId}, ExpectedDim={Expected}, StoredDim={Stored}, UserId={UserId}",
-                            profile.Id,
-                            emb.Id,
-                            probeArray.Length,
-                            storedSpan.Length,
-                            profile.UserId);
-
-                        continue;
-                    }
-
-                    validEmbeddings++;
-                    profileValidEmbeddings++;
-
-                    var similarity = ComputeCosineSimilarity(
-                        probeArray,
-                        probeNorm,
-                        storedSpan);
-
-                    if (similarity > profileBestSimilarity)
-                    {
-                        profileBestSimilarity = similarity;
-                    }
-
-                    if (similarity > bestSimilarity)
-                    {
-                        bestSimilarity = similarity;
-                        bestProfile = profile;
-                    }
-
-                    _logger.LogTrace(
-                        "Embedding compared. ProfileId={ProfileId}, EmbeddingId={EmbeddingId}, UserId={UserId}, Similarity={Similarity:F4}",
-                        profile.Id,
-                        emb.Id,
-                        profile.UserId,
-                        similarity);
+                    return new FaceMatchResult(false, null, null, 0.0);
                 }
+
+                var threshold = thresholdOverride ?? _defaultThreshold;
+                if (threshold <= 0 || threshold > 1)
+                {
+                    _logger.LogWarning(
+                        "Invalid thresholdOverride={OverrideThreshold}. Falling back to DefaultThreshold={DefaultThreshold}.",
+                        thresholdOverride,
+                        _defaultThreshold);
+
+                    threshold = _defaultThreshold;
+                }
+
+                using var scope = _logger.BeginScope(new Dictionary<string, object>
+                {
+                    ["EmbeddingDim"] = probeEmbedding.Count,
+                    ["ProfilesCount"] = profiles.Count,
+                    ["Threshold"] = threshold
+                });
 
                 _logger.LogDebug(
-                        "Profile processed. ProfileId={ProfileId}, UserId={UserId}, UserName={UserName}, TotalEmbeddings={TotalEmbeddings}, ValidEmbeddings={ValidEmbeddings}, BestSimilarity={BestSimilarity:F4}",
-                        profile.Id,
-                        profile.UserId,
-                        profile.UserName,
-                        profileEmbeddingCount,
-                        profileValidEmbeddings,
-                        double.IsNegativeInfinity(profileBestSimilarity) ? 0.0 : profileBestSimilarity);
-            }
-
-            sw.Stop();
-
-            if (bestProfile == null || double.IsNegativeInfinity(bestSimilarity))
-            {
-                _logger.LogInformation(
-                    "Face matching completed. No valid embeddings across {ProfilesCount} profiles. ProfilesWithEmbeddings={ProfilesWithEmbeddings}, ProfilesWithoutEmbeddings={ProfilesWithoutEmbeddings}, TotalEmbeddings={TotalEmbeddings}, ValidEmbeddings={ValidEmbeddings}, EmptyEmbeddings={EmptyEmbeddings}, ElapsedMs={ElapsedMs}",
+                    "Starting face matching. EmbeddingDim={EmbeddingDim}, Profiles={ProfilesCount}, Threshold={Threshold:F4}",
+                    probeEmbedding.Count,
                     profiles.Count,
-                    profilesWithEmbeddings,
-                    profilesWithoutEmbeddings,
-                    totalEmbeddings,
-                    validEmbeddings,
-                    emptyEmbeddings,
-                    sw.ElapsedMilliseconds);
+                    threshold);
 
-                if (profiles.Count > 0)
-                    LogProfileDetails(profiles);
+                // Convert probe to array + precompute norm for span-based math
+                var probeArray = probeEmbedding.ToArray();
+                var probeNorm = ComputeNorm(probeArray);
 
-                return new FaceMatchResult(false, null, null, 0.0);
-            }
+                if (probeNorm == 0)
+                {
+                    _logger.LogWarning("Face matching aborted. Probe embedding norm is zero.");
+                    return new FaceMatchResult(false, null, null, 0.0);
+                }
 
-            var isMatch = bestSimilarity >= threshold;
+                // Diagnostics counters
+                var totalEmbeddings = 0;
+                var validEmbeddings = 0;
+                var emptyEmbeddings = 0;
+                var profilesWithEmbeddings = 0;
+                var profilesWithoutEmbeddings = 0;
 
-            _logger.LogInformation(
-                     "Face matching completed. TotalProfiles={ProfileCount}, ProfilesWithEmbeddings={ProfilesWithEmbeddings}, ValidEmbeddings={ValidEmbeddings}, BestSimilarity={BestSimilarity:F4}, Threshold={Threshold:F4}, IsMatch={IsMatch}, MatchedUserId={UserId}, MatchedUserName={UserName}, MatchedFaceProfileId={FaceProfileId}, ElapsedMs={ElapsedMs}",
-                     profiles.Count,
-                     profilesWithEmbeddings,
-                     validEmbeddings,
-                     bestSimilarity,
-                     threshold,
-                     isMatch,
-                     bestProfile.UserId,
-                     bestProfile.FullName,
-                     bestProfile.Id,
-                     sw.ElapsedMilliseconds);
+                FaceProfileSnapshot? bestProfile = null;
+                double bestSimilarity = double.NegativeInfinity;
+
+                foreach (var profile in profiles)
+                {
+                    if (profile == null)
+                        continue;
+
+                    if (profile.Embeddings == null || profile.Embeddings.Count == 0)
+                    {
+                        profilesWithoutEmbeddings++;
+
+                        _logger.LogDebug(
+                            "Profile has NO embeddings. ProfileId={ProfileId}, UserId={UserId}, UserName={UserName}",
+                            profile.Id,
+                            profile.UserId,
+                            profile.UserName ?? "N/A");
+
+                        continue;
+                    }
+
+                    profilesWithEmbeddings++;
+
+                    var profileEmbeddingCount = 0;
+                    var profileValidEmbeddings = 0;
+                    var profileBestSimilarity = double.NegativeInfinity;
+
+                    foreach (var emb in profile.Embeddings)
+                    {
+                        totalEmbeddings++;
+                        profileEmbeddingCount++;
+
+                        if (emb?.Vector == null || emb.Vector.Length == 0)
+                        {
+                            emptyEmbeddings++;
+
+                            _logger.LogWarning(
+                                "Empty embedding vector. ProfileId={ProfileId}, EmbeddingId={EmbeddingId}, UserId={UserId}",
+                                profile.Id,
+                                emb?.Id,
+                                profile.UserId);
+
+                            continue;
+                        }
+
+                        var storedSpan = emb.Vector.AsSpan();
+
+                        if (storedSpan.Length != probeArray.Length)
+                        {
+                            _logger.LogError(
+                                "Embedding dimension mismatch. ProfileId={ProfileId}, EmbeddingId={EmbeddingId}, ExpectedDim={Expected}, StoredDim={Stored}, UserId={UserId}",
+                                profile.Id,
+                                emb.Id,
+                                probeArray.Length,
+                                storedSpan.Length,
+                                profile.UserId);
+
+                            continue;
+                        }
+
+                        validEmbeddings++;
+                        profileValidEmbeddings++;
+
+                        var similarity = ComputeCosineSimilarity(
+                            probeArray,
+                            probeNorm,
+                            storedSpan);
+
+                        if (similarity > profileBestSimilarity)
+                        {
+                            profileBestSimilarity = similarity;
+                        }
+
+                        if (similarity > bestSimilarity)
+                        {
+                            bestSimilarity = similarity;
+                            bestProfile = profile;
+                        }
+
+                        _logger.LogTrace(
+                            "Embedding compared. ProfileId={ProfileId}, EmbeddingId={EmbeddingId}, UserId={UserId}, Similarity={Similarity:F4}",
+                            profile.Id,
+                            emb.Id,
+                            profile.UserId,
+                            similarity);
+                    }
+
+                    _logger.LogDebug(
+                            "Profile processed. ProfileId={ProfileId}, UserId={UserId}, UserName={UserName}, TotalEmbeddings={TotalEmbeddings}, ValidEmbeddings={ValidEmbeddings}, BestSimilarity={BestSimilarity:F4}",
+                            profile.Id,
+                            profile.UserId,
+                            profile.UserName,
+                            profileEmbeddingCount,
+                            profileValidEmbeddings,
+                            double.IsNegativeInfinity(profileBestSimilarity) ? 0.0 : profileBestSimilarity);
+                }
+
+                if (bestProfile == null || double.IsNegativeInfinity(bestSimilarity))
+                {
+                    _logger.LogInformation(
+                        "Face matching completed. No valid embeddings across {ProfilesCount} profiles. ProfilesWithEmbeddings={ProfilesWithEmbeddings}, ProfilesWithoutEmbeddings={ProfilesWithoutEmbeddings}, TotalEmbeddings={TotalEmbeddings}, ValidEmbeddings={ValidEmbeddings}, EmptyEmbeddings={EmptyEmbeddings}, ElapsedMs={ElapsedMs}",
+                        profiles.Count,
+                        profilesWithEmbeddings,
+                        profilesWithoutEmbeddings,
+                        totalEmbeddings,
+                        validEmbeddings,
+                        emptyEmbeddings,
+                        sw.ElapsedMilliseconds);
+
+                    if (profiles.Count > 0)
+                        LogProfileDetails(profiles);
+
+                    return new FaceMatchResult(false, null, null, 0.0);
+                }
+
+                var isMatch = bestSimilarity >= threshold;
+
+                _logger.LogInformation(
+                         "Face matching completed. TotalProfiles={ProfileCount}, ProfilesWithEmbeddings={ProfilesWithEmbeddings}, ValidEmbeddings={ValidEmbeddings}, BestSimilarity={BestSimilarity:F4}, Threshold={Threshold:F4}, IsMatch={IsMatch}, MatchedUserId={UserId}, MatchedUserName={UserName}, MatchedFaceProfileId={FaceProfileId}, ElapsedMs={ElapsedMs}",
+                         profiles.Count,
+                         profilesWithEmbeddings,
+                         validEmbeddings,
+                         bestSimilarity,
+                         threshold,
+                         isMatch,
+                         bestProfile.UserId,
+                         bestProfile.FullName,
+                         bestProfile.Id,
+                         sw.ElapsedMilliseconds);
 
 
-            if (isMatch)
-            {
+                if (isMatch)
+                {
+                    return new FaceMatchResult(
+                        true,
+                        bestProfile.UserId,
+                        bestProfile.Id,
+                        bestSimilarity);
+                }
+
                 return new FaceMatchResult(
-                    true,
-                    bestProfile.UserId,
-                    bestProfile.Id,
+                    false,
+                    null,
+                    null,
                     bestSimilarity);
             }
-
-            return new FaceMatchResult(
-                false,
-                null,
-                null,
-                bestSimilarity);
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Face matching failed after {ElapsedMs}ms.",
+                    sw.ElapsedMilliseconds);
+                throw;
+            }
+            finally
+            {
+                sw.Stop();
+                _metrics.ObserveMatchDuration(sw.Elapsed.TotalMilliseconds);
+            }
         }
 
         private void LogProfileDetails(IReadOnlyList<FaceProfileSnapshot> profiles)

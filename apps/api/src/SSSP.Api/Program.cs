@@ -32,7 +32,6 @@ using SSSP.BL.Startup;
 using System.Threading.RateLimiting;
 using SSSP.Api.Middleware;
 using SSSP.Api.Hubs;
-using SSSP.BL.Monitoring;
 using Prometheus;
 using Microsoft.AspNetCore.SignalR;
 using SSSP.BL.Realtime.Incidents;
@@ -41,8 +40,9 @@ using SSSP.Api.Realtime.Outbox;
 using SSSP.Api.Outbox;
 using SSSP.BL.Outbox;
 using SSSP.Api.Services;
-using SSSP.BL.Helpers.Interfaces;
-using SSSP.BL.Telemetry.Incidents;
+using StackExchange.Redis;
+using SSSP.Telemetry.Abstractions.Faces;
+using SSSP.Telemetry.Abstractions.Incidents;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -224,7 +224,7 @@ try
     // Identity
     // =======================================
     builder.Services
-        .AddIdentity<User, Role>(options =>
+        .AddIdentity<User, SSSP.DAL.Models.Role>(options =>
         {
             options.Password.RequireDigit = true;
             options.Password.RequireUppercase = true;
@@ -299,45 +299,54 @@ try
     // Cache Configuration (env aware)
     // =======================================
 
-    builder.Services.AddSingleton<FaceProfileCacheMetrics>();
 
-    builder.Services.Configure<FaceProfileCacheOptions>(cfg =>
-    {
-        cfg.AbsoluteExpiration = TimeSpan.FromMinutes(5);
-    });
+    builder.Services.AddSingleton<IFaceMetrics, PrometheusFaceMetrics>();
 
-    var useRedisFaceCache = builder.Configuration.GetValue<bool>("Cache:UseRedisFaceCache", false);
 
-    if (useRedisFaceCache)
+    builder.Services
+    .AddOptions<FaceProfileCacheOptions>()
+    .Bind(builder.Configuration.GetSection("FaceProfileCache"))
+    .ValidateOnStart();
+
+    builder.Services.AddSingleton<FaceProfileCacheStore>();
+    builder.Services.AddScoped<IFaceProfileLoader, FaceProfileDbLoader>();
+
+    builder.Services.AddSingleton<IFaceProfileCache, RedisBackedFaceProfileCache>();
+
+    builder.Services.AddHostedService<FaceProfileCacheRefresherWorker>();
+
+    var cacheMode = builder.Configuration.GetValue<string>("FaceProfileCache:Mode") ?? "Memory";
+
+    var useRedis = cacheMode.Equals("Redis", StringComparison.OrdinalIgnoreCase);
+
+    if (useRedis)
     {
         var redisConnection = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
 
-        builder.Services.AddStackExchangeRedisCache(options =>
+        // Redis
+        builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
         {
-            options.Configuration = redisConnection;
-            options.InstanceName = "SSSP:";
+            var options = ConfigurationOptions.Parse(redisConnection);
+            options.AbortOnConnectFail = false;
+            options.ConnectRetry = 3;
+            options.ConnectTimeout = 5000;
+            options.SyncTimeout = 5000;
+            options.KeepAlive = 60;
+            return ConnectionMultiplexer.Connect(options);
         });
 
-        Log.Information("Using Hybrid face cache (L1 + l2(Redis) + DB). Connection={RedisConnection}", redisConnection);
 
-        // L2 concrete
-        builder.Services.AddScoped<DistributedFaceProfileCache>();
+        builder.Services.AddSingleton<IFaceProfileDistributedSnapshotCache, RedisFaceProfileDistributedSnapshotCache>();
 
-        // L1 Hybrid as the IFaceProfileCache
-        builder.Services.AddMemoryCache(options =>
-        {
-            options.SizeLimit = 1024;
-            options.CompactionPercentage = 0.25;
-        });
-
-        builder.Services.AddScoped<IFaceProfileCache, HybridFaceProfileCache>();
+        Log.Information("FaceProfile cache mode=Redis. Connection={RedisConnection}", redisConnection);
     }
     else
     {
-        Log.Information("Using in-memory FaceProfileCache (Redis disabled)");
+        builder.Services.AddSingleton<IFaceProfileDistributedSnapshotCache, NullFaceProfileDistributedSnapshotCache>();
 
-        builder.Services.AddScoped<IFaceProfileCache, FaceProfileCache>();
+        Log.Information("FaceProfile cache mode=Memory (Redis disabled/not ready).");
     }
+
 
 
 
@@ -393,8 +402,9 @@ try
     {
         var logger = sp.GetRequiredService<ILogger<FaceMatchingManager>>();
         var threshold = builder.Configuration.GetValue<double>("FaceRecognition:SimilarityThreshold", 0.65);
+        var metrics = sp.GetRequiredService<IFaceMetrics>();
         Log.Information("Face matching threshold configured: {Threshold}", threshold);
-        return new FaceMatchingManager(threshold, logger);
+        return new FaceMatchingManager(threshold, metrics, logger);
     });
 
     // DI of SignalR - Notifiaction System - Realtime
@@ -402,7 +412,6 @@ try
     builder.Services.AddSingleton<INotificationPublisher, SignalRNotificationPublisher>();
     builder.Services.AddScoped<IIncidentRealtime, IncidentRealtime>();
     builder.Services.AddSingleton<IIncidentTelemetry, IncidentTelemetry>();
-
 
     builder.Services.AddScoped<IFaceTrackingManager, FaceTrackingManager>();
     builder.Services.AddScoped<IFaceAutoEnrollmentService, FaceAutoEnrollmentService>();
@@ -419,7 +428,6 @@ try
     builder.Services.AddHostedService(sp =>
         sp.GetRequiredService<CameraMonitoringWorker>());
     builder.Services.AddHostedService<StartupValidationService>();
-    builder.Services.AddHostedService<FaceProfileCacheWarmupService>();
     builder.Services.AddHostedService<CameraTopologyWarmupService>();
 
 

@@ -273,6 +273,15 @@ namespace SSSP.BL.Managers
                 travelSeconds,
                 bestSession.AvgSimilarity);
 
+            // NEW: Publish cross-camera re-ID notification
+            _ = PublishCrossCameraReIdAsync(
+                bestSession.UserId,
+                fromCam,
+                cameraId,
+                zoneId,
+                travelSeconds,
+                bestSession.AvgSimilarity);
+
             _telemetry?.TrackEvent("CrossCameraReIdHit", new Dictionary<string, string>
             {
                 ["UserId"] = bestSession.UserId.ToString(),
@@ -311,6 +320,31 @@ namespace SSSP.BL.Managers
             return _sessions.Values
                 .Where(s => (now - s.LastSeenUtc) < _options.Tracker.SessionExpiration)
                 .ToList();
+        }
+
+
+        private async Task PublishCrossCameraReIdAsync(
+            Guid userId,
+            string fromCamera,
+            string toCamera,
+            string zoneId,
+            double travelSeconds,
+            double similarity)
+        {
+            try
+            {
+                // TODO: Inject IOutboxWriter via constructor
+                // For now, we'll use the notifier service
+                _logger.LogInformation(
+                    "CROSS-CAMERA RE-ID NOTIFICATION. UserId={UserId}, From={From}, To={To}, TravelSec={Sec}",
+                    userId, fromCamera, toCamera, travelSeconds);
+
+                // Telemetry already tracked above, notification will be added when IOutboxWriter is injected
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to publish cross-camera re-ID notification");
+            }
         }
     }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ApplicationInsights;
@@ -11,8 +12,8 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Logging;
 using SSSP.Api.DTOs.Face;
 using SSSP.BL.Interfaces;
-using SSSP.BL.Monitoring;
 using SSSP.BL.Services.Interfaces;
+using SSSP.Telemetry.Abstractions.Faces;
 
 namespace SSSP.Api.Controllers
 {
@@ -26,24 +27,24 @@ namespace SSSP.Api.Controllers
         private readonly IFaceEnrollmentService _enrollmentService;
         private readonly IFaceRecognitionService _recognitionService;
         private readonly IFaceProfileCache _faceProfileCache;
-        private readonly FaceProfileCacheMetrics _faceCacheMetrics;
         private readonly ILogger<FaceController> _logger;
-        private readonly TelemetryClient? _telemetry;
+        private readonly TelemetryClient? _telemetry;      // ApplicationInsights (optional)
+        private readonly IFaceMetrics _metrics;            // Prometheus
 
         public FaceController(
             IFaceEnrollmentService enrollmentService,
             IFaceRecognitionService recognitionService,
             ILogger<FaceController> logger,
             IFaceProfileCache faceProfileCache,
-            FaceProfileCacheMetrics faceCacheMetrics,
-            TelemetryClient telemetry)
+            IFaceMetrics metrics,
+            TelemetryClient? telemetry = null)
         {
             _enrollmentService = enrollmentService ?? throw new ArgumentNullException(nameof(enrollmentService));
             _recognitionService = recognitionService ?? throw new ArgumentNullException(nameof(recognitionService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _faceProfileCache = faceProfileCache;
-            _faceCacheMetrics = faceCacheMetrics;
-            _telemetry = telemetry ?? throw new ArgumentNullException(nameof(telemetry));
+            _faceProfileCache = faceProfileCache ?? throw new ArgumentNullException(nameof(faceProfileCache));
+            _metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
+            _telemetry = telemetry; // allow null
         }
 
         // POST: api/face/enroll
@@ -55,15 +56,8 @@ namespace SSSP.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Enroll([FromForm] EnrollFaceRequest request, CancellationToken ct)
         {
-            if (request is null)
-            {
-                return BadRequest(new { Message = "Request body is required." });
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return ValidationProblem(ModelState);
-            }
+            if (request is null) return BadRequest(new { Message = "Request body is required." });
+            if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
             var sw = Stopwatch.StartNew();
 
@@ -123,7 +117,7 @@ namespace SSSP.Api.Controllers
                     "Face enrollment completed. UserId={UserId}, FaceProfileId={FaceProfileId}, IsPrimary={IsPrimary}, ElapsedMs={ElapsedMs}",
                     request.UserId, profile.Id, profile.IsPrimary, sw.ElapsedMilliseconds);
 
-                var response = new
+                return Ok(new
                 {
                     profile.Id,
                     profile.UserId,
@@ -131,9 +125,7 @@ namespace SSSP.Api.Controllers
                     profile.IsPrimary,
                     profile.CreatedAt,
                     ElapsedMs = sw.ElapsedMilliseconds
-                };
-
-                return Ok(response);
+                });
             }
             catch (OperationCanceledException)
             {
@@ -170,7 +162,6 @@ namespace SSSP.Api.Controllers
                     userId: request.UserId,
                     errorReason: ex.GetType().Name);
 
-                // Let your global exception handler / middleware shape the final response
                 throw;
             }
         }
@@ -182,28 +173,18 @@ namespace SSSP.Api.Controllers
         [ProducesResponseType(typeof(FaceMatchResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<FaceMatchResponse>> Verify(
-            [FromForm] VerifyFaceRequest request,
-            CancellationToken ct)
+        public async Task<ActionResult<FaceMatchResponse>> Verify([FromForm] VerifyFaceRequest request, CancellationToken ct)
         {
-            if (request is null)
-            {
-                return BadRequest(new { Message = "Request body is required." });
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return ValidationProblem(ModelState);
-            }
+            if (request is null) return BadRequest(new { Message = "Request body is required." });
+            if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
             var sw = Stopwatch.StartNew();
             var cameraId = request.CameraId ?? "N/A";
+            var endpoint = "/api/Face/verify";
 
             try
             {
-                _logger.LogInformation(
-                    "Face verification request received. CameraId={CameraId}",
-                    cameraId);
+                _logger.LogInformation("Face verification request received. CameraId={CameraId}", cameraId);
 
                 if (!IsValidImage(request.Image, out var imageValidationError))
                 {
@@ -212,6 +193,10 @@ namespace SSSP.Api.Controllers
                     _logger.LogWarning(
                         "Verification rejected - invalid image. CameraId={CameraId}, Reason={Reason}",
                         cameraId, imageValidationError);
+
+                    // Prometheus
+                    _metrics.IncrementVerifyRequests(endpoint, "fail");
+                    _metrics.ObserveVerifyDuration(endpoint, sw.Elapsed.TotalMilliseconds);
 
                     TrackFaceApiMetric(
                         operation: "Verify",
@@ -236,12 +221,15 @@ namespace SSSP.Api.Controllers
                     "Face verification image loaded. CameraId={CameraId}, ImageSize={ImageSize}, ContentType={ContentType}",
                     cameraId, imageBytes.Length, request.Image!.ContentType);
 
-                var result = await _recognitionService.VerifyAsync(
-                    imageBytes,
-                    request.CameraId,
-                    ct);
+                var result = await _recognitionService.VerifyAsync(imageBytes, request.CameraId, ct);
 
                 sw.Stop();
+
+                // Prometheus
+                _metrics.IncrementVerifyRequests(endpoint, "success");
+                _metrics.ObserveVerifyDuration(endpoint, sw.Elapsed.TotalMilliseconds);
+                _metrics.ObserveFacesPerRequest(endpoint, 1);
+
 
                 TrackFaceApiMetric(
                     operation: "Verify",
@@ -278,9 +266,12 @@ namespace SSSP.Api.Controllers
             {
                 sw.Stop();
 
-                _logger.LogWarning(
-                    "Face verification cancelled. CameraId={CameraId}, ElapsedMs={ElapsedMs}",
-                    cameraId, sw.ElapsedMilliseconds);
+                _metrics.IncrementVerifyRequests(endpoint, "fail");
+                _metrics.ObserveVerifyDuration(endpoint, sw.Elapsed.TotalMilliseconds);
+                _metrics.ObserveFacesPerRequest(endpoint, 0);
+
+
+                _logger.LogWarning("Face verification cancelled. CameraId={CameraId}, ElapsedMs={ElapsedMs}", cameraId, sw.ElapsedMilliseconds);
 
                 TrackFaceApiMetric(
                     operation: "Verify",
@@ -296,9 +287,10 @@ namespace SSSP.Api.Controllers
             {
                 sw.Stop();
 
-                _logger.LogError(
-                    ex,
-                    "Face verification failed. CameraId={CameraId}, ElapsedMs={ElapsedMs}, ExceptionType={ExceptionType}",
+                _metrics.IncrementVerifyRequests(endpoint, "fail");
+                _metrics.ObserveVerifyDuration(endpoint, sw.Elapsed.TotalMilliseconds);
+
+                _logger.LogError(ex, "Face verification failed. CameraId={CameraId}, ElapsedMs={ElapsedMs}, ExceptionType={ExceptionType}",
                     cameraId, sw.ElapsedMilliseconds, ex.GetType().Name);
 
                 TrackFaceApiMetric(
@@ -313,8 +305,6 @@ namespace SSSP.Api.Controllers
             }
         }
 
-       
-        
         // POST: api/face/verify-many
         [HttpPost("verify-many")]
         [AllowAnonymous]
@@ -322,28 +312,18 @@ namespace SSSP.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<MultiFaceMatchResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(object), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<MultiFaceMatchResponse>>> VerifyMany(
-            [FromForm] VerifyFaceRequest request,
-            CancellationToken ct)
+        public async Task<ActionResult<IEnumerable<MultiFaceMatchResponse>>> VerifyMany([FromForm] VerifyFaceRequest request, CancellationToken ct)
         {
-            if (request is null)
-            {
-                return BadRequest(new { Message = "Request body is required." });
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return ValidationProblem(ModelState);
-            }
+            if (request is null) return BadRequest(new { Message = "Request body is required." });
+            if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
             var sw = Stopwatch.StartNew();
             var cameraId = request.CameraId ?? "N/A";
+            var endpoint = "/api/Face/verify-many";
 
             try
             {
-                _logger.LogInformation(
-                    "Multi-face verification request received. CameraId={CameraId}",
-                    cameraId);
+                _logger.LogInformation("Multi-face verification request received. CameraId={CameraId}", cameraId);
 
                 if (!IsValidImage(request.Image, out var imageValidationError))
                 {
@@ -352,6 +332,10 @@ namespace SSSP.Api.Controllers
                     _logger.LogWarning(
                         "Multi-face verification rejected - invalid image. CameraId={CameraId}, Reason={Reason}",
                         cameraId, imageValidationError);
+
+                    // Prometheus
+                    _metrics.IncrementVerifyRequests(endpoint, "fail");
+                    _metrics.ObserveVerifyDuration(endpoint, sw.Elapsed.TotalMilliseconds);
 
                     TrackFaceApiMetric(
                         operation: "VerifyMany",
@@ -376,15 +360,15 @@ namespace SSSP.Api.Controllers
                     "Multi-face verification image loaded. CameraId={CameraId}, ImageSize={ImageSize}, ContentType={ContentType}",
                     cameraId, imageBytes.Length, request.Image!.ContentType);
 
-                // ---- Core multi-face verification ----
-                var hits = await _recognitionService.VerifyManyAsync(
-                    imageBytes,
-                    request.CameraId,
-                    ct);
+                var hits = await _recognitionService.VerifyManyAsync(imageBytes, request.CameraId, ct);
 
                 sw.Stop();
 
-                // Telemetry: we don’t have a single UserId; send N/A
+                // Prometheus KPI (objective ~200ms)
+                _metrics.ObserveFacesPerRequest(endpoint, hits.Count);
+                _metrics.IncrementVerifyRequests(endpoint, "success");
+                _metrics.ObserveVerifyDuration(endpoint, sw.Elapsed.TotalMilliseconds);
+
                 TrackFaceApiMetric(
                     operation: "VerifyMany",
                     elapsedMs: sw.ElapsedMilliseconds,
@@ -393,25 +377,15 @@ namespace SSSP.Api.Controllers
                     cameraId: cameraId,
                     userId: null);
 
-                // Map domain hits -> API DTO
-                var response = hits.Select(h =>
+                var response = hits.Select(h => new MultiFaceMatchResponse
                 {
-                    // Assuming FaceRecognitionHit has:
-                    //  - int FaceId
-                    //  - FaceBoundingBox BoundingBox { X, Y, W, H }
-                    //  - FaceMatchResult Match { IsMatch, UserId, FaceProfileId, Similarity }
-                    //  - float QualityScore
-
-                    return new MultiFaceMatchResponse
-                    {
-                        FaceId = h.FaceId,
-                        BoundingBox = h.Bbox,
-                        OverallQuality = h.OverallQuality,
-                        IsMatch = h.Match.IsMatch,
-                        UserId = h.Match.UserId,
-                        FaceProfileId = h.Match.FaceProfileId,
-                        Similarity = h.Match.Similarity
-                    };
+                    FaceId = h.FaceId,
+                    BoundingBox = h.Bbox,
+                    OverallQuality = h.OverallQuality,
+                    IsMatch = h.Match.IsMatch,
+                    UserId = h.Match.UserId,
+                    FaceProfileId = h.Match.FaceProfileId,
+                    Similarity = h.Match.Similarity
                 }).ToList();
 
                 _logger.LogInformation(
@@ -426,6 +400,9 @@ namespace SSSP.Api.Controllers
             catch (OperationCanceledException)
             {
                 sw.Stop();
+
+                _metrics.IncrementVerifyRequests(endpoint, "fail");
+                _metrics.ObserveVerifyDuration(endpoint, sw.Elapsed.TotalMilliseconds);
 
                 _logger.LogWarning(
                     "Multi-face verification cancelled. CameraId={CameraId}, ElapsedMs={ElapsedMs}",
@@ -445,6 +422,9 @@ namespace SSSP.Api.Controllers
             {
                 sw.Stop();
 
+                _metrics.IncrementVerifyRequests(endpoint, "fail");
+                _metrics.ObserveVerifyDuration(endpoint, sw.Elapsed.TotalMilliseconds);
+
                 _logger.LogError(
                     ex,
                     "Multi-face verification failed. CameraId={CameraId}, ElapsedMs={ElapsedMs}, ExceptionType={ExceptionType}",
@@ -462,38 +442,25 @@ namespace SSSP.Api.Controllers
             }
         }
 
+        // GET: api/face/cache-stats
+        // Removed FaceProfileCacheMetrics usage; keep simple stats only.
         [HttpGet("cache-stats")]
         public async Task<ActionResult<object>> GetCacheStats(CancellationToken ct)
         {
             var profiles = await _faceProfileCache.GetAllAsync(ct);
-            var (l1h, l1m, l2h, l2m, dbLoads) = _faceCacheMetrics.Snapshot();
 
             var response = new
             {
-                ProfilesCount = profiles.Count,
-                Metrics = new
-                {
-                    L1Hits = l1h,
-                    L1Misses = l1m,
-                    L2Hits = l2h,
-                    L2Misses = l2m,
-                    DbLoads = dbLoads
-                }
+                ProfilesCount = profiles.Count
             };
 
-            _logger.LogInformation(
-                "Face cache stats requested. Profiles={Profiles}, L1(Hit={L1H}, Miss={L1M}), L2(Hit={L2H}, Miss={L2M}), DbLoads={DbLoads}",
-                profiles.Count, l1h, l1m, l2h, l2m, dbLoads);
-
+            _logger.LogInformation("Face cache stats requested. Profiles={Profiles}", profiles.Count);
             return Ok(response);
         }
 
-
         #region Private Helpers
 
-        private static bool IsValidImage(
-            IFormFile? file,
-            out string errorMessage)
+        private static bool IsValidImage(IFormFile? file, out string errorMessage)
         {
             if (file is null || file.Length == 0)
             {
@@ -527,8 +494,7 @@ namespace SSSP.Api.Controllers
             Guid? userId = null,
             string? errorReason = null)
         {
-            if (_telemetry is null)
-                return;
+            if (_telemetry is null) return;
 
             var props = new Dictionary<string, string>
             {
@@ -539,16 +505,12 @@ namespace SSSP.Api.Controllers
             };
 
             if (!string.IsNullOrWhiteSpace(errorReason))
-            {
                 props["ErrorReason"] = errorReason;
-            }
 
             _telemetry.TrackMetric("FaceApiLatencyMs", elapsedMs, props);
 
             if (imageSizeBytes.HasValue)
-            {
                 _telemetry.TrackMetric("FaceApiImageSizeBytes", imageSizeBytes.Value, props);
-            }
         }
 
         #endregion
