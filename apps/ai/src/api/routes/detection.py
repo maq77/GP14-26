@@ -6,7 +6,11 @@ from typing import List
 import structlog
 
 from src.schemas.detection import DetectResponse, BoundingBox, Detection, DetectRequest
+<<<<<<< HEAD
 from src.core.container import get_detection_app
+=======
+from ...core.container import get_detection_app
+>>>>>>> main
 
 router = APIRouter(prefix="/api/v1", tags=["detection"])
 logger = structlog.get_logger()

@@ -1,5 +1,6 @@
 ﻿namespace SSSP.BL.Options
 {
+<<<<<<< HEAD
     public sealed class FaceProfileCacheOptions
     {
         // 1 min cache
@@ -24,5 +25,10 @@
 
         public bool AllowEmergencyDbRefreshIfStale { get; set; } = false;
 
+=======
+    public class FaceProfileCacheOptions
+    {
+        public TimeSpan AbsoluteExpiration { get; set; } = TimeSpan.FromMinutes(1);
+>>>>>>> main
     }
 }

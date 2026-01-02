@@ -18,8 +18,13 @@ from packages.contracts.python.face_pb2 import (
 )
 from packages.contracts.python.face_pb2_grpc import FaceServiceServicer
 
+<<<<<<< HEAD
 from src.services.ml.Face_Recognition_Service import FaceRecognitionService
 from src.core.exceptions import InvalidImageException
+=======
+from ....services.ml.Face_Recognition_Service import FaceRecognitionService
+from ....core.exceptions import InvalidImageException
+>>>>>>> main
 
 logger = structlog.get_logger("grpc.face_servicer")
 

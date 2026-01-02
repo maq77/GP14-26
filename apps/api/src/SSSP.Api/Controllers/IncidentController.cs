@@ -26,6 +26,7 @@ namespace SSSP.Api.Controllers
             [FromBody] CreateIncidentRequest request,
             CancellationToken ct)
         {
+<<<<<<< HEAD
             var idempotencyKey = Request.Headers.TryGetValue("Idempotency-Key", out var v)
                 ? v.ToString()
                 : null;
@@ -40,10 +41,25 @@ namespace SSSP.Api.Controllers
                 request.PayloadJson,
                 idempotencyKey,
                 ct);
+=======
+            var incident = await _service.CreateAsync(
+                request.Title,
+                request.Description,
+                request.Type,
+                request.Source,
+                request.OperatorId,
+                request.Location,
+                request.PayloadJson,
+                ct);
+
+            _logger.LogInformation("Incident created via API. Id={Id}, Type={Type}, Severity={Severity}",
+                incident.Id, incident.Type, incident.Severity);
+>>>>>>> main
 
             return Ok(ToResponse(incident));
         }
 
+<<<<<<< HEAD
         [HttpPost("{id:int}/start/{userId:guid}")]
         public async Task<IActionResult> StartWork(int id, Guid userId, CancellationToken ct)
         {
@@ -88,6 +104,38 @@ namespace SSSP.Api.Controllers
             return Ok(incidents.Select(ToResponse));
         }
 
+=======
+        [HttpPost("{id:int}/assign/{userId:guid}")]
+        public async Task<IActionResult> Assign(int id, Guid userId, CancellationToken ct)
+        {
+            await _service.AssignAsync(id, userId, ct);
+            return Ok();
+        }
+
+        [HttpPost("{id:int}/resolve")]
+        public async Task<IActionResult> Resolve(int id, CancellationToken ct)
+        {
+            await _service.ResolveAsync(id, ct);
+            return Ok();
+        }
+
+        [HttpGet("open")]
+        public async Task<ActionResult<IEnumerable<IncidentResponse>>> GetOpen(CancellationToken ct)
+        {
+            var incidents = await _service.GetOpenAsync(ct);
+            return Ok(incidents.Select(ToResponse));
+        }
+
+        [HttpGet("operator/{operatorId:int}")]
+        public async Task<ActionResult<IEnumerable<IncidentResponse>>> GetByOperator(
+            int operatorId,
+            CancellationToken ct)
+        {
+            var incidents = await _service.GetByOperatorAsync(operatorId, ct);
+            return Ok(incidents.Select(ToResponse));
+        }
+
+>>>>>>> main
         private static IncidentResponse ToResponse(Incident incident)
         {
             return new IncidentResponse

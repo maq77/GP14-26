@@ -13,6 +13,7 @@ from dataclasses import dataclass
 import cv2
 import numpy as np
 
+<<<<<<< HEAD
 from src.core.logging import get_logger
 from src.core.exceptions import InvalidImageException
 from src.models.face.detector import FaceDetector, DetectionConfig, DetectedFace
@@ -20,6 +21,14 @@ from src.models.face.embedder import FaceEmbedder, EmbedderConfig
 
 
 
+=======
+from ...core.logging import get_logger
+from ...core.exceptions import InvalidImageException
+from ...models.face.detector import FaceDetector, DetectionConfig, DetectedFace
+from ...models.face.embedder import FaceEmbedder, EmbedderConfig
+
+
+>>>>>>> main
 logger = get_logger("sssp.ai.face_recognition_service")
 
 

@@ -18,7 +18,10 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
+<<<<<<< HEAD
     <PackageReference Include="StackExchange.Redis" Version="2.10.1" />
+=======
+>>>>>>> main
   </ItemGroup>
 
   <PropertyGroup>

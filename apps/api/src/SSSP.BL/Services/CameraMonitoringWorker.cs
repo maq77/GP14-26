@@ -11,7 +11,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 using Sssp.Ai.Stream;
+<<<<<<< HEAD
 using SSSP.BL.Outbox;
+=======
+>>>>>>> main
 using SSSP.BL.Records;
 using SSSP.BL.Services.Interfaces;
 using SSSP.Infrastructure.AI.Grpc.Interfaces;
@@ -267,6 +270,7 @@ namespace SSSP.BL.Services
                             _logger.LogInformation(
                                 "FACE MATCH. CameraId={CameraId}, FrameId={FrameId}, UserId={UserId}, FaceProfileId={FaceProfileId}, Similarity={Similarity:F4}, MatchNumber={MatchNumber}",
                                 cameraId, response.FrameId, match.UserId, match.FaceProfileId, match.Similarity, matchCount);
+<<<<<<< HEAD
 
                             await PublishFaceRecognizedAsync(
                                                              cameraId,
@@ -274,6 +278,8 @@ namespace SSSP.BL.Services
                                                              match,
                                                              face,
                                                              cancellationToken);
+=======
+>>>>>>> main
                         }
                         else
                         {
@@ -301,6 +307,7 @@ namespace SSSP.BL.Services
                 cameraId, sessionDuration.TotalSeconds, frameCount, faceCount, matchCount, avgAiProcessingMs);
         }
 
+<<<<<<< HEAD
 
         private async Task PublishFaceRecognizedAsync(
     int cameraId,
@@ -350,6 +357,8 @@ namespace SSSP.BL.Services
                 idempotencyKey: $"face.recognized:{cameraId}:{frameId}",
                 ct: ct);
         }
+=======
+>>>>>>> main
         private void LogFaceQualityMetrics(
             int cameraId,
             IReadOnlyList<FaceResult> faces,

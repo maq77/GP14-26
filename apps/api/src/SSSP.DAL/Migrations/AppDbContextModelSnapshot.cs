@@ -319,6 +319,68 @@ namespace SSSP.DAL.Migrations
                     b.ToTable("FaceProfiles");
                 });
 
+<<<<<<< HEAD
+=======
+            modelBuilder.Entity("SSSP.DAL.Models.Incident", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid?>("AssignedToUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("DedupeKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OperatorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PayloadJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Severity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssignedToUserId");
+
+                    b.HasIndex("OperatorId");
+
+                    b.ToTable("Incidents");
+                });
+
+>>>>>>> main
             modelBuilder.Entity("SSSP.DAL.Models.Operator", b =>
                 {
                     b.Property<int>("Id")
@@ -736,6 +798,50 @@ namespace SSSP.DAL.Migrations
                     b.Navigation("User");
                 });
 
+<<<<<<< HEAD
+=======
+            modelBuilder.Entity("SSSP.DAL.Models.Incident", b =>
+                {
+                    b.HasOne("User", "AssignedToUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedToUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("SSSP.DAL.Models.Operator", "Operator")
+                        .WithMany("Incidents")
+                        .HasForeignKey("OperatorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.OwnsOne("SSSP.DAL.ValueObjects.Location", "Location", b1 =>
+                        {
+                            b1.Property<int>("IncidentId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Address")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<double?>("Latitude")
+                                .HasColumnType("float");
+
+                            b1.Property<double?>("Longitude")
+                                .HasColumnType("float");
+
+                            b1.HasKey("IncidentId");
+
+                            b1.ToTable("Incidents");
+
+                            b1.WithOwner()
+                                .HasForeignKey("IncidentId");
+                        });
+
+                    b.Navigation("AssignedToUser");
+
+                    b.Navigation("Location");
+
+                    b.Navigation("Operator");
+                });
+
+>>>>>>> main
             modelBuilder.Entity("SSSP.DAL.Models.Sensor", b =>
                 {
                     b.HasOne("SSSP.DAL.Models.Operator", "Operator")

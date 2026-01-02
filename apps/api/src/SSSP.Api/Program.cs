@@ -8,8 +8,11 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
+<<<<<<< HEAD
 using FluentValidation;
 using FluentValidation.AspNetCore;
+=======
+>>>>>>> main
 using SSSP.BL.Managers;
 using SSSP.BL.Services;
 using SSSP.BL.Services.Interfaces;
@@ -32,6 +35,7 @@ using SSSP.BL.Startup;
 using System.Threading.RateLimiting;
 using SSSP.Api.Middleware;
 using SSSP.Api.Hubs;
+<<<<<<< HEAD
 using Prometheus;
 using Microsoft.AspNetCore.SignalR;
 using SSSP.BL.Realtime.Incidents;
@@ -43,6 +47,11 @@ using SSSP.Api.Services;
 using StackExchange.Redis;
 using SSSP.Telemetry.Abstractions.Faces;
 using SSSP.Telemetry.Abstractions.Incidents;
+=======
+using SSSP.Api.Services;
+using SSSP.BL.Monitoring;
+using Prometheus;
+>>>>>>> main
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,6 +100,7 @@ try
     // =======================================
     builder.Services.AddCors(options =>
     {
+<<<<<<< HEAD
         /*options.AddPolicy("AllowFrontend", policy =>
         {
             policy.WithOrigins("http://localhost:3000", "http://localhost:5173")
@@ -100,6 +110,10 @@ try
         });*/
         options.AddPolicy("AllowAll", policy =>
         {
+=======
+        options.AddPolicy("AllowAll", policy =>
+        {
+>>>>>>> main
             policy.AllowAnyOrigin()
                   .AllowAnyMethod()
                   .AllowAnyHeader();
@@ -117,8 +131,11 @@ try
             options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         });
 
+<<<<<<< HEAD
     builder.Services.AddFluentValidationAutoValidation();
     builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+=======
+>>>>>>> main
     builder.Services.AddEndpointsApiExplorer();
 
     // =======================================
@@ -224,7 +241,11 @@ try
     // Identity
     // =======================================
     builder.Services
+<<<<<<< HEAD
         .AddIdentity<User, SSSP.DAL.Models.Role>(options =>
+=======
+        .AddIdentity<User, Role>(options =>
+>>>>>>> main
         {
             options.Password.RequireDigit = true;
             options.Password.RequireUppercase = true;
@@ -276,6 +297,7 @@ try
                 {
                     Log.Debug("JWT token validated for user {User}", context.Principal?.Identity?.Name);
                     return Task.CompletedTask;
+<<<<<<< HEAD
                 },
                 /*OnMessageReceived = context =>
                 {
@@ -290,6 +312,9 @@ try
 
                     return Task.CompletedTask;
                 }*/
+=======
+                }
+>>>>>>> main
             };
         });
 
@@ -299,6 +324,7 @@ try
     // Cache Configuration (env aware)
     // =======================================
 
+<<<<<<< HEAD
 
     builder.Services.AddSingleton<IFaceMetrics, PrometheusFaceMetrics>();
 
@@ -345,10 +371,51 @@ try
         builder.Services.AddSingleton<IFaceProfileDistributedSnapshotCache, NullFaceProfileDistributedSnapshotCache>();
 
         Log.Information("FaceProfile cache mode=Memory (Redis disabled/not ready).");
+=======
+    builder.Services.AddSingleton<FaceProfileCacheMetrics>();
+
+    builder.Services.Configure<FaceProfileCacheOptions>(cfg =>
+    {
+        cfg.AbsoluteExpiration = TimeSpan.FromMinutes(5);
+    });
+
+    var useRedisFaceCache = builder.Configuration.GetValue<bool>("Cache:UseRedisFaceCache", false);
+
+    if (useRedisFaceCache)
+    {
+        var redisConnection = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379";
+
+        builder.Services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = redisConnection;
+            options.InstanceName = "SSSP:";
+        });
+
+        Log.Information("Using Hybrid face cache (L1 + l2(Redis) + DB). Connection={RedisConnection}", redisConnection);
+
+        // L2 concrete
+        builder.Services.AddScoped<DistributedFaceProfileCache>();
+
+        // L1 Hybrid as the IFaceProfileCache
+        builder.Services.AddMemoryCache(options =>
+        {
+            options.SizeLimit = 1024;
+            options.CompactionPercentage = 0.25;
+        });
+
+        builder.Services.AddScoped<IFaceProfileCache, HybridFaceProfileCache>();
+    }
+    else
+    {
+        Log.Information("Using in-memory FaceProfileCache (Redis disabled)");
+
+        builder.Services.AddScoped<IFaceProfileCache, FaceProfileCache>();
+>>>>>>> main
     }
 
 
 
+<<<<<<< HEAD
 
     // =======================================
     // Repository Pattern
@@ -356,6 +423,11 @@ try
     builder.Services.AddHostedService<OutboxDispatcherWorker>();
     builder.Services.AddScoped<IOutboxWriter, EfOutboxWriter>();
     builder.Services.AddScoped<IOutboxReader, EfOutboxReader>();
+=======
+    // =======================================
+    // Repository Pattern
+    // =======================================
+>>>>>>> main
     builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
     builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
@@ -369,8 +441,11 @@ try
     builder.Services.AddSingleton<IIncidentManager, IncidentManager>();
     builder.Services.AddScoped<IIncidentService, IncidentService>();
     builder.Services.AddSingleton<ICameraTopologyService, CameraTopologyService>();
+<<<<<<< HEAD
     builder.Services.AddSingleton<SSSP.DAL.ValueObjects.IClock, SSSP.DAL.ValueObjects.SystemClock>();
 
+=======
+>>>>>>> main
 
 
 
@@ -402,6 +477,7 @@ try
     {
         var logger = sp.GetRequiredService<ILogger<FaceMatchingManager>>();
         var threshold = builder.Configuration.GetValue<double>("FaceRecognition:SimilarityThreshold", 0.65);
+<<<<<<< HEAD
         var metrics = sp.GetRequiredService<IFaceMetrics>();
         Log.Information("Face matching threshold configured: {Threshold}", threshold);
         return new FaceMatchingManager(threshold, metrics, logger);
@@ -412,6 +488,14 @@ try
     builder.Services.AddSingleton<INotificationPublisher, SignalRNotificationPublisher>();
     builder.Services.AddScoped<IIncidentRealtime, IncidentRealtime>();
     builder.Services.AddSingleton<IIncidentTelemetry, IncidentTelemetry>();
+=======
+        Log.Information("Face matching threshold configured: {Threshold}", threshold);
+        return new FaceMatchingManager(threshold, logger);
+    });
+
+    // DI of SignalR - Notifiaction System - Realtime
+    builder.Services.AddSingleton<ITrackingNotificationService, TrackingNotificationService>();
+>>>>>>> main
 
     builder.Services.AddScoped<IFaceTrackingManager, FaceTrackingManager>();
     builder.Services.AddScoped<IFaceAutoEnrollmentService, FaceAutoEnrollmentService>();
@@ -428,6 +512,10 @@ try
     builder.Services.AddHostedService(sp =>
         sp.GetRequiredService<CameraMonitoringWorker>());
     builder.Services.AddHostedService<StartupValidationService>();
+<<<<<<< HEAD
+=======
+    builder.Services.AddHostedService<FaceProfileCacheWarmupService>();
+>>>>>>> main
     builder.Services.AddHostedService<CameraTopologyWarmupService>();
 
 
@@ -436,11 +524,16 @@ try
     // =======================================
     // SignalR
     // =======================================
+<<<<<<< HEAD
     var signalr = builder.Services.AddSignalR(options =>
+=======
+    builder.Services.AddSignalR(options =>
+>>>>>>> main
     {
         options.EnableDetailedErrors = builder.Environment.IsDevelopment();
         options.KeepAliveInterval = TimeSpan.FromSeconds(15);
         options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+<<<<<<< HEAD
     })
     .AddJsonProtocol(o =>
     {
@@ -457,6 +550,10 @@ try
     //}
 
 
+=======
+    });
+
+>>>>>>> main
     // =======================================
     // Health Checks
     // =======================================
@@ -473,14 +570,18 @@ try
         .AddCheck<CameraMonitoringHealthCheck>("camera_monitoring", tags: new[] { "ready", "cameras" })
         .AddCheck<FaceProfileCacheHealthCheck>("face_cache", tags: new[] { "ready", "cache" });
 
+<<<<<<< HEAD
     var useDockerEndpoints = builder.Configuration
     .GetValue<bool>("HealthChecks:UseDockerEndpoints", false);
 
+=======
+>>>>>>> main
     builder.Services
         .AddHealthChecksUI(options =>
         {
             options.SetEvaluationTimeInSeconds(30);
             options.MaximumHistoryEntriesPerEndpoint(100);
+<<<<<<< HEAD
 
             if (useDockerEndpoints)
             {
@@ -496,6 +597,16 @@ try
         .AddInMemoryStorage();
 
 
+=======
+            options.AddHealthCheckEndpoint("SSSP API - Ready", "http://api:8080/health/ready");
+            options.AddHealthCheckEndpoint("SSSP API - Live", "http://api:8080/health/live");
+
+            // options.AddHealthCheckEndpoint("SSSP API - Ready", "/health/ready"); //local
+            // options.AddHealthCheckEndpoint("SSSP API - Live", "/health/live");  //local
+        })
+        .AddInMemoryStorage();
+
+>>>>>>> main
     // =======================================
     // Response Compression
     // =======================================
@@ -668,14 +779,23 @@ try
     }
 
     app.UseMiddleware<CorrelationIdMiddleware>();
+<<<<<<< HEAD
 
+=======
+    app.UseResponseCompression();
+
+    app.UseRateLimiter();
+>>>>>>> main
 
     app.UsePerformanceMonitoring();
     app.UseGlobalExceptionHandler();
 
+<<<<<<< HEAD
     app.UseRateLimiter();
     app.UseResponseCompression();
 
+=======
+>>>>>>> main
     app.UseSerilogRequestLogging(options =>
     {
         options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000}ms";
@@ -698,14 +818,21 @@ try
     }
 
     app.UseHttpsRedirection();
+<<<<<<< HEAD
     //app.UseCors("AllowFrontend");
+=======
+>>>>>>> main
     app.UseCors("AllowAll");
     app.UseAuthentication();
     app.UseAuthorization();
     
     app.MapControllers();
+<<<<<<< HEAD
     app.MapHub<NotificationsHub>(NotificationsHub.HubUrl);
     //app.MapHub<TrackingHub>(TrackingHub.HubUrl);
+=======
+    app.MapHub<TrackingHub>(TrackingHub.HubUrl);
+>>>>>>> main
     // Prometheus metrics endpoint (for scraping)
     app.MapMetrics("/metrics");
 
@@ -757,9 +884,15 @@ try
     Log.Information("Listening on: {Urls}", string.Join(", ", app.Urls));
     if (app.Environment.IsDevelopment())
     {
+<<<<<<< HEAD
         Log.Information("Swagger UI: {Url}/swagger", app.Urls.FirstOrDefault() ?? "http://localhost:8080");
     }
     Log.Information("Health UI: {Url}/health-ui", app.Urls.FirstOrDefault() ?? "http://localhost:8080");
+=======
+        Log.Information("Swagger UI: {Url}/swagger", app.Urls.FirstOrDefault() ?? "http://localhost:5000");
+    }
+    Log.Information("Health UI: {Url}/health-ui", app.Urls.FirstOrDefault() ?? "http://localhost:5000");
+>>>>>>> main
     Log.Information("========================================");
 
     app.Run();

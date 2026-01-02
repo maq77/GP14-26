@@ -16,6 +16,11 @@ All higher-level business logic (recognize, verify, enroll, etc.)
 is implemented in .NET and NOT in this AI service.
 """
 
+<<<<<<< HEAD
+=======
+# import sys
+# from pathlib import Path
+>>>>>>> main
 import grpc
 from concurrent import futures
 import structlog
@@ -27,6 +32,7 @@ from src.api.grpc.servicers.video_stream_servicer import VideoStreamService
 from src.services.ml.Face_Recognition_Service import FaceRecognitionService
 from src.core.config import settings
 
+<<<<<<< HEAD
 # ---------------------------------------------------------------------------
 # Sys.path setup so generated protobufs & packages are importable
 # ---------------------------------------------------------------------------
@@ -53,6 +59,49 @@ from face_pb2_grpc import add_FaceServiceServicer_to_server
 
 # Video stream service for live frames + embeddings
 from video_stream_pb2_grpc import add_VideoStreamServiceServicer_to_server
+=======
+import grpc
+import structlog
+from ..lifespan.health_registry import get_health_registry, HealthStatus
+
+# ---------------------------------------------------------------------------
+# Sys.path setup so generated protobufs & packages are importable
+# ---------------------------------------------------------------------------
+
+# CURRENT_FILE = Path(__file__).resolve()
+# PROJECT_ROOT = CURRENT_FILE.parents[5]  # .../GP14-26
+# CONTRACTS_PY_PATH = PROJECT_ROOT / "packages" / "contracts" / "python"
+
+# # Make sure these are at the front of sys.path
+# sys.path.insert(0, str(PROJECT_ROOT))          # so `packages.*` works
+# sys.path.insert(0, str(CONTRACTS_PY_PATH))     # so `face_pb2` / `video_stream_pb2` etc. work
+# sys.path.insert(0, str(CONTRACTS_PY_PATH.parent))  # .../packages/contracts
+
+# ---------------------------------------------------------------------------
+# gRPC generated code imports
+# ---------------------------------------------------------------------------
+
+# Detection service (compiled with python_package = "sssp.ai.detection" most likely)
+from packages.contracts.python.detection_pb2_grpc import add_DetectionServiceServicer_to_server
+
+# Face service (no BL here – only low-level ML endpoints are implemented)
+from packages.contracts.python.face_pb2_grpc import add_FaceServiceServicer_to_server
+
+
+# Video stream service for live frames + embeddings
+from packages.contracts.python.video_stream_pb2_grpc import add_VideoStreamServiceServicer_to_server
+
+
+# ---------------------------------------------------------------------------
+# Servicers & ML service
+# ---------------------------------------------------------------------------
+
+from .servicers.detection_servicer import DetectionServicer
+from .servicers.face_servicer import FaceServicer
+from .servicers.video_stream_servicer import VideoStreamService
+from ...services.ml.Face_Recognition_Service import FaceRecognitionService
+from ...core.config import settings
+>>>>>>> main
 
 logger = structlog.get_logger("grpc_server")
 

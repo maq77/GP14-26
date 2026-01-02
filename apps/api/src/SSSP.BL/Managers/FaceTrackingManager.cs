@@ -273,6 +273,7 @@ namespace SSSP.BL.Managers
                 travelSeconds,
                 bestSession.AvgSimilarity);
 
+<<<<<<< HEAD
             // NEW: Publish cross-camera re-ID notification
             _ = PublishCrossCameraReIdAsync(
                 bestSession.UserId,
@@ -282,6 +283,8 @@ namespace SSSP.BL.Managers
                 travelSeconds,
                 bestSession.AvgSimilarity);
 
+=======
+>>>>>>> main
             _telemetry?.TrackEvent("CrossCameraReIdHit", new Dictionary<string, string>
             {
                 ["UserId"] = bestSession.UserId.ToString(),
@@ -321,6 +324,7 @@ namespace SSSP.BL.Managers
                 .Where(s => (now - s.LastSeenUtc) < _options.Tracker.SessionExpiration)
                 .ToList();
         }
+<<<<<<< HEAD
 
 
         private async Task PublishCrossCameraReIdAsync(
@@ -346,6 +350,8 @@ namespace SSSP.BL.Managers
                 _logger.LogError(ex, "Failed to publish cross-camera re-ID notification");
             }
         }
+=======
+>>>>>>> main
     }
 
 }

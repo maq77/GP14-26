@@ -5,9 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+<<<<<<< HEAD
 using Microsoft.Extensions.Options;
 using SSSP.BL.Options;
 using SSSP.BL.Services;
+=======
+using SSSP.BL.Interfaces;
+>>>>>>> main
 using SSSP.BL.Services.Interfaces;
 
 namespace SSSP.BL.HealthChecks
@@ -25,7 +29,13 @@ namespace SSSP.BL.HealthChecks
             _logger = logger;
         }
 
+<<<<<<< HEAD
         public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken ct = default)
+=======
+        public Task<HealthCheckResult> CheckHealthAsync(
+            HealthCheckContext context,
+            CancellationToken ct = default)
+>>>>>>> main
         {
             try
             {
@@ -41,6 +51,13 @@ namespace SSSP.BL.HealthChecks
                     ["camera_ids"] = sessions.Select(s => s.CameraId).ToArray()
                 };
 
+<<<<<<< HEAD
+=======
+                _logger.LogDebug(
+                    "Camera health check. ActiveCameras={ActiveCameras}, RunningCameras={RunningCameras}",
+                    activeCameras, runningCameras);
+
+>>>>>>> main
                 if (activeCameras != runningCameras)
                 {
                     return Task.FromResult(
@@ -58,13 +75,20 @@ namespace SSSP.BL.HealthChecks
             {
                 _logger.LogError(ex, "Camera health check failed");
                 return Task.FromResult(
+<<<<<<< HEAD
                     HealthCheckResult.Unhealthy("Camera monitoring check failed", ex));
+=======
+                    HealthCheckResult.Unhealthy(
+                        "Camera monitoring check failed",
+                        ex));
+>>>>>>> main
             }
         }
     }
 
     public sealed class FaceProfileCacheHealthCheck : IHealthCheck
     {
+<<<<<<< HEAD
         private readonly FaceProfileCacheStore _store;
         private readonly FaceProfileCacheOptions _opts;
         private readonly ILogger<FaceProfileCacheHealthCheck> _logger;
@@ -109,6 +133,65 @@ namespace SSSP.BL.HealthChecks
                 count, age.TotalSeconds, tooStale, _store.LastRefreshSucceeded, _store.IsRefreshing, _store.LastError);
 
             return Task.FromResult(HealthCheckResult.Degraded("Face profile cache stale or refresh failing", data: data));
+=======
+        private readonly IFaceProfileCache _cache;
+        private readonly ILogger<FaceProfileCacheHealthCheck> _logger;
+
+        public FaceProfileCacheHealthCheck(
+            IFaceProfileCache cache,
+            ILogger<FaceProfileCacheHealthCheck> logger)
+        {
+            _cache = cache;
+            _logger = logger;
+        }
+
+        public async Task<HealthCheckResult> CheckHealthAsync(
+            HealthCheckContext context,
+            CancellationToken ct = default)
+        {
+            try
+            {
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                var profiles = await _cache.GetAllAsync(ct);
+                sw.Stop();
+
+                var data = new Dictionary<string, object>
+                {
+                    ["profile_count"] = profiles.Count,
+                    ["response_time_ms"] = sw.ElapsedMilliseconds,
+                    ["timestamp"] = DateTimeOffset.UtcNow
+                };
+
+                _logger.LogDebug(
+                    "Cache health check. Profiles={ProfileCount}, ResponseMs={ResponseMs}",
+                    profiles.Count, sw.ElapsedMilliseconds);
+
+                if (profiles.Count == 0)
+                {
+                    return HealthCheckResult.Degraded(
+                        "No profiles in cache",
+                        data: data);
+                }
+
+                if (sw.ElapsedMilliseconds > 1000)
+                {
+                    return HealthCheckResult.Degraded(
+                        $"Cache response slow ({sw.ElapsedMilliseconds}ms)",
+                        data: data);
+                }
+
+                return HealthCheckResult.Healthy(
+                    $"Cache operational ({profiles.Count} profiles)",
+                    data: data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cache health check failed");
+                return HealthCheckResult.Unhealthy(
+                    "Cache check failed",
+                    ex);
+            }
+>>>>>>> main
         }
     }
 
@@ -121,7 +204,13 @@ namespace SSSP.BL.HealthChecks
             _logger = logger;
         }
 
+<<<<<<< HEAD
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken ct = default)
+=======
+        public async Task<HealthCheckResult> CheckHealthAsync(
+            HealthCheckContext context,
+            CancellationToken ct = default)
+>>>>>>> main
         {
             try
             {
@@ -137,6 +226,11 @@ namespace SSSP.BL.HealthChecks
                     ["timestamp"] = DateTimeOffset.UtcNow
                 };
 
+<<<<<<< HEAD
+=======
+                _logger.LogDebug("Database health check. ResponseMs={ResponseMs}", sw.ElapsedMilliseconds);
+
+>>>>>>> main
                 return HealthCheckResult.Healthy("Database operational", data: data);
             }
             catch (Exception ex)
@@ -146,4 +240,8 @@ namespace SSSP.BL.HealthChecks
             }
         }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> main

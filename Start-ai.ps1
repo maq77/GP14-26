@@ -8,4 +8,7 @@ cd "apps\ai"
 
 cd "..\.."
 uvicorn apps.ai.src.api.main:app --reload --port 8001
+<<<<<<< HEAD
 uvicorn src.api.main:app --reload --port 8001
+=======
+>>>>>>> main
