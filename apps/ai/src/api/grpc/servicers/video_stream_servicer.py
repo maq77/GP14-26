@@ -19,11 +19,7 @@ import structlog
 import grpc
 
 from packages.contracts.python import video_stream_pb2, video_stream_pb2_grpc
-<<<<<<< HEAD
 from src.services.ml.Face_Recognition_Service import FaceRecognitionService
-=======
-from ....services.ml.Face_Recognition_Service import FaceRecognitionService
->>>>>>> main
 
 logger = structlog.get_logger("grpc.video_stream_servicer")
 

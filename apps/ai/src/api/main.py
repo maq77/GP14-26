@@ -18,19 +18,11 @@ import time
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-<<<<<<< HEAD
 from src.core.config import settings
 from src.core.logging import setup_logging, get_logger
 from src.api.lifespan.manager import lifespan
 from src.api.routes import health, detection
 from src.api.lifespan.health_registry import get_health_registry
-=======
-from ..core.config import settings
-from ..core.logging import setup_logging, get_logger
-from .lifespan.manager import lifespan
-from .routes import health, detection
-from .lifespan.health_registry import get_health_registry
->>>>>>> main
 
 # Setup logging first
 setup_logging()

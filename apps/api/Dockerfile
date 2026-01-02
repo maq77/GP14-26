@@ -15,15 +15,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl && \
 RUN groupadd -r -g 1000 sssp && \
     useradd -r -u 1000 -g sssp -s /bin/bash sssp
 
-<<<<<<< HEAD
 # --------------------------------------------------
 # Stage 2: Restore Dependencies (Cached)
 # --------------------------------------------------
-=======
-# ---------------------------
-# Stage 2: restore (cached)
-# ---------------------------
->>>>>>> main
 FROM mcr.microsoft.com/dotnet/sdk:9.0-bookworm-slim AS restore
 WORKDIR /src
 
@@ -45,7 +39,6 @@ COPY apps/api/src/SSSP.BL/SSSP.BL.csproj src/SSSP.BL/
 COPY apps/api/src/SSSP.DAL/SSSP.DAL.csproj src/SSSP.DAL/
 COPY apps/api/src/SSSP.Infrastructure.AI.Grpc/SSSP.Infrastructure.AI.Grpc.csproj src/SSSP.Infrastructure.AI.Grpc/
 COPY apps/api/src/SSSP.Infrastructure.Persistence/SSSP.Infrastructure.Persistence.csproj src/SSSP.Infrastructure.Persistence/
-<<<<<<< HEAD
 COPY apps/api/src/SSSP.Telemetry.Abstractions/SSSP.Telemetry.Abstractions.csproj src/SSSP.Telemetry.Abstractions/
 
 # Restore packages
@@ -76,29 +69,6 @@ WORKDIR /src/src/SSSP.Api
 
 # Development server with hot-reload
 CMD ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080"]
-=======
-
-RUN dotnet restore --disable-parallel -v minimal
-
-
-# ---------------------------
-# Stage 3: development (hot reload)
-# ---------------------------
-FROM restore AS development
-
-ENV ASPNETCORE_URLS=http://0.0.0.0:8080 \
-    ASPNETCORE_ENVIRONMENT=Development \
-    DOTNET_USE_POLLING_FILE_WATCHER=1
-
-# Copy full source
-COPY apps/api/src/ src/
-COPY packages/contracts/csharp/ /packages/contracts/csharp/
-
-WORKDIR /src/src/SSSP.Api
-
-# Enable hot reload with `dotnet watch` if needed
-CMD ["dotnet", "run", "--urls=http://0.0.0.0:8080", "--no-restore"] 
->>>>>>> main
 
 # ---------------------------
 # Stage 4: build
